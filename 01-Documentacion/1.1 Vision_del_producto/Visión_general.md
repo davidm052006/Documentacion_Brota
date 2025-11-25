@@ -153,7 +153,7 @@ Los objetivos principales de Brota son:
     
 
 📎 **Ver documento completo:**  
-👉 _[[Objetivos_del_proyecto]]_
+👉 _[[Objetivos_del_proyecto|Objetivos del proyecto]]_
 
 ---
 
