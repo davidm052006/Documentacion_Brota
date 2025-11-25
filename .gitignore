@@ -1,0 +1,15 @@
+# Obsidian: nunca subir esta carpeta ni nada dentro de ella
+.obsidian/
+
+# Papelera local de Obsidian (si la usas)
+.trash también la ignoramos)
+.trash/
+
+# Archivos temporales del sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# (Opcional) Si usas Excalidraw o Canvas, también puedes ignorar sus cachés
+.obsidian/plugins/obsidian-excalidraw/
+.obsidian/canvas/
