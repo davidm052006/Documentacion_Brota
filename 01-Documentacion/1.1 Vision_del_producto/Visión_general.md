@@ -86,7 +86,7 @@ Brota está diseñado para estudiantes que están en un momento crucial:
     
 
 📎 **Más información:**  
-👉 _Ver documento: [[Publico_objetivo]]_
+👉 _Ver documento: [[Publico_objetivo.md|Publico objetivos]]_
 
 ---
 
@@ -95,7 +95,7 @@ Brota está diseñado para estudiantes que están en un momento crucial:
 Brota nace también como respuesta a una problemática creciente: falta de orientación vocacional, desconocimiento de opciones formativas, barreras económicas y desconexión entre lo que se estudia y lo que realmente se puede llegar a ejercer.
 
 📎 **Detalles completos:**  
-👉 _Ver documento: [[Problema_que_resuelve]]_
+👉 _Ver documento: [[Problema_que_resuelve.md|Problema que resuelve]]_
 
 ---
 
@@ -104,7 +104,7 @@ Brota nace también como respuesta a una problemática creciente: falta de orien
 Brota está pensado para estudiantes de entre 14 y 25 años, instituciones educativas, orientadores y familias que buscan una herramienta confiable, clara y accesible.
 
 📎 **Más detalles:**  
-👉 _Ver documento: [[Publico_objetivo]]_
+👉 _Ver documento: [[Publico_objetivo.md|Publico objetivo]]_
 
 ---
 
@@ -135,7 +135,7 @@ Brota quiere ser ese primer aliado en el camino educativo, la voz que te diga:
 Nuestra misión es ofrecer una orientación vocacional accesible, personalizada y basada en datos, que permita a los jóvenes descubrir su potencial, comprender sus opciones formativas y tomar decisiones educativas acertadas y realistas.
 
 📎 **Ver misión completa:**  
-👉 _[[Misión del sistema]]_
+👉 _[[Misión del sistema.md|Misión del sistema]]_
 
 ---
 
@@ -153,18 +153,18 @@ Los objetivos principales de Brota son:
     
 
 📎 **Ver documento completo:**  
-👉 _[[Objetivos_del_proyecto|Objetivos del proyecto]]_
+👉 _[[Objetivos_del_proyecto.md|Objetivos del proyecto]]_
 
 ---
 
 ## 🌍 **Enlaces relacionados**
 
-- _[[Publico_objetivo]]_
+- _[[Publico_objetivo.md|Publico objetivo]]_
     
-- _[[Objetivos_del_proyecto]]_
+- _[[Objetivos_del_proyecto.md|Objetivos del proyecto]]_
     
-- _[[Problema_que_resuelve]]_
+- _[[Problema_que_resuelve.md|Problema que resuelve]]_
     
-- _[[Misión del sistema]]_
+- _[[Misión del sistema.md|Misión del sistema]]_
     
-- _[[Estudios e información de interés]]_
+- _[[Estudios e información de interés.md|Estudios e información de interés]]_
