@@ -1,7 +1,7 @@
 # 🌱 **Visión General de Brota**
 
 Brota nace como una iniciativa que busca iluminar el camino académico de miles de jóvenes que hoy se encuentran frente a una decisión difícil: **¿qué estudiar y hacia dónde llevar su futuro?**  
-Nuestra visión es construir un sistema moderno, accesible y humano que acompañe a cada estudiante en el proceso de descubrir sus fortalezas, explorar oportunidades y tomar decisiones formativas con claridad y confianza.
+Nuestra visión es construir un sistema moderno, accesible y humano que acompañe a cada estudiante en el proceso de descubrir sus fortalezas, explorar oportunidades y tomar decisiones formativas con claridad y confianza
 
 ---
 
