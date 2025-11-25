@@ -157,6 +157,9 @@ Los objetivos principales de Brota son:
 
 ---
 
+## **Información de interés
+📎 **Ver documento completo:**  
+👉 _[Info de interés](<Estudios e información de interés>)_
 ## 🌍 **Enlaces relacionados**
 
 - _[Publico objetivo](<Publico_objetivo.md>)_
