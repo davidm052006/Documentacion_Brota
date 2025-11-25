@@ -1,0 +1,114 @@
+{
+  "collapse-filter": true,
+  "search": "",
+  "showTags": false,
+  "showAttachments": false,
+  "hideUnresolved": false,
+  "showOrphans": true,
+  "collapse-color-groups": true,
+  "colorGroups": [
+    {
+      "query": "path:\"01-Documentacion/1.1 Vision_del_producto\"  ",
+      "color": {
+        "a": 1,
+        "rgb": 14701138
+      }
+    },
+    {
+      "query": "path:\"01-Documentacion/1.2 Funcionalidades\"  ",
+      "color": {
+        "a": 1,
+        "rgb": 14725458
+      }
+    },
+    {
+      "query": "path:\"01-Documentacion/1.3 Secciones_de_synapse\"  ",
+      "color": {
+        "a": 1,
+        "rgb": 11657298
+      }
+    },
+    {
+      "query": "path:\"01-Documentacion/1.4 UI-UX\"  ",
+      "color": {
+        "a": 1,
+        "rgb": 5431378
+      }
+    },
+    {
+      "query": "path:\"01-Documentacion/1.5 Historias_usuario\"  ",
+      "color": {
+        "a": 1,
+        "rgb": 5431473
+      }
+    },
+    {
+      "query": "path:\"01-Documentacion/1.6 Reglas_del_sistema\"  ",
+      "color": {
+        "a": 1,
+        "rgb": 5419488
+      }
+    },
+    {
+      "query": "path:\"02-Desarrollo/2.1 Arquitectura\"  ",
+      "color": {
+        "a": 1,
+        "rgb": 5395168
+      }
+    },
+    {
+      "query": "path:\"02-Desarrollo/2.2 Backend\"  ",
+      "color": {
+        "a": 1,
+        "rgb": 11621088
+      }
+    },
+    {
+      "query": "path:\"02-Desarrollo/2.3 Frontend\"  ",
+      "color": {
+        "a": 1,
+        "rgb": 14701233
+      }
+    },
+    {
+      "query": "path:\"02-Desarrollo/2.4 IA_y_automatización\"  ",
+      "color": {
+        "a": 1,
+        "rgb": 9594447
+      }
+    },
+    {
+      "query": "path:\"02-Desarrollo/2.5 Integraciones_externas\"  ",
+      "color": {
+        "a": 1,
+        "rgb": 4732953
+      }
+    },
+    {
+      "query": "path:\"02-Desarrollo/2.6 Pruebas\"  ",
+      "color": {
+        "a": 1,
+        "rgb": 1724739
+      }
+    },
+    {
+      "query": "path:\"02-Desarrollo/2.7 Deploy\"  ",
+      "color": {
+        "a": 1,
+        "rgb": 4067125
+      }
+    }
+  ],
+  "collapse-display": true,
+  "showArrow": false,
+  "textFadeMultiplier": 0,
+  "nodeSizeMultiplier": 1,
+  "lineSizeMultiplier": 1,
+  "collapse-forces": true,
+  "centerStrength": 0.518713248970312,
+  "repelStrength": 10,
+  "linkStrength": 1,
+  "linkDistance": 250,
+  "scale": 0.4444444444444434,
+  "close": true
+}

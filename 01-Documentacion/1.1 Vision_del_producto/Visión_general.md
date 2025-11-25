@@ -17,7 +17,7 @@ Nuestra visión es construir un sistema moderno, accesible y humano que acompañ
     
 - Preferencias personales
     
-- Condiciones socioeconómicas
+- Condiciones socio económicas
     
 - Disponibilidad de tiempo
     
