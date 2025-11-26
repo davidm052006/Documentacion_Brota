@@ -1,4 +1,4 @@
-# ## 📝 Problemática relacionada (formato Markdown solicitado)
+# ## 📝 Problemática relacionada 
 
 ### Reporte del periódico El Economista sobre la problemática
 
