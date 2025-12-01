@@ -64,7 +64,7 @@ El estudiante puede, en cualquier momento:
 - Cookie de analíticas → solo si el usuario dice “Sí, está bien”
 - Nunca publicidad ni rastreo de terceros
 
-## 7. Qué pasa si hay una fuga de datos (Dios no lo quiera)
+## 7. Qué pasa si hay una fuga de datos 
 1. Notificamos a los afectados en menos de 72 horas
 2. Notificamos a la Superintendencia de Industria y Comercio
 3. Publicamos un aviso claro en la página
