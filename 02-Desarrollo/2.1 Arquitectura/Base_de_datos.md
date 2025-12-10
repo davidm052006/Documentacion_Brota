@@ -366,4 +366,4 @@ CREATE TABLE Comparacion (
 
 # 🖼️ 4. MER (Imagen)
 
-![[modelo entidad relacion (MER).png]]
+![[modelo-entidad-relacion-(MER).png]]

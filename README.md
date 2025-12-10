@@ -87,7 +87,6 @@ Este documento formaliza los requerimientos del sistema y sirve como guía para 
 
 ## 7. Requisitos No Funcionales
 [Requisitos completos](<Requerimientos_Brota.md>)
-![[modelo entidad relacion (MER).png]]
 
 | ID | Categoría | Descripción |
 |----|----------|------------|
@@ -183,10 +182,8 @@ Sommerville, I. (2011). *Software Engineering* (9th ed.). Pearson Education.
 ## 📎 Anexos
 
 ### Diagrama ER del sistema Brota
-[modelo entidad relacion (ER)](<modelo entidad relacion (MER).png>)
+[Diagrama ER](<docs/modelo-entidad-relacion-(MER).png>)
 ### Diagrama de arquitectura
-[diagrama de arquitectura](<diagrama de arquitectura.png>)
-
-
+[Diagrama de arquitectura](<docs/diagrama-de-arquitectura.png>)
 
 
