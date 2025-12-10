@@ -1,188 +1,192 @@
-# 🌱 **Brota -- Sistema de Orientación y Perfilamiento Estudiantil**
+# Documento de Requisitos – Sistema Brota (Versión Ampliada)
 
-> **"Tus talentos importan, tus condiciones importan, tu futuro
-> importa.\
-> Aquí están tus opciones. Caminemos juntos."**
+**Estudiante:** David Paredes, Nicol Rincon, Brayan Moreno, Julian Machado, Brayan Alejandro
+**Institución:** Sena CGMLH  
+**Curso:** Análisis y Desarrollo de Software  
+**Instructor:** Jesus Ropero
+**Fecha:** 10/12/2025
 
-Brota es un sistema moderno, humano y accesible creado para ayudar a
-jóvenes estudiantes a descubrir sus habilidades, explorar oportunidades
-reales y tomar decisiones informadas sobre su futuro académico y
-profesional.
+---
 
-Este repositorio contiene **toda la documentación** y **estructura de
-desarrollo** del proyecto.
+## 1. Introducción
 
-------------------------------------------------------------------------
+La documentación de requisitos es una fase fundamental dentro del ciclo de vida del desarrollo de software, ya que permite identificar, analizar y formalizar las necesidades reales de un sistema antes de su implementación. Este proceso asegura que todos los actores involucrados compartan una visión clara, coherente y verificable del sistema a desarrollar.
 
-# ✨ **Visión del Proyecto**
+En el contexto del proyecto **Brota**, se busca construir una plataforma de orientación vocacional inteligente que ayude a jóvenes a tomar decisiones educativas informadas, considerando no solo intereses académicos, sino también habilidades, contexto socioeconómico y expectativas de vida.
 
-Soñamos con un sistema que elimine la incertidumbre y la falta de
-orientación que enfrentan miles de estudiantes.\
-Brota nace para acompañar, guiar y ofrecer claridad en un momento
-crucial: elegir qué estudiar.
+Este documento recopila los requisitos funcionales y no funcionales del sistema, así como los modelos conceptuales necesarios para guiar su desarrollo. La documentación sigue las normas APA 7, emplea redacción técnica formal y combina narración, tablas y modelos conceptuales, fortaleciendo las competencias de análisis y diseño de software.
 
-Queremos:
+---
 
--   Que **ningún joven elija su futuro a ciegas**.\
--   Democratizar la **orientación vocacional** en Colombia y
-    Latinoamérica.\
--   Conectar talentos con oportunidades reales.\
--   Reducir la brecha de información entre estudiantes e instituciones
-    educativas.\
--   Ser la plataforma que convierte dudas en posibilidades.
+## 2. Objetivo General
 
-Brota existe porque creemos que cada estudiante merece un camino claro,
-accesible y hecho a su medida.
+Elaborar un documento de requisitos claro, completo y estructurado para el sistema Brota, aplicando normas APA 7, modelos conceptuales y buenas prácticas de análisis de software.
 
-------------------------------------------------------------------------
+---
 
-# 🎯 **Objetivo General del Proyecto**
+## 3. Objetivos Específicos
 
-Construir una plataforma de orientación estudiantil que, mediante un
-cuestionario inteligente, identifique habilidades, gustos, vocación y
-condiciones del usuario para generar recomendaciones personalizadas de:
+- Identificar los stakeholders del sistema y sus roles.
+- Definir requisitos funcionales y no funcionales de forma estructurada.
+- Aplicar normas APA 7 en la documentación técnica.
+- Describir los modelos conceptuales (ER, UML y BPMN).
+- Integrar documentación narrativa, tablas técnicas y diagramas.
+- Garantizar coherencia, claridad y consistencia en el documento.
 
--   Carreras\
--   Rutas de aprendizaje\
--   Instituciones de diferente tipo\
--   Contenidos previos y guías prácticas
+---
 
-Todo con el fin de ayudar al estudiante a tomar decisiones informadas y
-realistas sobre su futuro académico.
+## 4. Caso de Estudio – Sistema Brota
 
-------------------------------------------------------------------------
+Brota es una plataforma de orientación vocacional diseñada para estudiantes entre 14 y 25 años que se enfrentan a la decisión de qué estudiar. Actualmente, muchos jóvenes carecen de acompañamiento personalizado, información clara sobre carreras y acceso a orientación adecuada.
 
-# 📘 **Documentación del Proyecto**
+El sistema Brota permitirá:
 
-Toda la documentación del repositorio está organizada de la siguiente
-manera:
+- Identificar habilidades, intereses y vocación.
+- Recomendar carreras universitarias, técnicas y no tradicionales.
+- Mostrar instituciones educativas acordes al perfil del estudiante.
+- Ofrecer rutas de aprendizaje previas al inicio académico.
+- Brindar acompañamiento mediante una asistente virtual.
 
-------------------------------------------------------------------------
+Este documento formaliza los requerimientos del sistema y sirve como guía para su desarrollo.
 
-## 📁 **01 -- Documentación**
+---
 
-### 📄 **1.1 Visión del Producto**
+## 5. Identificación de Stakeholders
 
-> (Agrega aquí el enlace a tu archivo)
+### Stakeholders Internos – Primarios
+- **Administrador del sistema:** Gestiona carreras, instituciones y contenidos.
+- **Orientador académico:** Analiza resultados y acompaña a estudiantes.
 
-### ⚙️ **1.2 Funcionalidades**
+### Stakeholders Externos – Primarios
+- **Estudiante:** Usuario principal que recibe orientación vocacional.
 
-> (Enlace)
+### Stakeholders Internos – Secundarios
+- **Equipo de desarrollo:** Mantiene y mejora la plataforma.
 
-### 🧩 **1.3 Secciones de Brota**
+### Stakeholders Externos – Secundarios
+- **Familias:** Apoyan el proceso de decisión del estudiante.
+- **Instituciones educativas:** Ofrecen programas académicos.
 
-> (Enlace)
+---
 
-### 🎨 **1.4 UI / UX**
+## 6. Requisitos Funcionales
+[Requisitos completos](<Requerimientos_Brota.md>)
 
-> (Enlace)
 
-### 🧾 **1.5 Historias de Usuario**
+| ID | Descripción | Prioridad |
+|----|------------|-----------|
+| RF1 | El sistema debe permitir al estudiante completar un cuestionario vocacional | Alta |
+| RF2 | El sistema debe generar un perfil de habilidades con porcentajes | Alta |
+| RF3 | El sistema debe recomendar carreras según el perfil del usuario | Alta |
+| RF4 | El sistema debe mostrar información detallada de cada carrera | Media |
+| RF5 | El sistema debe permitir comparar carreras | Media |
+| RF6 | El sistema debe mostrar rutas de aprendizaje previas | Media |
+| RF7 | El sistema debe generar un reporte descargable en PDF | Media |
 
-> (Enlace)
+---
 
-### 📜 **1.6 Reglas del Sistema**
+## 7. Requisitos No Funcionales
+[Requisitos completos](<Requerimientos_Brota.md>)
+![[modelo entidad relacion (MER).png]]
 
-> (Enlace)
+| ID | Categoría | Descripción |
+|----|----------|------------|
+| RNF1 | Disponibilidad | El sistema debe estar disponible el 98% del tiempo |
+| RNF2 | Rendimiento | Las respuestas deben mostrarse en menos de 2 segundos |
+| RNF3 | Usabilidad | La interfaz debe ser clara e intuitiva |
+| RNF4 | Seguridad | Los datos deben almacenarse de forma segura |
+| RNF5 | Escalabilidad | El sistema debe permitir crecimiento futuro |
 
-------------------------------------------------------------------------
+---
 
-## 🛠️ **02 -- Desarrollo**
+## 8. Modelos Conceptuales
 
-### 🏛️ **2.1 Arquitectura**
+### 8.1. Modelo ER (Entidad–Relación)
 
-> (Enlace)
+**Entidades principales:**
+- Usuario
+- PerfilVocacional
+- Carrera
+- Institución
+- RutaAprendizaje
+- ResultadoCuestionario
 
-### 🖥️ **2.2 Backend**
+**Relaciones clave:**
+- Un Usuario tiene un PerfilVocacional.
+- Un PerfilVocacional recomienda varias Carreras.
+- Una Carrera puede pertenecer a varias Instituciones.
 
-> (Enlace)
+---
 
-### 💻 **2.3 Frontend**
+### 8.2. Modelo UML – Caso de Uso (Descripción textual)
 
-> (Enlace)
+**Caso de uso:** Completar cuestionario vocacional  
+**Actor:** Estudiante  
 
-### 🤖 **2.4 IA y Automatización**
+**Flujo básico:**
+1. El estudiante inicia el cuestionario.
+2. Responde preguntas sobre intereses y habilidades.
+3. El sistema procesa las respuestas.
+4. El sistema genera un perfil vocacional.
+5. Se muestran recomendaciones personalizadas.
 
-> (Enlace)
+---
 
-### 🔗 **2.5 Integraciones Externas**
+### 8.3. Modelo BPMN – Proceso de Orientación
 
-> (Enlace)
+1. Inicio del proceso.
+2. El estudiante responde el cuestionario.
+3. El sistema analiza resultados.
+4. Se generan recomendaciones.
+5. El estudiante explora opciones.
+6. Fin del proceso.
 
-### 🧪 **2.6 Pruebas**
+---
 
-> (Enlace)
+## 9. Documentación Híbrida
 
-### 🚀 **2.7 Deploy**
+La documentación híbrida integra texto narrativo, tablas y modelos conceptuales, permitiendo una comprensión integral del sistema Brota.
 
-> (Enlace)
+- El **texto narrativo** describe procesos y decisiones.
+- Las **tablas técnicas** organizan requisitos y actores.
+- Los **diagramas** visualizan la estructura y procesos.
+- La **justificación técnica** respalda decisiones de análisis.
 
-------------------------------------------------------------------------
+Este enfoque garantiza claridad, coherencia y utilidad académica y técnica.
 
-# 🧰 **Tecnologías Utilizadas**
+---
 
--   **Frontend:** React / Vue / Tailwind / Vite\
--   **Backend:** Node.js / Express / Nest / TypeScript\
--   **Base de Datos:** PostgreSQL / MySQL / MongoDB\
--   **Infraestructura:** Docker / CI/CD / Railway / Render\
--   **IA:** Python / APIs / Modelos personalizados\
--   **Documentación:** Markdown + Obsidian + GitHub
+## 10. Conclusiones
 
-------------------------------------------------------------------------
+El presente documento consolida el análisis de requisitos del sistema Brota, definiendo actores, funciones, restricciones y modelos conceptuales. Su correcta estructuración proporciona una base sólida para el diseño, desarrollo y validación del sistema.
 
-# 📦 **Cómo usar este repositorio**
+---
 
-1.  Clona el repositorio:
+## 11. Referencias (APA 7)
 
-    ``` bash
-    git clone <URL-del-repo>
-    ```
+IEEE. (2011). *IEEE Recommended Practice for Software Requirements Specifications*.  
+Sommerville, I. (2011). *Software Engineering* (9th ed.). Pearson Education.
 
-2.  Navega a la carpeta del proyecto:
+---
 
-    ``` bash
-    cd brota
-    ```
+## 12. Glosario
 
-3.  Abre la carpeta **01-Documentacion** para iniciar con la lectura del
-    sistema.\
+- **Requisito:** Necesidad que debe cumplir el sistema.
+- **Stakeholder:** Actor interesado en el sistema.
+- **Requisito funcional:** Función específica del sistema.
+- **Requisito no funcional:** Restricción o cualidad del sistema.
+- **BPMN:** Notación para modelar procesos.
+- **Caso de uso:** Interacción entre actor y sistema.
 
-4.  En **02-Desarrollo**, encontrarás todo lo técnico para
-    implementación.\
+---
 
-5.  Puedes usar Obsidian localmente si quieres una vista más fluida de
-    los enlaces internos.
+## 📎 Anexos
 
-------------------------------------------------------------------------
+### Diagrama ER del sistema Brota
+[modelo entidad relacion (ER)](<modelo entidad relacion (MER).png>)
+### Diagrama de arquitectura
+[diagrama de arquitectura](<diagrama de arquitectura.png>)
 
-# 🤝 **Contribuciones**
 
-Si deseas aportar al proyecto:
 
-1.  Crea un branch nuevo\
-2.  Envía un Pull Request\
-3.  Describe claramente tu aporte o cambio\
-4.  Asegúrate de no romper la estructura actual
 
-Los PRs bien explicados son siempre bienvenidos 💚
-
-------------------------------------------------------------------------
-
-# 👥 **Equipo de Desarrollo**
-
-  Nombre               Rol
-  -------------------- ----------------------------
-  **David Mateo**      Desarrollo / Investigación
-  **Nicoll Rincón**    Diseño / UX & UI
-  **Brayan Moreno**    Desarrollo
-  **Julian Machado**   Desarrollo
-  **Brayan Sánchez**   Desarrollo
-
-------------------------------------------------------------------------
-
-# 🌍 **Gracias por apoyar Brota**
-
-Este proyecto nace de experiencias reales y del deseo de ayudar a otros
-jóvenes a encontrar su camino.\
-Cada aporte, idea o revisión ayuda a que más estudiantes puedan tomar
-decisiones con claridad, confianza y acompañamiento.
