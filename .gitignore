@@ -13,3 +13,8 @@ desktop.ini
 # (Opcional) Si usas Excalidraw o Canvas, también puedes ignorar sus cachés
 .obsidian/plugins/obsidian-excalidraw/
 .obsidian/canvas/
+
+# Kiro: ignorar configuraciones y archivos internos
+.kiro/
+# Excepción: permitir requirements.md de specs
+!.kiro/specs/*/requirements.md
