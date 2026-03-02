@@ -54,47 +54,52 @@ Este documento formaliza los requerimientos del sistema y sirve como guía para 
 ## 5. Identificación de Stakeholders
 
 ### Stakeholders Internos – Primarios
+
 - **Administrador del sistema:** Gestiona carreras, instituciones y contenidos.
 - **Orientador académico:** Analiza resultados y acompaña a estudiantes.
 
 ### Stakeholders Externos – Primarios
+
 - **Estudiante:** Usuario principal que recibe orientación vocacional.
 
 ### Stakeholders Internos – Secundarios
+
 - **Equipo de desarrollo:** Mantiene y mejora la plataforma.
 
 ### Stakeholders Externos – Secundarios
+
 - **Familias:** Apoyan el proceso de decisión del estudiante.
 - **Instituciones educativas:** Ofrecen programas académicos.
 
 ---
 
 ## 6. Requisitos Funcionales
-[Requisitos completos](<Requerimientos_Brota.md>)
 
+[Requisitos completos](Requerimientos_Brota.md)
 
-| ID | Descripción | Prioridad |
-|----|------------|-----------|
-| RF1 | El sistema debe permitir al estudiante completar un cuestionario vocacional | Alta |
-| RF2 | El sistema debe generar un perfil de habilidades con porcentajes | Alta |
-| RF3 | El sistema debe recomendar carreras según el perfil del usuario | Alta |
-| RF4 | El sistema debe mostrar información detallada de cada carrera | Media |
-| RF5 | El sistema debe permitir comparar carreras | Media |
-| RF6 | El sistema debe mostrar rutas de aprendizaje previas | Media |
-| RF7 | El sistema debe generar un reporte descargable en PDF | Media |
+| ID  | Descripción                                                                 | Prioridad |
+| --- | --------------------------------------------------------------------------- | --------- |
+| RF1 | El sistema debe permitir al estudiante completar un cuestionario vocacional | Alta      |
+| RF2 | El sistema debe generar un perfil de habilidades con porcentajes            | Alta      |
+| RF3 | El sistema debe recomendar carreras según el perfil del usuario             | Alta      |
+| RF4 | El sistema debe mostrar información detallada de cada carrera               | Media     |
+| RF5 | El sistema debe permitir comparar carreras                                  | Media     |
+| RF6 | El sistema debe mostrar rutas de aprendizaje previas                        | Media     |
+| RF7 | El sistema debe generar un reporte descargable en PDF                       | Media     |
 
 ---
 
 ## 7. Requisitos No Funcionales
-[Requisitos completos](<Requerimientos_Brota.md>)
 
-| ID | Categoría | Descripción |
-|----|----------|------------|
-| RNF1 | Disponibilidad | El sistema debe estar disponible el 98% del tiempo |
-| RNF2 | Rendimiento | Las respuestas deben mostrarse en menos de 2 segundos |
-| RNF3 | Usabilidad | La interfaz debe ser clara e intuitiva |
-| RNF4 | Seguridad | Los datos deben almacenarse de forma segura |
-| RNF5 | Escalabilidad | El sistema debe permitir crecimiento futuro |
+[Requisitos completos](Requerimientos_Brota.md)
+
+| ID   | Categoría      | Descripción                                           |
+| ---- | -------------- | ----------------------------------------------------- |
+| RNF1 | Disponibilidad | El sistema debe estar disponible el 98% del tiempo    |
+| RNF2 | Rendimiento    | Las respuestas deben mostrarse en menos de 2 segundos |
+| RNF3 | Usabilidad     | La interfaz debe ser clara e intuitiva                |
+| RNF4 | Seguridad      | Los datos deben almacenarse de forma segura           |
+| RNF5 | Escalabilidad  | El sistema debe permitir crecimiento futuro           |
 
 ---
 
@@ -103,6 +108,7 @@ Este documento formaliza los requerimientos del sistema y sirve como guía para 
 ### 8.1. Modelo ER (Entidad–Relación)
 
 **Entidades principales:**
+
 - Usuario
 - PerfilVocacional
 - Carrera
@@ -111,6 +117,7 @@ Este documento formaliza los requerimientos del sistema y sirve como guía para 
 - ResultadoCuestionario
 
 **Relaciones clave:**
+
 - Un Usuario tiene un PerfilVocacional.
 - Un PerfilVocacional recomienda varias Carreras.
 - Una Carrera puede pertenecer a varias Instituciones.
@@ -120,9 +127,10 @@ Este documento formaliza los requerimientos del sistema y sirve como guía para 
 ### 8.2. Modelo UML – Caso de Uso (Descripción textual)
 
 **Caso de uso:** Completar cuestionario vocacional  
-**Actor:** Estudiante  
+**Actor:** Estudiante
 
 **Flujo básico:**
+
 1. El estudiante inicia el cuestionario.
 2. Responde preguntas sobre intereses y habilidades.
 3. El sistema procesa las respuestas.
@@ -163,8 +171,8 @@ El presente documento consolida el análisis de requisitos del sistema Brota, de
 
 ## 11. Referencias (APA 7)
 
-IEEE. (2011). *IEEE Recommended Practice for Software Requirements Specifications*.  
-Sommerville, I. (2011). *Software Engineering* (9th ed.). Pearson Education.
+IEEE. (2011). _IEEE Recommended Practice for Software Requirements Specifications_.  
+Sommerville, I. (2011). _Software Engineering_ (9th ed.). Pearson Education.
 
 ---
 
@@ -182,8 +190,25 @@ Sommerville, I. (2011). *Software Engineering* (9th ed.). Pearson Education.
 ## 📎 Anexos
 
 ### Diagrama ER del sistema Brota
+
 [Diagrama ER](<docs/modelo-entidad-relacion-(MER).png>)
+
 ### Diagrama de arquitectura
-[Diagrama de arquitectura](<docs/diagrama-de-arquitectura.png>)
 
+[Diagrama de arquitectura](docs/diagrama-de-arquitectura.png)
 
+---
+
+## 📚 Documentación del Proyecto
+
+Este documento es el requisito académico formal del proyecto. Para acceder a la documentación técnica y operativa completa del sistema, consulta:
+
+**[→ Ir a la Documentación del Proyecto](docs/00_START_HERE.md)**
+
+### Estructura de Documentación
+
+El proyecto utiliza una estructura de tres niveles:
+
+1. **Documentación Activa** (`/docs/`) - MVP actual, arquitectura vigente, modelo de datos
+2. **Documentación Histórica** (`/docs/archivo/`) - Visiones iniciales, estudios preliminares
+3. **Documentación Técnica Modular** (`/backend/`, `/frontend/`) - Documentación específica por módulo
