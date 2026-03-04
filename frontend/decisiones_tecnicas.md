@@ -2,7 +2,48 @@
 
 ## Stack Tecnológico
 
-(Por definir durante implementación)
+### Framework & Librerías Core
+
+- **React** (v18+) - Librería UI
+- **React Router** (v6+) - Navegación SPA
+- **Vite** - Build tool y dev server (más rápido que Create React App)
+
+### Estilos
+
+- **Tailwind CSS** - Utility-first CSS framework
+- **Headless UI** - Componentes accesibles sin estilos
+
+### Manejo de Estado
+
+- **React Query** (TanStack Query) - Estado del servidor
+- **Zustand** - Estado global ligero (si es necesario)
+
+### Formularios y Validación
+
+- **React Hook Form** - Manejo de formularios performante
+- **Zod** - Validación de esquemas (compartido con backend)
+
+### Visualización de Datos
+
+- **Recharts** - Gráficos para perfil vocacional
+
+### Generación de PDFs
+
+- **jsPDF** + **html2canvas** - Generación de reportes
+
+### HTTP Client
+
+- **Axios** - Cliente HTTP (alternativa: fetch nativo)
+
+### Supabase
+
+- **@supabase/supabase-js** - Cliente oficial de Supabase
+
+### Deploy
+
+- **Vercel** - Hosting y deploy automático
+
+---
 
 ## Decisiones de Diseño
 

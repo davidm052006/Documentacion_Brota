@@ -2,7 +2,7 @@
 
 ## Visión General
 
-El frontend de Brota es la interfaz de usuario que permite a estudiantes completar el cuestionario vocacional y recibir recomendaciones personalizadas.
+El frontend de Brota es una aplicación React que permite a estudiantes completar el cuestionario vocacional y recibir recomendaciones personalizadas.
 
 ## Responsabilidades
 
@@ -11,10 +11,47 @@ El frontend de Brota es la interfaz de usuario que permite a estudiantes complet
 - Presentación de recomendaciones
 - Comparación de programas
 - Panel administrativo básico
+- Generación de reportes PDF
+
+## Stack Tecnológico
+
+- **Framework:** React (v18+)
+- **Build Tool:** Vite
+- **Estilos:** Tailwind CSS
+- **Estado del Servidor:** React Query (TanStack Query)
+- **Formularios:** React Hook Form
+- **Validación:** Zod
+- **Gráficos:** Recharts
+- **PDF:** jsPDF + html2canvas
+- **HTTP:** Axios
+- **Routing:** React Router (v6+)
+- **Deploy:** Vercel
 
 ## Estructura del Proyecto
 
-(Por definir según implementación)
+```
+frontend/
+├── src/
+│   ├── components/
+│   │   ├── Cuestionario/      # Brayan Arias
+│   │   ├── PerfilVocacional/  # Brayan Arias
+│   │   ├── Recomendaciones/   # Julian Machado
+│   │   ├── Comparador/        # Julian Machado
+│   │   ├── DetallePrograma/   # Julian Machado
+│   │   └── Admin/             # Julian Machado
+│   ├── pages/
+│   │   ├── cuestionario.jsx
+│   │   ├── perfil.jsx
+│   │   ├── recomendaciones.jsx
+│   │   └── admin/
+│   ├── hooks/
+│   ├── services/
+│   ├── utils/
+│   └── App.jsx
+├── public/
+├── package.json
+└── vite.config.js
+```
 
 ## Documentación Técnica
 
@@ -24,15 +61,73 @@ El frontend de Brota es la interfaz de usuario que permite a estudiantes complet
 
 ## Tecnologías
 
-(Por definir)
+### Core
+
+- React + Vite
+- React Router
+
+### Estilos
+
+- Tailwind CSS
+- Headless UI
+
+### Estado y Datos
+
+- React Query (TanStack Query)
+- Zustand (si es necesario)
+
+### Formularios
+
+- React Hook Form
+- Zod (validación)
+
+### Visualización
+
+- Recharts (gráficos)
+- jsPDF (reportes PDF)
 
 ## Instalación y Configuración
 
-(Por definir)
+### Prerrequisitos
 
-## Testing
+- Node.js v18 o superior
+- npm o yarn
 
-(Por definir)
+### Variables de Entorno
+
+Crear archivo `.env`:
+
+```
+VITE_SUPABASE_URL=https://xxx.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJxxx...
+VITE_API_URL=http://localhost:3000/api
+```
+
+### Instalación
+
+```bash
+cd frontend
+npm install
+```
+
+### Desarrollo
+
+```bash
+npm run dev
+```
+
+### Build
+
+```bash
+npm run build
+npm run preview
+```
+
+### Testing
+
+```bash
+npm test
+```
 
 ---
 

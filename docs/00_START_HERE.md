@@ -16,6 +16,7 @@ Contiene la documentación del MVP actual y la información operativa vigente:
 - [Arquitectura Actual](arquitectura_actual.md) - Diseño arquitectónico vigente
 - [Modelo de Datos Vigente](modelo_datos_vigente.md) - Entidades y relaciones actuales
 - [Requerimientos Funcionales](requerimientos_funcionales.md) - Requisitos activos del sistema
+- [Equipo y Roles](equipo_y_roles.md) - Miembros del equipo y responsabilidades
 - [Estrategia de Pruebas](estrategia_pruebas.md) - Plan de testing del MVP
 - [Guía de Deploy](guia_deploy.md) - Instrucciones de despliegue
 - [Gestión del Proyecto](gestion_proyecto.md) - Workflow y Kanban
@@ -57,6 +58,34 @@ Ubicación: `/frontend/`
 - ✅ Control manual de información crítica
 - ✅ MVP funcional antes de escalar
 - ✅ Arquitectura preparada para crecimiento futuro
+
+## 🛠️ Stack Tecnológico
+
+### Backend
+
+- Node.js + Express
+- Supabase (PostgreSQL)
+- Zod (validación)
+- Jest (testing)
+
+### Frontend
+
+- React + Vite
+- Tailwind CSS
+- React Query
+- React Hook Form
+- Recharts
+
+### Deploy
+
+- Vercel (frontend y backend)
+- GitHub (control de versiones)
+
+### Base de Datos
+
+- Supabase (PostgreSQL como servicio)
+- Auth integrado
+- Storage para archivos
 
 ## 📊 Diagramas
 
