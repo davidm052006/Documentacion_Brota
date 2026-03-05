@@ -1,7 +1,7 @@
 # Documento de Requisitos – Sistema Brota (Versión Ampliada)
 
 **Estudiante:** David Paredes, Brayan Moreno, Julian Machado, Brayan Alejandro
-**Institución:** Sena CGMLH  
+**Institución:** Sena CGMLTI  
 **Curso:** Análisis y Desarrollo de Software  
 **Fecha:** 10/12/2025
 
