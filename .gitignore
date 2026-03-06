@@ -18,3 +18,8 @@ desktop.ini
 .kiro/
 # Excepción: permitir requirements.md de specs
 !.kiro/specs/*/requirements.md
+
+# Archivos personales de aprendizaje (solo local)
+docs/ruta_aprendizaje_lider.md
+docs/aprendizajes.md
+docs/notas_personales.md

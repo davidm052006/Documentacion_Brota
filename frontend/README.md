@@ -9,9 +9,22 @@ El frontend de Brota es una aplicación React que permite a estudiantes completa
 - Cuestionario vocacional interactivo
 - Visualización de perfil vocacional
 - Presentación de recomendaciones
+- **Navegación visual: Árbol del Conocimiento** 🌳
 - Comparación de programas
 - Panel administrativo básico
 - Generación de reportes PDF
+
+## Concepto Visual Central
+
+El frontend de Brota está construido alrededor del **Árbol del Conocimiento**, una metáfora visual que representa el viaje de aprendizaje del estudiante:
+
+- 🌱 **Semilla**: Inicio de la curiosidad
+- 🌿 **Raíces**: Exploración vocacional
+- 🪵 **Tronco**: Miles de caminos posibles
+- 🌿 **Ramas**: Áreas de conocimiento
+- 🍃 **Hojas**: Programas específicos
+
+Ver documentación completa: [Concepto: Árbol del Conocimiento](concepto_arbol_conocimiento.md)
 
 ## Stack Tecnológico
 
@@ -57,6 +70,7 @@ frontend/
 
 - [Estructura UI](estructura_ui.md) - Componentes y organización
 - [Flujo de Usuario](flujo_usuario.md) - Navegación y experiencia
+- [Concepto: Árbol del Conocimiento](concepto_arbol_conocimiento.md) - Diseño visual central ⭐
 - [Decisiones Técnicas](decisiones_tecnicas.md) - Tecnologías y arquitectura
 
 ## Tecnologías
