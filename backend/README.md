@@ -1,115 +1,16 @@
-# 🔧 Backend - Sistema Brota
+# React + Vite
 
-## Visión General
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-El backend de Brota es una API RESTful construida con Node.js y Express que gestiona la lógica de negocio del sistema de orientación vocacional.
+Currently, two official plugins are available:
 
-## Responsabilidades
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-- Procesamiento de cuestionarios vocacionales
-- Algoritmo de recomendación personalizada
-- Gestión de instituciones, programas y convocatorias
-- Control de fechas y ocultamiento automático
-- Autenticación y autorización (vía Supabase)
-- Validación de datos
+## React Compiler
 
-## Stack Tecnológico
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-- **Runtime:** Node.js (v18+)
-- **Framework:** Express.js (v4+)
-- **Base de Datos:** Supabase (PostgreSQL)
-- **Validación:** Zod
-- **Testing:** Jest + Supertest
-- **Deploy:** Vercel (Serverless Functions)
+## Expanding the ESLint configuration
 
-## Estructura del Proyecto
-
-```
-backend/
-├── src/
-│   ├── modules/
-│   │   ├── cuestionario/      # Brayan Moreno
-│   │   ├── recomendaciones/   # David Mateo
-│   │   ├── instituciones/     # Brayan Moreno
-│   │   ├── programas/         # Brayan Moreno
-│   │   └── convocatorias/     # Brayan Moreno
-│   ├── shared/
-│   │   ├── middleware/
-│   │   └── utils/
-│   ├── config/
-│   │   ├── supabase.js
-│   │   └── env.js
-│   └── app.js
-├── tests/
-├── package.json
-└── vercel.json
-```
-
-## Documentación Técnica
-
-- [Estructura API](estructura_api.md) - Endpoints y contratos
-- [Modelo de Datos](modelo_datos.md) - Esquema de base de datos
-- [Decisiones Técnicas](decisiones_tecnicas.md) - Arquitectura y tecnologías
-
-## Tecnologías
-
-### Core
-
-- Node.js + Express
-- Supabase (PostgreSQL + Auth)
-
-### Validación y Seguridad
-
-- Zod (validación de esquemas)
-- Helmet (headers HTTP seguros)
-- CORS
-
-### Testing
-
-- Jest (framework de testing)
-- Supertest (testing de APIs)
-
-## Instalación y Configuración
-
-### Prerrequisitos
-
-- Node.js v18 o superior
-- npm o yarn
-- Cuenta de Supabase
-
-### Variables de Entorno
-
-Crear archivo `.env`:
-
-```
-SUPABASE_URL=https://xxx.supabase.co
-SUPABASE_ANON_KEY=eyJxxx...
-SUPABASE_SERVICE_KEY=eyJxxx...
-NODE_ENV=development
-PORT=3000
-```
-
-### Instalación
-
-```bash
-cd backend
-npm install
-```
-
-### Desarrollo
-
-```bash
-npm run dev
-```
-
-### Testing
-
-```bash
-npm test
-npm run test:watch
-npm run test:coverage
-```
-
----
-
-[← Volver a documentación principal](../docs/00_START_HERE.md)
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
