@@ -1,4 +1,13 @@
-# 📊 Modelo de Datos Vigente - Sistema Brota
+---
+status: HISTORICAL
+title: Concepto Estructural - Árbol de Conocimientos
+description: Concepto de navegación obsoleto (basado en ramas)
+---
+
+> **[ESTADO: HISTÓRICO]**
+> *Nota: Este concepto fue reemplazado por el "Sistema Planetario" (ver `concept-02-planetary-system.md`) debido a limitaciones de escalabilidad y para mejorar la experiencia de navegación.*
+
+# 📊 (Histórico) Modelo de Datos Vigente - Sistema Brota
 
 ## Diagrama Entidad-Relación
 

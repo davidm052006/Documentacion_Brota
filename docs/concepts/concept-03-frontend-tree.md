@@ -1,6 +1,15 @@
-# 🌳 Concepto: Árbol del Conocimiento - Frontend Brota
+---
+status: HISTORICAL
+title: Concepto Visual Frontend - Árbol del Conocimiento
+description: Antiguo concepto visual y de interfaz para la plataforma
+---
 
-**Versión:** MVP 1.0  
+> **[ESTADO: HISTÓRICO]**
+> *Nota: Este concepto de navegación por ramas fue reemplazado a nivel de frontend por el "Sistema Planetario de Navegación" (ver `frontend/concepto_sistema_planetario.md`) para solventar problemas de escalabilidad visual.*
+
+# 🌳 (Histórico) Concepto: Árbol del Conocimiento - Frontend Brota
+
+**Versión:** MVP 1.0 (Depreciada)
 **Última actualización:** Marzo 2026
 
 ---
