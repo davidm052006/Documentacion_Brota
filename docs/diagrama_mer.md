@@ -12,7 +12,9 @@ erDiagram
         UUID id PK
         UUID user_id FK
         VARCHAR nombre
+        VARCHAR segundo_nombre
         VARCHAR apellido
+        VARCHAR segundo_apellido
         INTEGER edad
         VARCHAR genero
         VARCHAR ciudad
