@@ -11,14 +11,12 @@ erDiagram
     PERFILES_USUARIO {
         UUID id PK
         UUID user_id FK
-        VARCHAR nombre
+        VARCHAR primer_nombre
         VARCHAR segundo_nombre
-        VARCHAR apellido
+        VARCHAR primer_apellido
         VARCHAR segundo_apellido
         INTEGER edad
         VARCHAR genero
-        VARCHAR ciudad
-        VARCHAR departamento
         VARCHAR nivel_educativo
         JSONB condiciones_socioeconomicas
         VARCHAR disponibilidad_tiempo
@@ -31,7 +29,6 @@ erDiagram
         VARCHAR nombre
         VARCHAR tipo
         VARCHAR ciudad
-        VARCHAR departamento
         TEXT direccion
         VARCHAR telefono
         VARCHAR email
@@ -42,12 +39,22 @@ erDiagram
         TIMESTAMPTZ updated_at
     }
 
+    AREAS_ESTUDIO {
+        UUID id PK
+        VARCHAR nombre
+        TEXT descripcion
+        VARCHAR icono
+        BOOLEAN activa
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+    }
+
     PROGRAMAS {
         UUID id PK
         UUID institucion_id FK
+        UUID area_estudio_id FK
         VARCHAR nombre
         VARCHAR tipo
-        VARCHAR area_academica
         VARCHAR duracion
         VARCHAR modalidad
         TEXT descripcion
@@ -121,6 +128,7 @@ erDiagram
     CUESTIONARIOS ||--o{ PREGUNTAS : "contiene"
     CUESTIONARIOS ||--o{ RESULTADOS : "produce"
     INSTITUCIONES ||--o{ PROGRAMAS : "ofrece"
+    AREAS_ESTUDIO ||--o{ PROGRAMAS : "agrupa"
     PROGRAMAS ||--o{ CONVOCATORIAS : "tiene"
     PROGRAMAS ||--o{ RECOMENDACIONES : "es_recomendado_en"
     RESULTADOS ||--o{ RECOMENDACIONES : "origina"
@@ -128,17 +136,18 @@ erDiagram
 
 ## 📋 Resumen de Entidades
 
-### Entidades Core (8 tablas MVP)
+### Entidades Core (9 tablas MVP)
 
 1. **AUTH_USERS** - Gestión de autenticación (Supabase)
 2. **PERFILES_USUARIO** - Datos adicionales del estudiante
 3. **INSTITUCIONES** - Instituciones educativas curadas
-4. **PROGRAMAS** - Programas académicos ofrecidos
-5. **CONVOCATORIAS** - Períodos de inscripción (separado de programas)
-6. **CUESTIONARIOS** - Versiones del cuestionario vocacional
-7. **PREGUNTAS** - Preguntas del cuestionario
-8. **RESULTADOS** - Respuestas y perfiles generados
-9. **RECOMENDACIONES** - Recomendaciones personalizadas
+4. **AREAS_ESTUDIO** - Áreas y campos de conocimiento
+5. **PROGRAMAS** - Programas académicos ofrecidos
+6. **CONVOCATORIAS** - Períodos de inscripción (separado de programas)
+7. **CUESTIONARIOS** - Versiones del cuestionario vocacional
+8. **PREGUNTAS** - Preguntas del cuestionario
+9. **RESULTADOS** - Respuestas y perfiles generados
+10. **RECOMENDACIONES** - Recomendaciones personalizadas
 
 ## 🔗 Relaciones Clave
 
@@ -150,6 +159,7 @@ erDiagram
 - **CUESTIONARIOS → PREGUNTAS**: 1:N (un cuestionario tiene múltiples preguntas)
 - **CUESTIONARIOS → RESULTADOS**: 1:N (un cuestionario produce múltiples resultados)
 - **INSTITUCIONES → PROGRAMAS**: 1:N (una institución ofrece múltiples programas)
+- **AREAS_ESTUDIO → PROGRAMAS**: 1:N (un área de estudio agrupa múltiples programas)
 - **PROGRAMAS → CONVOCATORIAS**: 1:N ⚠️ CRÍTICO (un programa tiene múltiples convocatorias)
 - **PROGRAMAS → RECOMENDACIONES**: 1:N (un programa aparece en múltiples recomendaciones)
 - **RESULTADOS → RECOMENDACIONES**: 1:N (un resultado genera múltiples recomendaciones)

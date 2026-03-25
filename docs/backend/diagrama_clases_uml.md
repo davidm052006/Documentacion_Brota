@@ -25,7 +25,9 @@ classDiagram
     class Estudiante {
       <<Entity>>
       -String primerNombre
+      -String segundoNombre
       -String primerApellido
+      -String segundoApellido
       -Integer edad
       -String nivelEducativo
       -JSONB condicionesSocioeconomicas
@@ -67,6 +69,8 @@ classDiagram
       -String tipo
       -Integer orden
       -String categoria
+      -Float peso
+      -JSONB opciones
       +validarEstructuraOpciones() Boolean
     }
 
@@ -85,6 +89,7 @@ classDiagram
       -UUID id
       -String nombre
       -String tipo
+      -String ciudad
       -String direccion
       -Boolean activa
       +agregarPrograma(Programa p) void
@@ -97,6 +102,7 @@ classDiagram
       -String nombre
       -String descripcion
       -String icono
+      -Boolean activa
       +contarProgramasAsociados() Integer
     }
 
@@ -104,9 +110,12 @@ classDiagram
       <<Entity>>
       -UUID id
       -String nombre
+      -String tipo
+      -String duracion
       -String modalidad
       -Integer costoMatricula
       -JSONB perfilCompatible
+      -Boolean activo
       +verificarConvocatorias() List~Convocatoria~
     }
 
@@ -116,6 +125,8 @@ classDiagram
       -String nombre
       -Date fechaApertura
       -Date fechaCierre
+      -Integer cupos
+      -Boolean activa
       +estaVigente() Boolean
       +diasParaCierre() Integer
     }
@@ -145,6 +156,7 @@ classDiagram
     Estudiante "1" --> "many" Resultado : realiza
     Programa "many" --> "1" AreaEstudio : pertenece a
     Recomendacion "many" --> "1" Programa : sugiere
+    Pregunta "many" <-- "1" Resultado : contiene respuestas para
 
     %% ========================================
     %% 3. CAPA DE NEGOCIO Y SERVICIOS
@@ -166,16 +178,17 @@ classDiagram
 
     %% DEPENDENCIAS (Indica el uso de la clase en el flujo)
     EvaluacionService ..> Resultado : crea
+    MotorRecomendacionService ..> Resultado : analiza
     MotorRecomendacionService ..> Recomendacion : genera
 ```
 
 ## Explicación Rápida de las Relaciones
 
-1. **Herencia (Triángulo blanco):** `Estudiante` y `Administrador` heredan las características base y el ID de `Usuario`. En la base de datos Supabase esto se traduce a la tabla `auth.users` conectada `perfiles_usuario`.
-2. **Composición (Rombo negro):** Indica dependencia estricta. Si borras un `Cuestionario`, las `Pregunta`s que lo componen también desaparecen (Cascade Delete en BD). Lo mismo pasa entre `Programa` y `Convocatoria`.
-3. **Agregación (Rombo blanco):** Una `Institucion` agrupa varios `Programa`s académicos, pero conceptualmente si cerramos el programa, la universidad/institución sigue existiendo.
-4. **Asociación (Línea simple):** Refleja referencias de dependencias más sueltas, por ejemplo que una `Recomendacion` sugiere un `Programa` específico de cierta `AreaEstudio`. 
-5. **Dependencia (Línea punteada):** Utilizada en las capas de servicios para mostrar que `EvaluacionService` "instancia" o "usa" la clase `Resultado` al evaluarlos, pero no son propiedades estáticas.
+1. **Herencia (Triángulo blanco):** `Estudiante` y `Administrador` heredan las características base y el ID de `Usuario`. En Supabase esto se traduce a la tabla externa `auth.users` conectada a la tabla `perfiles_usuario`.
+2. **Composición (Rombo negro):** Indica dependencia estricta. Si borras un `Cuestionario`, las `Pregunta`s que lo componen también desaparecen (Cascade Delete). Lo mismo ocurre entre `Programa` y `Convocatoria`, y `Resultado` con `Recomendacion`.
+3. **Agregación (Rombo blanco):** Una `Institucion` agrupa varios `Programa`s, pero si se cierra el programa, la institución sigue existiendo.
+4. **Asociación (Línea simple):** Refleja referencias lógicas más sueltas. Por ejemplo, una `Recomendacion` sugiere un `Programa`, un `Programa` pertenece a un `AreaEstudio`, y un `Resultado` almacena internamente las respuestas conectadas a múltiples `Pregunta`s.
+5. **Dependencia (Línea punteada):** Utilizada en las capas de servicios para mostrar qué componentes necesitan a otros para funcionar. Por ejemplo, `MotorRecomendacionService` depende de analizar un `Resultado` para inferir compatibilidad y luego generar las instancias de `Recomendacion`.
 
 **Visibilidad de Atributos UML (Símbolos):**
 - `-` Privado (Accedidos vía métodos/encapsulamiento).
