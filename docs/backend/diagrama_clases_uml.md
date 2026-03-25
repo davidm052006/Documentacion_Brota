@@ -1,82 +1,176 @@
 classDiagram
+    %% ========================================
+    %% 1. DOMAIN LAYER - ENTITIES AND INHERITANCE
+    %% ========================================
+    
+    class User {
+      <<Entity>>
+      -UUID id
+      -String email
+      -String passwordHash
+      -String role
+      -DateTime createdAt
+      +login(String email, String pwd) Boolean
+      +logout() void
+      +changePassword(String newPwd) Boolean
+    }
 
-class User {
-  <<Entity>>
-  -UUID id
-  -String email
-  -String passwordHash
-  -String role
-  -DateTime createdAt
-  +login(String email, String pwd) Boolean
-  +logout() void
-  +changePassword(String newPwd) Boolean
-}
+    class Student {
+      <<Entity>>
+      -String firstName
+      -String middleName
+      -String lastName
+      -String secondLastName
+      -Integer age
+      -String educationalLevel
+      -JSONB socioeconomicConditions
+      +startQuestionnaire(Questionnaire q) void
+      +viewRecommendations() List~Recommendation~
+      +updateFutureOptions() void
+    }
 
-class Student {
-  <<Entity>>
-  -String firstName
-  -String middleName
-  -String lastName
-  -String secondLastName
-  -Integer age
-  -String educationalLevel
-  -JSONB socioeconomicConditions
-  +startQuestionnaire(Questionnaire q) void
-  +viewRecommendations() List~Recommendation~
-  +updateFutureOptions() void
-}
+    class Administrator {
+      <<Entity>>
+      -String position
+      +createInstitution(Institution i) Institution
+      +openAdmissionCall(Program p, AdmissionCall c) void
+      +manageStudyArea(StudyArea a) void
+    }
 
-class Administrator {
-  <<Entity>>
-  -String position
-}
+    %% INHERITANCE
+    User <|-- Student : Is a
+    User <|-- Administrator : Is a
 
-User <|-- Student
-User <|-- Administrator
+    %% ========================================
+    %% 2. MAIN BUSINESS ENTITIES
+    %% ========================================
+    
+    class Questionnaire {
+      <<Entity>>
+      -UUID id
+      -String name
+      -String version
+      -Boolean isActive
+      +getActiveQuestions() List~Question~
+      +cloneForNewVersion() Questionnaire
+    }
 
-class Questionnaire {
-  <<Entity>>
-}
+    class Question {
+      <<Entity>>
+      -UUID id
+      -String text
+      -String type
+      -Integer order
+      -String category
+      -Float weight
+      -JSONB options
+      +validateOptionsStructure() Boolean
+    }
 
-class Question {
-  <<Entity>>
-}
+    class Result {
+      <<Entity>>
+      -UUID id
+      -JSONB answers
+      -JSONB vocationalProfile
+      -DateTime takenAt
+      +getAffinity(String area) Float
+      +exportPDF() File
+    }
 
-class Result {
-  <<Entity>>
-}
+    class Institution {
+      <<Entity>>
+      -UUID id
+      -String name
+      -String type
+      -String city
+      -String address
+      -Boolean isActive
+      +addProgram(Program p) void
+      +deactivate() void
+    }
 
-class Institution {
-  <<Entity>>
-}
+    class StudyArea {
+      <<Entity>>
+      -UUID id
+      -String name
+      -String description
+      -String icon
+      -Boolean isActive
+      +countAssociatedPrograms() Integer
+    }
 
-class StudyArea {
-  <<Entity>>
-}
+    class Program {
+      <<Entity>>
+      -UUID id
+      -String name
+      -String type
+      -String duration
+      -String modality
+      -Integer tuitionFee
+      -JSONB compatibleProfile
+      -Boolean isActive
+      +checkAdmissionCalls() List~AdmissionCall~
+    }
 
-class Program {
-  <<Entity>>
-}
+    class AdmissionCall {
+      <<Entity>>
+      -UUID id
+      -String name
+      -Date openingDate
+      -Date closingDate
+      -Integer quota
+      -Boolean isActive
+      +isCurrentlyActive() Boolean
+      +daysUntilClosing() Integer
+    }
 
-class AdmissionCall {
-  <<Entity>>
-}
+    class Recommendation {
+      <<Entity>>
+      -UUID id
+      -Float compatibility
+      -String reasons
+      -Boolean isViewed
+      +markAsViewed() void
+    }
 
-class Recommendation {
-  <<Entity>>
-}
+    %% ========================================
+    %% RELATIONSHIPS (Associations, Aggregations, Compositions)
+    %% ========================================
+    
+    %% Composition (The whole destroys the part)
+    Questionnaire "1" *-- "many" Question : is composed of
+    Result "1" *-- "many" Recommendation : contains
+    Program "1" *-- "many" AdmissionCall : offers
+    
+    %% Aggregation (The part can exist without the whole)
+    Institution "1" o-- "many" Program : groups
+    
+    %% Simple Association (Logical relationships or references)
+    Student "1" --> "many" Result : takes
+    Student "1" --> "many" Questionnaire : takes / starts   %% ← Nueva conexión solicitada
+    Program "many" --> "1" StudyArea : belongs to
+    Recommendation "many" --> "1" Program : suggests
+    Question "many" <-- "1" Result : contains answers for
 
-%% RELATIONSHIPS (FIXED)
+    %% ========================================
+    %% 3. BUSINESS AND SERVICES LAYER
+    %% ========================================
+    
+    class EvaluationService {
+      <<Service>>
+      -QuestionnaireRepository repo
+      +processAnswers(UUID studentId, JSON answers) Profile
+      -calculateWeightsByArea(List answers) Map
+    }
 
-Questionnaire "1" *-- "*" Question
-Result "1" *-- "*" Recommendation
-Program "1" *-- "*" AdmissionCall
+    class RecommendationEngineService {
+      <<Service>>
+      -ProgramRepository repoProgram
+      +generateRecommendations(Result res) List~Recommendation~
+      +crossProfileWithPrograms(JSON profile) List~Program~
+    }
 
-Institution "1" o-- "*" Program
-
-Student "1" --> "*" Result
-Student "*" --> "*" Questionnaire   %% 👈 TU LÍNEA
-
-Program "*" --> "1" StudyArea
-Recommendation "*" --> "1" Program
-Question "*" <-- "1" Result
+    %% DEPENDENCIES (Indicates the use of the class in the flow)
+    EvaluationService ..> Result : creates
+    RecommendationEngineService ..> Result : analyzes
+    RecommendationEngineService ..> Recommendation : generates
