@@ -11,31 +11,31 @@ El siguiente diagrama UML de despliegue ilustra la topología física y lógica 
 ```mermaid
 flowchart TD
     %% Clientes externos
-    Cliente[<<"\<Device\>">>\n Navegador Web Estudiante / Admin]
+    Cliente["<<Device>>\n Navegador Web Estudiante / Admin"]
     
     %% Datacenter SENA CGMLTI
-    subgraph Datacenter_SENA[<<"\<Datacenter\>">>\n SENA - Sede CGMLTI]
+    subgraph Datacenter_SENA ["<<Datacenter>>\n SENA - Sede CGMLTI"]
         
         %% Kubernetes Cluster Node
-        subgraph Cluster_K8s[<<"\<Cluster Kubernetes\>">>\n Orquestador de Contenedores Docker]
+        subgraph Cluster_K8s ["<<Cluster Kubernetes>>\n Orquestador de Contenedores Docker"]
             
-            Ingress[<<"\<Ingress Controller\>">>\n NGINX Gateway]
+            Ingress["<<Ingress Controller>>\n NGINX Gateway"]
             
             %% Frontend Worker Node
-            subgraph Node_FE[<<"\<Worker Node\>">>\n Capa de Presentación]
-                Pod_FE(<<"\<Pod / Docker Container\>">>\n App Vue.js Servida por Nginx)
+            subgraph Node_FE ["<<Worker Node>>\n Capa de Presentación"]
+                Pod_FE("<<Pod / Docker Container>>\n App Vue.js Servida por Nginx")
             end
             
             %% Backend Worker Node
-            subgraph Node_BE[<<"\<Worker Node\>">>\n Capa de Lógica de Negocio]
-                Pod_BE(<<"\<Pod / Docker Container\>">>\n API Node.js/Express)
-                Auth_Service(<<"\<Pod / Docker Container\>">>\n API de Autenticación - Supabase GoTrue)
+            subgraph Node_BE ["<<Worker Node>>\n Capa de Lógica de Negocio"]
+                Pod_BE("<<Pod / Docker Container>>\n API Node.js/Express")
+                Auth_Service("<<Pod / Docker Container>>\n API de Autenticación - Supabase GoTrue")
             end
         end
         
         %% Base de datos Node
-        subgraph Node_DB[<<"\<Servidor de Datos\>">>\n VM o Servidor Dedicado]
-            Postgres[(<<"\<Database\>">>\n Motor PostgreSQL)]
+        subgraph Node_DB ["<<Servidor de Datos>>\n VM o Servidor Dedicado"]
+            Postgres[("<<Database>>\n Motor PostgreSQL")]
         end
     end
 
