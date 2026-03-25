@@ -1,196 +1,196 @@
-# Diagrama de Clases UML - Arquitectura en Capas (Sistema Brota)
+# UML Class Diagram - Layered Architecture (Brota System)
 
-A continuación se presenta el diagrama de clases modelando las entidades principales del dominio del **Sistema Brota**, así como las relaciones entre ellas según los principios de la Programación Orientada a Objetos (POO). También se incluye una abstracción de la capa de servicios (Lógica de Negocio) requerida para la arquitectura multicapa.
+Below is the class diagram modeling the main domain entities of the **Brota System**, as well as the relationships between them according to Object-Oriented Programming (OOP) principles. It also includes an abstraction of the services layer (Business Logic) required for the multi-layered architecture.
 
-Este diagrama ha sido adaptado reflejando la estructura actual de los datos (como `AreaEstudio`, el rediseño de perfil de estudiante, e Instituciones).
+This diagram has been adapted to reflect the current data structure (such as `StudyArea`, the student profile redesign, and Institutions).
 
 ```mermaid
 classDiagram
     %% ========================================
-    %% 1. CAPA DE DOMINIO - ENTIDADES Y HERENCIA
+    %% 1. DOMAIN LAYER - ENTITIES AND INHERITANCE
     %% ========================================
     
-    class Usuario {
+    class User {
       <<Entity>>
       -UUID id
       -String email
       -String passwordHash
-      -String rol
-      -DateTime fechaCreacion
+      -String role
+      -DateTime createdAt
       +login(String email, String pwd) Boolean
       +logout() void
-      +cambiarPassword(String newPwd) Boolean
+      +changePassword(String newPwd) Boolean
     }
 
-    class Estudiante {
+    class Student {
       <<Entity>>
-      -String primerNombre
-      -String segundoNombre
-      -String primerApellido
-      -String segundoApellido
-      -Integer edad
-      -String nivelEducativo
-      -JSONB condicionesSocioeconomicas
-      +iniciarCuestionario(Cuestionario c) void
-      +verRecomendaciones() List~Recomendacion~
-      +actualizarOpcionesFuturo() void
+      -String firstName
+      -String middleName
+      -String lastName
+      -String secondLastName
+      -Integer age
+      -String educationalLevel
+      -JSONB socioeconomicConditions
+      +startQuestionnaire(Questionnaire q) void
+      +viewRecommendations() List~Recommendation~
+      +updateFutureOptions() void
     }
 
-    class Administrador {
+    class Administrator {
       <<Entity>>
-      -String cargo
-      +crearInstitucion(Institucion i) Institucion
-      +abrirConvocatoria(Programa p, Convocatoria c) void
-      +gestionarAreaEstudio(AreaEstudio a) void
+      -String position
+      +createInstitution(Institution i) Institution
+      +openAdmissionCall(Program p, AdmissionCall c) void
+      +manageStudyArea(StudyArea a) void
     }
 
-    %% HERENCIA
-    Usuario <|-- Estudiante : Es un (Inheritance)
-    Usuario <|-- Administrador : Es un (Inheritance)
+    %% INHERITANCE
+    User <|-- Student : Is a
+    User <|-- Administrator : Is a
 
     %% ========================================
-    %% 2. ENTIDADES PRINCIPALES DEL NEGOCIO
+    %% 2. MAIN BUSINESS ENTITIES
     %% ========================================
     
-    class Cuestionario {
+    class Questionnaire {
       <<Entity>>
       -UUID id
-      -String nombre
+      -String name
       -String version
-      -Boolean activo
-      +obtenerPreguntasActivas() List~Pregunta~
-      +clonarParaNuevaVersion() Cuestionario
+      -Boolean isActive
+      +getActiveQuestions() List~Question~
+      +cloneForNewVersion() Questionnaire
     }
 
-    class Pregunta {
+    class Question {
       <<Entity>>
       -UUID id
-      -String texto
-      -String tipo
-      -Integer orden
-      -String categoria
-      -Float peso
-      -JSONB opciones
-      +validarEstructuraOpciones() Boolean
+      -String text
+      -String type
+      -Integer order
+      -String category
+      -Float weight
+      -JSONB options
+      +validateOptionsStructure() Boolean
     }
 
-    class Resultado {
+    class Result {
       <<Entity>>
       -UUID id
-      -JSONB respuestas
-      -JSONB perfilVocacional
-      -DateTime fechaRealizacion
-      +obtenerAfinidad(String area) Float
-      +exportarPDF() File
+      -JSONB answers
+      -JSONB vocationalProfile
+      -DateTime takenAt
+      +getAffinity(String area) Float
+      +exportPDF() File
     }
 
-    class Institucion {
+    class Institution {
       <<Entity>>
       -UUID id
-      -String nombre
-      -String tipo
-      -String ciudad
-      -String direccion
-      -Boolean activa
-      +agregarPrograma(Programa p) void
-      +desactivar() void
+      -String name
+      -String type
+      -String city
+      -String address
+      -Boolean isActive
+      +addProgram(Program p) void
+      +deactivate() void
     }
 
-    class AreaEstudio {
+    class StudyArea {
       <<Entity>>
       -UUID id
-      -String nombre
-      -String descripcion
-      -String icono
-      -Boolean activa
-      +contarProgramasAsociados() Integer
+      -String name
+      -String description
+      -String icon
+      -Boolean isActive
+      +countAssociatedPrograms() Integer
     }
 
-    class Programa {
+    class Program {
       <<Entity>>
       -UUID id
-      -String nombre
-      -String tipo
-      -String duracion
-      -String modalidad
-      -Integer costoMatricula
-      -JSONB perfilCompatible
-      -Boolean activo
-      +verificarConvocatorias() List~Convocatoria~
+      -String name
+      -String type
+      -String duration
+      -String modality
+      -Integer tuitionFee
+      -JSONB compatibleProfile
+      -Boolean isActive
+      +checkAdmissionCalls() List~AdmissionCall~
     }
 
-    class Convocatoria {
+    class AdmissionCall {
       <<Entity>>
       -UUID id
-      -String nombre
-      -Date fechaApertura
-      -Date fechaCierre
-      -Integer cupos
-      -Boolean activa
-      +estaVigente() Boolean
-      +diasParaCierre() Integer
+      -String name
+      -Date openingDate
+      -Date closingDate
+      -Integer quota
+      -Boolean isActive
+      +isCurrentlyActive() Boolean
+      +daysUntilClosing() Integer
     }
 
-    class Recomendacion {
+    class Recommendation {
       <<Entity>>
       -UUID id
-      -Float compatibilidad
-      -String razones
-      -Boolean vista
-      +marcarComoVista() void
+      -Float compatibility
+      -String reasons
+      -Boolean isViewed
+      +markAsViewed() void
     }
 
     %% ========================================
-    %% RELACIONES (Asociaciones, Agregaciones, Composiciones)
+    %% RELATIONSHIPS (Associations, Aggregations, Compositions)
     %% ========================================
     
-    %% Composición (El todo destruye a la parte)
-    Cuestionario "1" *-- "many" Pregunta : está compuesto por
-    Resultado "1" *-- "many" Recomendacion : contiene
-    Programa "1" *-- "many" Convocatoria : oferta
+    %% Composition (The whole destroys the part)
+    Questionnaire "1" *-- "many" Question : is composed of
+    Result "1" *-- "many" Recommendation : contains
+    Program "1" *-- "many" AdmissionCall : offers
     
-    %% Agregación (La parte puede existir sin el todo)
-    Institucion "1" o-- "many" Programa : agrupa
+    %% Aggregation (The part can exist without the whole)
+    Institution "1" o-- "many" Program : groups
     
-    %% Asociación Simple (Relaciones lógicas o referencias)
-    Estudiante "1" --> "many" Resultado : realiza
-    Programa "many" --> "1" AreaEstudio : pertenece a
-    Recomendacion "many" --> "1" Programa : sugiere
-    Pregunta "many" <-- "1" Resultado : contiene respuestas para
+    %% Simple Association (Logical relationships or references)
+    Student "1" --> "many" Result : takes
+    Program "many" --> "1" StudyArea : belongs to
+    Recommendation "many" --> "1" Program : suggests
+    Question "many" <-- "1" Result : contains answers for
 
     %% ========================================
-    %% 3. CAPA DE NEGOCIO Y SERVICIOS
+    %% 3. BUSINESS AND SERVICES LAYER
     %% ========================================
     
-    class EvaluacionService {
+    class EvaluationService {
       <<Service>>
-      -CuestionarioRepository repo
-      +procesarRespuestas(UUID estudianteId, JSON respuestas) Perfil
-      -calcularPesosPorArea(List respuestas) Map
+      -QuestionnaireRepository repo
+      +processAnswers(UUID studentId, JSON answers) Profile
+      -calculateWeightsByArea(List answers) Map
     }
 
-    class MotorRecomendacionService {
+    class RecommendationEngineService {
       <<Service>>
-      -ProgramaRepository repoPrograma
-      +generarRecomendaciones(Resultado res) List~Recomendacion~
-      +cruzarPerfilConProgramas(JSON perfil) List~Programa~
+      -ProgramRepository repoProgram
+      +generateRecommendations(Result res) List~Recommendation~
+      +crossProfileWithPrograms(JSON profile) List~Program~
     }
 
-    %% DEPENDENCIAS (Indica el uso de la clase en el flujo)
-    EvaluacionService ..> Resultado : crea
-    MotorRecomendacionService ..> Resultado : analiza
-    MotorRecomendacionService ..> Recomendacion : genera
+    %% DEPENDENCIES (Indicates the use of the class in the flow)
+    EvaluationService ..> Result : creates
+    RecommendationEngineService ..> Result : analyzes
+    RecommendationEngineService ..> Recommendation : generates
 ```
 
-## Explicación Rápida de las Relaciones
+## Quick Explanation of Relationships
 
-1. **Herencia (Triángulo blanco):** `Estudiante` y `Administrador` heredan las características base y el ID de `Usuario`. En Supabase esto se traduce a la tabla externa `auth.users` conectada a la tabla `perfiles_usuario`.
-2. **Composición (Rombo negro):** Indica dependencia estricta. Si borras un `Cuestionario`, las `Pregunta`s que lo componen también desaparecen (Cascade Delete). Lo mismo ocurre entre `Programa` y `Convocatoria`, y `Resultado` con `Recomendacion`.
-3. **Agregación (Rombo blanco):** Una `Institucion` agrupa varios `Programa`s, pero si se cierra el programa, la institución sigue existiendo.
-4. **Asociación (Línea simple):** Refleja referencias lógicas más sueltas. Por ejemplo, una `Recomendacion` sugiere un `Programa`, un `Programa` pertenece a un `AreaEstudio`, y un `Resultado` almacena internamente las respuestas conectadas a múltiples `Pregunta`s.
-5. **Dependencia (Línea punteada):** Utilizada en las capas de servicios para mostrar qué componentes necesitan a otros para funcionar. Por ejemplo, `MotorRecomendacionService` depende de analizar un `Resultado` para inferir compatibilidad y luego generar las instancias de `Recomendacion`.
+1. **Inheritance (White triangle):** `Student` and `Administrator` inherit the base characteristics and ID from `User`. In Supabase, this translates to the external `auth.users` table connected to the `perfiles_usuario` (user profiles) table.
+2. **Composition (Black diamond):** Indicates strict dependency. If you delete a `Questionnaire`, the `Question`s that compose it also disappear (Cascade Delete). The same occurs between `Program` and `AdmissionCall`, and `Result` with `Recommendation`.
+3. **Aggregation (White diamond):** An `Institution` groups several `Program`s, but if the program is closed, the institution still exists.
+4. **Association (Simple line):** Reflects looser logical references. For example, a `Recommendation` suggests a `Program`, a `Program` belongs to a `StudyArea`, and a `Result` internally stores the answers connected to multiple `Question`s.
+5. **Dependency (Dotted line):** Used in the service layers to show which components need others to function. For example, `RecommendationEngineService` depends on analyzing a `Result` to infer compatibility and then generate the `Recommendation` instances.
 
-**Visibilidad de Atributos UML (Símbolos):**
-- `-` Privado (Accedidos vía métodos/encapsulamiento).
-- `+` Público.
-- `#` Protegido (Para clases hijas).
+**UML Attribute Visibility (Symbols):**
+- `-` Private (Accessed via methods/encapsulation).
+- `+` Public.
+- `#` Protected (For child classes).
