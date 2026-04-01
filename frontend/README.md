@@ -71,3 +71,33 @@ Cuando el sistema Brota esté listo para salir al aire, en lugar de usar el ento
 npm run build
 ```
 Esto generará una carpeta oculta `dist/` con todo tu código minificado, comprimido y ultra rápido, empaquetado y listo para ser subido a Vercel, Netlify o cualquier servidor.
+
+---
+
+## 🎨 Paleta de Colores
+
+### Modo Oscuro (Dark Mode)
+
+| Elemento | Color HEX | Descripción |
+| :--- | :--- | :--- |
+| Primary (fondo principal / navbar / texto fuerte) | `#065F46` | Deep emerald green |
+| Gradient de la planta | `#4AC748` → `#48C786` → `#48C7C5` | Organic gradient suave (verde lima → turquesa suave) |
+| Botón principal "Crear cuenta gratis" | `#A3E635` | Vibrant lime green |
+| Botón secundario "Iniciar sesión" | Bordes en `#FF6B6B` | Coral orange |
+| Botón "Enviar" del formulario | `#FF6B6B` | Coral orange |
+| Fondo general | `#F8F5EB` | Soft warm cream/off-white |
+| Texto principal (headlines) | Blanco (`#FFFFFF`) | Sobre fondo verde oscuro |
+| Texto secundario | `#065F46` o negro suave | Según contraste |
+
+### Modo Claro (Light Mode)
+
+| Elemento | Color HEX | Descripción |
+| :--- | :--- | :--- |
+| Primary (fondo principal / navbar / texto fuerte) | `#065F46` | Deep emerald green |
+| Hojas / planta (sólido) | `#065F46` y `#4AC748` | Verde oscuro + verde más vivo (sin gradient) |
+| Botón principal "Crear cuenta gratis" | `#A3E635` | Vibrant lime green |
+| Botón secundario "Iniciar sesión" | Texto y borde en `#FF6B6B` | Coral orange |
+| Botón "Enviar" del formulario | `#FF6B6B` | Coral orange |
+| Fondo general | `#F8F5EB` | Soft warm cream/off-white |
+| Texto principal (headlines) | `#065F46` | Verde oscuro sobre crema |
+| Texto secundario | `#065F46` | Verde oscuro |
