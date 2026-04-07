@@ -10,88 +10,23 @@ erDiagram
     PERFILES_USUARIO {
         UUID id PK
         UUID user_id FK
-<<<<<<< HEAD:docs/diagrama_mer.md
         VARCHAR nombre
         VARCHAR apellido
         INTEGER edad
         VARCHAR ciudad
-=======
-        VARCHAR primer_nombre
-        VARCHAR segundo_nombre
-        VARCHAR primer_apellido
-        VARCHAR segundo_apellido
-        INTEGER edad
-        VARCHAR genero
->>>>>>> a51c430bfb24a98e5a5215aa638f0580b7589cd9:docs/Data_Base/diagrama_mer.md
         VARCHAR nivel_educativo
         JSONB condiciones_socioeconomicas
         TIMESTAMPTZ created_at
-    }
-<<<<<<< HEAD:docs/diagrama_mer.md
-=======
-
-    INSTITUCIONES {
-        UUID id PK
-        VARCHAR nombre
-        VARCHAR tipo
-        VARCHAR ciudad
-        TEXT direccion
-        VARCHAR telefono
-        VARCHAR email
-        TEXT sitio_web
-        INTEGER costo_promedio
-        BOOLEAN activa
-        TIMESTAMPTZ created_at
         TIMESTAMPTZ updated_at
     }
-
-    AREAS_ESTUDIO {
-        UUID id PK
-        VARCHAR nombre
-        TEXT descripcion
-        VARCHAR icono
-        BOOLEAN activa
-        TIMESTAMPTZ created_at
-        TIMESTAMPTZ updated_at
-    }
-
-    PROGRAMAS {
-        UUID id PK
-        UUID institucion_id FK
-        UUID area_estudio_id FK
-        VARCHAR nombre
-        VARCHAR tipo
-        VARCHAR duracion
-        VARCHAR modalidad
-        TEXT descripcion
-        TEXT requisitos
-        INTEGER costo_matricula
-        JSONB perfil_compatible
-        BOOLEAN activo
-        TIMESTAMPTZ created_at
-        TIMESTAMPTZ updated_at
-    }
-
-    CONVOCATORIAS {
-        UUID id PK
-        UUID programa_id FK
-        VARCHAR nombre
-        DATE fecha_apertura
-        DATE fecha_cierre
-        INTEGER cupos
-        TEXT informacion_adicional
-        BOOLEAN activa
-        TIMESTAMPTZ created_at
-        TIMESTAMPTZ updated_at
-    }
-
->>>>>>> a51c430bfb24a98e5a5215aa638f0580b7589cd9:docs/Data_Base/diagrama_mer.md
     CUESTIONARIOS {
         UUID id PK
         VARCHAR nombre
         VARCHAR version
+        TEXT descripcion
         BOOLEAN activo
         TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
     }
     PREGUNTAS {
         UUID id PK
@@ -99,8 +34,10 @@ erDiagram
         TEXT texto
         VARCHAR tipo
         INTEGER orden
+        VARCHAR categoria
         DECIMAL peso
         JSONB opciones
+        TIMESTAMPTZ created_at
     }
     RESULTADOS {
         UUID id PK
@@ -115,19 +52,31 @@ erDiagram
         VARCHAR nombre
         VARCHAR tipo
         VARCHAR ciudad
+        VARCHAR departamento
+        TEXT direccion
+        VARCHAR telefono
+        VARCHAR email
+        TEXT sitio_web
         INTEGER costo_promedio
         BOOLEAN activa
         TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
     }
     PROGRAMAS {
         UUID id PK
         UUID institucion_id FK
         VARCHAR nombre
+        VARCHAR tipo
         VARCHAR area_academica
+        VARCHAR duracion
         VARCHAR modalidad
+        TEXT descripcion
+        TEXT requisitos
+        INTEGER costo_matricula
         JSONB perfil_compatible
         BOOLEAN activo
         TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
     }
     CONVOCATORIAS {
         UUID id PK
@@ -136,7 +85,10 @@ erDiagram
         DATE fecha_apertura
         DATE fecha_cierre
         INTEGER cupos
+        TEXT informacion_adicional
         BOOLEAN activa
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
     }
     RECOMENDACIONES {
         UUID id PK
@@ -148,7 +100,7 @@ erDiagram
         BOOLEAN vista
         TIMESTAMPTZ created_at
     }
-
+ 
     AUTH_USERS ||--|| PERFILES_USUARIO : "tiene"
     CUESTIONARIOS ||--o{ PREGUNTAS : "contiene"
     CUESTIONARIOS ||--o{ RESULTADOS : "produce"
@@ -156,9 +108,8 @@ erDiagram
     RESULTADOS ||--o{ RECOMENDACIONES : "origina"
     PERFILES_USUARIO ||--o{ RECOMENDACIONES : "recibe"
     INSTITUCIONES ||--o{ PROGRAMAS : "ofrece"
-    AREAS_ESTUDIO ||--o{ PROGRAMAS : "agrupa"
     PROGRAMAS ||--o{ CONVOCATORIAS : "tiene"
-    PROGRAMAS ||--o{ RECOMENDACIONES : "es recomendado en"
+    PROGRAMAS ||--o{ RECOMENDACIONES : "es_recomendado_en"
 ```
 
 ## 📋 Resumen de Entidades
