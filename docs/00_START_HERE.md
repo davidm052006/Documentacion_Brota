@@ -78,7 +78,7 @@ Ubicación: `/frontend/`
 
 ### Deploy
 
-- Vercel (frontend y backend)
+- Datacenter SENA
 - GitHub (control de versiones)
 
 ### Base de Datos

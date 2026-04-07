@@ -10,14 +10,82 @@ erDiagram
     PERFILES_USUARIO {
         UUID id PK
         UUID user_id FK
+<<<<<<< HEAD:docs/diagrama_mer.md
         VARCHAR nombre
         VARCHAR apellido
         INTEGER edad
         VARCHAR ciudad
+=======
+        VARCHAR primer_nombre
+        VARCHAR segundo_nombre
+        VARCHAR primer_apellido
+        VARCHAR segundo_apellido
+        INTEGER edad
+        VARCHAR genero
+>>>>>>> a51c430bfb24a98e5a5215aa638f0580b7589cd9:docs/Data_Base/diagrama_mer.md
         VARCHAR nivel_educativo
         JSONB condiciones_socioeconomicas
         TIMESTAMPTZ created_at
     }
+<<<<<<< HEAD:docs/diagrama_mer.md
+=======
+
+    INSTITUCIONES {
+        UUID id PK
+        VARCHAR nombre
+        VARCHAR tipo
+        VARCHAR ciudad
+        TEXT direccion
+        VARCHAR telefono
+        VARCHAR email
+        TEXT sitio_web
+        INTEGER costo_promedio
+        BOOLEAN activa
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+    }
+
+    AREAS_ESTUDIO {
+        UUID id PK
+        VARCHAR nombre
+        TEXT descripcion
+        VARCHAR icono
+        BOOLEAN activa
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+    }
+
+    PROGRAMAS {
+        UUID id PK
+        UUID institucion_id FK
+        UUID area_estudio_id FK
+        VARCHAR nombre
+        VARCHAR tipo
+        VARCHAR duracion
+        VARCHAR modalidad
+        TEXT descripcion
+        TEXT requisitos
+        INTEGER costo_matricula
+        JSONB perfil_compatible
+        BOOLEAN activo
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+    }
+
+    CONVOCATORIAS {
+        UUID id PK
+        UUID programa_id FK
+        VARCHAR nombre
+        DATE fecha_apertura
+        DATE fecha_cierre
+        INTEGER cupos
+        TEXT informacion_adicional
+        BOOLEAN activa
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+    }
+
+>>>>>>> a51c430bfb24a98e5a5215aa638f0580b7589cd9:docs/Data_Base/diagrama_mer.md
     CUESTIONARIOS {
         UUID id PK
         VARCHAR nombre
@@ -88,23 +156,25 @@ erDiagram
     RESULTADOS ||--o{ RECOMENDACIONES : "origina"
     PERFILES_USUARIO ||--o{ RECOMENDACIONES : "recibe"
     INSTITUCIONES ||--o{ PROGRAMAS : "ofrece"
+    AREAS_ESTUDIO ||--o{ PROGRAMAS : "agrupa"
     PROGRAMAS ||--o{ CONVOCATORIAS : "tiene"
     PROGRAMAS ||--o{ RECOMENDACIONES : "es recomendado en"
 ```
 
 ## 📋 Resumen de Entidades
 
-### Entidades Core (8 tablas MVP)
+### Entidades Core (9 tablas MVP)
 
 1. **AUTH_USERS** - Gestión de autenticación (Supabase)
 2. **PERFILES_USUARIO** - Datos adicionales del estudiante
 3. **INSTITUCIONES** - Instituciones educativas curadas
-4. **PROGRAMAS** - Programas académicos ofrecidos
-5. **CONVOCATORIAS** - Períodos de inscripción (separado de programas)
-6. **CUESTIONARIOS** - Versiones del cuestionario vocacional
-7. **PREGUNTAS** - Preguntas del cuestionario
-8. **RESULTADOS** - Respuestas y perfiles generados
-9. **RECOMENDACIONES** - Recomendaciones personalizadas
+4. **AREAS_ESTUDIO** - Áreas y campos de conocimiento
+5. **PROGRAMAS** - Programas académicos ofrecidos
+6. **CONVOCATORIAS** - Períodos de inscripción (separado de programas)
+7. **CUESTIONARIOS** - Versiones del cuestionario vocacional
+8. **PREGUNTAS** - Preguntas del cuestionario
+9. **RESULTADOS** - Respuestas y perfiles generados
+10. **RECOMENDACIONES** - Recomendaciones personalizadas
 
 ## 🔗 Relaciones Clave
 
@@ -116,6 +186,7 @@ erDiagram
 - **CUESTIONARIOS → PREGUNTAS**: 1:N (un cuestionario tiene múltiples preguntas)
 - **CUESTIONARIOS → RESULTADOS**: 1:N (un cuestionario produce múltiples resultados)
 - **INSTITUCIONES → PROGRAMAS**: 1:N (una institución ofrece múltiples programas)
+- **AREAS_ESTUDIO → PROGRAMAS**: 1:N (un área de estudio agrupa múltiples programas)
 - **PROGRAMAS → CONVOCATORIAS**: 1:N ⚠️ CRÍTICO (un programa tiene múltiples convocatorias)
 - **PROGRAMAS → RECOMENDACIONES**: 1:N (un programa aparece en múltiples recomendaciones)
 - **RESULTADOS → RECOMENDACIONES**: 1:N (un resultado genera múltiples recomendaciones)

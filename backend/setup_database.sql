@@ -8,12 +8,12 @@
 CREATE TABLE IF NOT EXISTS perfiles_usuario (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-  nombre VARCHAR(100) NOT NULL,
-  apellido VARCHAR(100) NOT NULL,
+  primer_nombre VARCHAR(100) NOT NULL,
+  segundo_nombre VARCHAR(100),
+  primer_apellido VARCHAR(100) NOT NULL,
+  segundo_apellido VARCHAR(100),
   edad INTEGER CHECK (edad >= 14 AND edad <= 100),
   genero VARCHAR(50),
-  ciudad VARCHAR(100),
-  departamento VARCHAR(100),
   nivel_educativo VARCHAR(100),
   condiciones_socioeconomicas JSONB DEFAULT '{}',
   disponibilidad_tiempo VARCHAR(50),
@@ -28,7 +28,6 @@ CREATE TABLE IF NOT EXISTS instituciones (
   nombre VARCHAR(200) NOT NULL,
   tipo VARCHAR(100),
   ciudad VARCHAR(100),
-  departamento VARCHAR(100),
   direccion TEXT,
   telefono VARCHAR(50),
   email VARCHAR(100),
@@ -39,13 +38,24 @@ CREATE TABLE IF NOT EXISTS instituciones (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 3. TABLA: programas
+-- 3. TABLA: areas_estudio
+CREATE TABLE IF NOT EXISTS areas_estudio (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  nombre VARCHAR(100) NOT NULL UNIQUE,
+  descripcion TEXT,
+  icono VARCHAR(50),
+  activa BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 4. TABLA: programas
 CREATE TABLE IF NOT EXISTS programas (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   institucion_id UUID REFERENCES instituciones(id) ON DELETE CASCADE,
+  area_estudio_id UUID REFERENCES areas_estudio(id) ON DELETE SET NULL,
   nombre VARCHAR(200) NOT NULL,
   tipo VARCHAR(100),
-  area_academica VARCHAR(100),
   duracion VARCHAR(100),
   modalidad VARCHAR(50),
   descripcion TEXT,
@@ -57,7 +67,7 @@ CREATE TABLE IF NOT EXISTS programas (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 4. TABLA: convocatorias
+-- 5. TABLA: convocatorias
 CREATE TABLE IF NOT EXISTS convocatorias (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   programa_id UUID REFERENCES programas(id) ON DELETE CASCADE,
@@ -71,7 +81,7 @@ CREATE TABLE IF NOT EXISTS convocatorias (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 5. TABLA: cuestionarios
+-- 6. TABLA: cuestionarios
 CREATE TABLE IF NOT EXISTS cuestionarios (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   nombre VARCHAR(200) NOT NULL,
@@ -82,7 +92,7 @@ CREATE TABLE IF NOT EXISTS cuestionarios (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 6. TABLA: preguntas
+-- 7. TABLA: preguntas
 CREATE TABLE IF NOT EXISTS preguntas (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   cuestionario_id UUID REFERENCES cuestionarios(id) ON DELETE CASCADE,
@@ -95,7 +105,7 @@ CREATE TABLE IF NOT EXISTS preguntas (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 7. TABLA: resultados
+-- 8. TABLA: resultados
 CREATE TABLE IF NOT EXISTS resultados (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   perfil_usuario_id UUID REFERENCES perfiles_usuario(id) ON DELETE CASCADE,
@@ -105,7 +115,7 @@ CREATE TABLE IF NOT EXISTS resultados (
   fecha_realizacion TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 8. TABLA: recomendaciones
+-- 9. TABLA: recomendaciones
 CREATE TABLE IF NOT EXISTS recomendaciones (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   perfil_usuario_id UUID REFERENCES perfiles_usuario(id) ON DELETE CASCADE,
@@ -123,7 +133,7 @@ CREATE TABLE IF NOT EXISTS recomendaciones (
 
 CREATE INDEX IF NOT EXISTS idx_perfiles_user_id ON perfiles_usuario(user_id);
 CREATE INDEX IF NOT EXISTS idx_programas_institucion ON programas(institucion_id);
-CREATE INDEX IF NOT EXISTS idx_programas_area ON programas(area_academica);
+CREATE INDEX IF NOT EXISTS idx_programas_area ON programas(area_estudio_id);
 CREATE INDEX IF NOT EXISTS idx_convocatorias_programa ON convocatorias(programa_id);
 CREATE INDEX IF NOT EXISTS idx_convocatorias_activa ON convocatorias(activa);
 CREATE INDEX IF NOT EXISTS idx_preguntas_cuestionario ON preguntas(cuestionario_id);
@@ -148,6 +158,9 @@ CREATE TRIGGER update_perfiles_usuario_updated_at BEFORE UPDATE ON perfiles_usua
 CREATE TRIGGER update_instituciones_updated_at BEFORE UPDATE ON instituciones
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+CREATE TRIGGER update_areas_estudio_updated_at BEFORE UPDATE ON areas_estudio
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
 CREATE TRIGGER update_programas_updated_at BEFORE UPDATE ON programas
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
@@ -161,6 +174,7 @@ CREATE TRIGGER update_convocatorias_updated_at BEFORE UPDATE ON convocatorias
 -- Habilitar RLS en todas las tablas
 ALTER TABLE perfiles_usuario ENABLE ROW LEVEL SECURITY;
 ALTER TABLE instituciones ENABLE ROW LEVEL SECURITY;
+ALTER TABLE areas_estudio ENABLE ROW LEVEL SECURITY;
 ALTER TABLE programas ENABLE ROW LEVEL SECURITY;
 ALTER TABLE convocatorias ENABLE ROW LEVEL SECURITY;
 ALTER TABLE cuestionarios ENABLE ROW LEVEL SECURITY;
@@ -178,8 +192,11 @@ CREATE POLICY "Usuarios pueden actualizar su propio perfil" ON perfiles_usuario
 CREATE POLICY "Usuarios pueden insertar su propio perfil" ON perfiles_usuario
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
--- Políticas para datos públicos (instituciones, programas, convocatorias)
+-- Políticas para datos públicos (instituciones, areas_estudio, programas, convocatorias)
 CREATE POLICY "Todos pueden ver instituciones activas" ON instituciones
+  FOR SELECT USING (activa = true);
+
+CREATE POLICY "Todos pueden ver areas de estudio activas" ON areas_estudio
   FOR SELECT USING (activa = true);
 
 CREATE POLICY "Todos pueden ver programas activos" ON programas
@@ -238,4 +255,4 @@ WHERE table_schema = 'public'
   AND table_type = 'BASE TABLE'
 ORDER BY table_name;
 
--- ✅ Si ves 8 tablas, todo está correcto
+-- ✅ Si ves 9 tablas, todo está correcto
