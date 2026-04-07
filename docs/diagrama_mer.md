@@ -7,93 +7,33 @@ erDiagram
     AUTH_USERS {
         UUID id PK
     }
-
     PERFILES_USUARIO {
         UUID id PK
         UUID user_id FK
         VARCHAR nombre
-        VARCHAR segundo_nombre
         VARCHAR apellido
-        VARCHAR segundo_apellido
         INTEGER edad
-        VARCHAR genero
         VARCHAR ciudad
-        VARCHAR departamento
         VARCHAR nivel_educativo
         JSONB condiciones_socioeconomicas
-        VARCHAR disponibilidad_tiempo
         TIMESTAMPTZ created_at
-        TIMESTAMPTZ updated_at
     }
-
-    INSTITUCIONES {
-        UUID id PK
-        VARCHAR nombre
-        VARCHAR tipo
-        VARCHAR ciudad
-        VARCHAR departamento
-        TEXT direccion
-        VARCHAR telefono
-        VARCHAR email
-        TEXT sitio_web
-        INTEGER costo_promedio
-        BOOLEAN activa
-        TIMESTAMPTZ created_at
-        TIMESTAMPTZ updated_at
-    }
-
-    PROGRAMAS {
-        UUID id PK
-        UUID institucion_id FK
-        VARCHAR nombre
-        VARCHAR tipo
-        VARCHAR area_academica
-        VARCHAR duracion
-        VARCHAR modalidad
-        TEXT descripcion
-        TEXT requisitos
-        INTEGER costo_matricula
-        JSONB perfil_compatible
-        BOOLEAN activo
-        TIMESTAMPTZ created_at
-        TIMESTAMPTZ updated_at
-    }
-
-    CONVOCATORIAS {
-        UUID id PK
-        UUID programa_id FK
-        VARCHAR nombre
-        DATE fecha_apertura
-        DATE fecha_cierre
-        INTEGER cupos
-        TEXT informacion_adicional
-        BOOLEAN activa
-        TIMESTAMPTZ created_at
-        TIMESTAMPTZ updated_at
-    }
-
     CUESTIONARIOS {
         UUID id PK
         VARCHAR nombre
         VARCHAR version
-        TEXT descripcion
         BOOLEAN activo
         TIMESTAMPTZ created_at
-        TIMESTAMPTZ updated_at
     }
-
     PREGUNTAS {
         UUID id PK
         UUID cuestionario_id FK
         TEXT texto
         VARCHAR tipo
         INTEGER orden
-        VARCHAR categoria
         DECIMAL peso
         JSONB opciones
-        TIMESTAMPTZ created_at
     }
-
     RESULTADOS {
         UUID id PK
         UUID perfil_usuario_id FK
@@ -102,7 +42,34 @@ erDiagram
         JSONB perfil_vocacional
         TIMESTAMPTZ fecha_realizacion
     }
-
+    INSTITUCIONES {
+        UUID id PK
+        VARCHAR nombre
+        VARCHAR tipo
+        VARCHAR ciudad
+        INTEGER costo_promedio
+        BOOLEAN activa
+        TIMESTAMPTZ created_at
+    }
+    PROGRAMAS {
+        UUID id PK
+        UUID institucion_id FK
+        VARCHAR nombre
+        VARCHAR area_academica
+        VARCHAR modalidad
+        JSONB perfil_compatible
+        BOOLEAN activo
+        TIMESTAMPTZ created_at
+    }
+    CONVOCATORIAS {
+        UUID id PK
+        UUID programa_id FK
+        VARCHAR nombre
+        DATE fecha_apertura
+        DATE fecha_cierre
+        INTEGER cupos
+        BOOLEAN activa
+    }
     RECOMENDACIONES {
         UUID id PK
         UUID perfil_usuario_id FK
@@ -114,16 +81,15 @@ erDiagram
         TIMESTAMPTZ created_at
     }
 
-    %% Relaciones
     AUTH_USERS ||--|| PERFILES_USUARIO : "tiene"
-    PERFILES_USUARIO ||--o{ RESULTADOS : "genera"
-    PERFILES_USUARIO ||--o{ RECOMENDACIONES : "recibe"
     CUESTIONARIOS ||--o{ PREGUNTAS : "contiene"
     CUESTIONARIOS ||--o{ RESULTADOS : "produce"
+    PERFILES_USUARIO ||--o{ RESULTADOS : "genera"
+    RESULTADOS ||--o{ RECOMENDACIONES : "origina"
+    PERFILES_USUARIO ||--o{ RECOMENDACIONES : "recibe"
     INSTITUCIONES ||--o{ PROGRAMAS : "ofrece"
     PROGRAMAS ||--o{ CONVOCATORIAS : "tiene"
-    PROGRAMAS ||--o{ RECOMENDACIONES : "es_recomendado_en"
-    RESULTADOS ||--o{ RECOMENDACIONES : "origina"
+    PROGRAMAS ||--o{ RECOMENDACIONES : "es recomendado en"
 ```
 
 ## 📋 Resumen de Entidades
