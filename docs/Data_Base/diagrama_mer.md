@@ -99,7 +99,8 @@ erDiagram
         BOOLEAN vista
         TIMESTAMPTZ created_at
     }
- 
+
+    %% Relaciones
     AUTH_USERS ||--|| PERFILES_USUARIO : "tiene"
     CUESTIONARIOS ||--o{ PREGUNTAS : "contiene"
     CUESTIONARIOS ||--o{ RESULTADOS : "produce"
