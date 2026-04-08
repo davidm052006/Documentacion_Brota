@@ -2,20 +2,19 @@
 
 ## 📋 Entidades que DEBEN estar en el MER del MVP
 
-### ✅ Entidades Core (8 tablas)
+### ✅ Entidades Core (8 tablas definitivas)
 
 1. **perfiles_usuario**
    - Campos clave: id (UUID), user_id (FK a auth.users), nombre, apellido, edad, ciudad
    - Relación: 1:1 con auth.users (Supabase)
    - Relación: 1:N con resultados
-   - Relación: 1:N con recomendaciones
 
 2. **instituciones**
-   - Campos clave: id (UUID), nombre, tipo, ciudad, activa
+   - Campos clave: id (UUID), nombre, tipo, ciudad, departamento, activa
    - Relación: 1:N con programas
 
 3. **programas**
-   - Campos clave: id (UUID), institucion_id (FK), nombre, tipo, modalidad
+   - Campos clave: id (UUID), institucion_id (FK), nombre, area_academica (VARCHAR)
    - Relación: N:1 con instituciones
    - Relación: 1:N con convocatorias
    - Relación: 1:N con recomendaciones
@@ -41,10 +40,10 @@
    - Relación: 1:N con recomendaciones
 
 8. **recomendaciones**
-   - Campos clave: id (UUID), perfil_usuario_id (FK), programa_id (FK), resultado_id (FK), compatibilidad
-   - Relación: N:1 con perfiles_usuario
+   - Campos clave: id (UUID), programa_id (FK), resultado_id (FK), compatibilidad
    - Relación: N:1 con programas
    - Relación: N:1 con resultados
+   - **Nota de Redundancia Eliminada:** La Relación directa N:1 con `perfiles_usuario` fue omitida para eliminar dependencias circulares (el usuario se trae implícitamente por medio del `resultado_id`).
 
 ---
 
@@ -53,40 +52,31 @@
 Estas entidades deben ser removidas o marcadas como "Fase Futura":
 
 - ❌ **MascotaIA** - No es parte del MVP
+- ❌ **AreasEstudio** - Removida. Simplificada a simple campo VARCHAR (`area_academica`) para evitar join extra en MVP.
 - ❌ **RutaAprendizaje** - Fase futura
-- ❌ **ContenidoRuta** - Fase futura
 - ❌ **ProgresoUsuario** - Fase futura
 - ❌ **Favorito** - Funcionalidad secundaria
-- ❌ **Comparacion** - Funcionalidad secundaria
 - ❌ **Carrera** - Reemplazada por "Programa" (más genérico)
 
 ---
 
-## 🔄 Cambios Críticos vs Diagrama Anterior
+## 🔄 Cambios Críticos vs Diagramas Anteriores
 
-### 1. Usuario → perfiles_usuario
+### 1. Eliminación de Dependencia Circular (Recomendaciones)
+
+- **Antes:** `Recomendaciones` tenía un `perfil_usuario_id` que apuntaba a Perfiles (Circular respecto a Resultados).
+- **Ahora:** Se accede al usuario de forma jerárquica: `Recomendaciones -> Resultados -> Perfiles`.
+- **Razón:** Limpieza de dependencias y normalización de la estructura.
+
+### 2. Usuario → perfiles_usuario
 
 - **Antes:** Tabla `Usuario` con campos de autenticación
 - **Ahora:** `perfiles_usuario` + Supabase Auth (auth.users)
-- **Razón:** Supabase maneja autenticación
-
-### 2. Carrera → Programa
-
-- **Antes:** Tabla `Carrera`
-- **Ahora:** Tabla `programas` (más genérico)
-- **Razón:** Incluye carreras, técnicos, tecnológicos, no tradicionales
 
 ### 3. Programa + Convocatoria (SEPARADOS)
 
 - **Antes:** Posiblemente fechas dentro de Programa
 - **Ahora:** Tablas separadas con relación 1:N
-- **Razón:** Control temporal, múltiples convocatorias, ocultamiento automático
-
-### 4. Tipos de Datos
-
-- **Antes:** INT para IDs
-- **Ahora:** UUID para IDs
-- **Razón:** Mejor para sistemas distribuidos (Supabase)
 
 ---
 
@@ -99,15 +89,13 @@ perfiles_usuario
     ↓ 1:N
     ├─→ resultados
     │      ↓ 1:N
-    │   recomendaciones
+    │   recomendaciones  (sin acceso directo por perfiles para evadir circularidad)
     │      ↓ N:1
     │   programas
     │      ↓ 1:N
     │   convocatorias
     │      ↓ N:1
     │   instituciones
-    │
-    └─→ recomendaciones (directo también)
 
 cuestionarios
     ↓ 1:N
@@ -118,83 +106,27 @@ cuestionarios
 resultados
 ```
 
-### Cardinalidades Importantes:
-
-1. **perfiles_usuario → resultados**: 1:N (un usuario puede hacer múltiples cuestionarios)
-2. **resultados → recomendaciones**: 1:N (un resultado genera múltiples recomendaciones)
-3. **programas → convocatorias**: 1:N ⚠️ CRÍTICO (un programa tiene múltiples convocatorias)
-4. **instituciones → programas**: 1:N (una institución ofrece múltiples programas)
-5. **cuestionarios → preguntas**: 1:N (un cuestionario tiene múltiples preguntas)
-
 ---
 
 ## 🎨 Cómo Verificar tu Diagrama Actual
 
 ### Paso 1: Abre el diagrama
 
-Abre `docs/modelo-entidad-relacion-(MER).png`
+Abre `docs/Data_Base/diagrama_mer.md`
 
 ### Paso 2: Verifica entidades
 
 Cuenta las entidades y compara con esta lista:
 
-- ✅ ¿Hay 8 entidades del MVP?
-- ❌ ¿Hay entidades que no deberían estar?
+- ✅ ¿Hay 8 entidades del MVP (Perfiles, Cuestionarios, Preguntas, Resultados, Recomendaciones, Instituciones, Programas, Convocatorias)?
+- ❌ ¿Asegúrate de que no haya Entidades como `AREAS_ESTUDIO`?
 
-### Paso 3: Verifica la separación Programa-Convocatoria
+### Paso 3: Verifica la Eliminación Circular
 
-- ✅ ¿Programa y Convocatoria son tablas separadas?
-- ✅ ¿Hay una línea de relación 1:N entre ellas?
-
-### Paso 4: Verifica nombres
-
-- ✅ ¿Dice "programas" en lugar de "Carrera"?
-- ✅ ¿Dice "perfiles_usuario" en lugar de "Usuario"?
-
-### Paso 5: Verifica relaciones críticas
-
-- ✅ ¿instituciones → programas (1:N)?
-- ✅ ¿programas → convocatorias (1:N)?
-- ✅ ¿perfiles_usuario → resultados (1:N)?
-- ✅ ¿resultados → recomendaciones (1:N)?
+- ✅ Asegúrate de que `PERFILES_USUARIO` ya **NO** apunte ni conecte a `RECOMENDACIONES`. Sólo debe fluir a `RESULTADOS`.
 
 ---
 
-## 🛠️ Si el Diagrama NO está Alineado
+## 🛠 Si el Diagrama NO está Alineado
 
-### Opción 1: Actualizar el diagrama existente
-
-Usa una herramienta como:
-
-- Draw.io / diagrams.net
-- Lucidchart
-- dbdiagram.io
-- PlantUML
-
-### Opción 2: Generar desde código
-
-Usa herramientas que generan diagramas desde SQL:
-
-- SchemaSpy
-- dbdocs.io
-- Supabase Studio (tiene visualización automática)
-
-### Opción 3: Usar Supabase Studio
-
-Supabase tiene un visualizador de esquema integrado:
-
-1. Ve a tu proyecto en Supabase
-2. Database → Schema Visualizer
-3. Exporta el diagrama
-
----
-
-## 📝 Recomendación
-
-**Para verificar:** Abre el archivo `docs/modelo-entidad-relacion-(MER).png` y compara visualmente con este checklist.
-
-**Si no coincide:** Te recomiendo usar **dbdiagram.io** o **Supabase Studio** para generar un nuevo diagrama que refleje exactamente el DDL que creamos en `backend/modelo_datos.md`.
-
----
-
-¿Quieres que te ayude a crear el código para generar un nuevo diagrama con una herramienta específica?
+Te recomiendo usar dbdiagram.io e importar directamente el archivo `backend/setup_database.sql` para generar automáticamente los gráficos correspondientes a la estructura base y exportarlo posteriormente a código Mermaid.

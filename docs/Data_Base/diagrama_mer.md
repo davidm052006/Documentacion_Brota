@@ -92,7 +92,6 @@ erDiagram
     }
     RECOMENDACIONES {
         UUID id PK
-        UUID perfil_usuario_id FK
         UUID programa_id FK
         UUID resultado_id FK
         DECIMAL compatibilidad
@@ -106,7 +105,6 @@ erDiagram
     CUESTIONARIOS ||--o{ RESULTADOS : "produce"
     PERFILES_USUARIO ||--o{ RESULTADOS : "genera"
     RESULTADOS ||--o{ RECOMENDACIONES : "origina"
-    PERFILES_USUARIO ||--o{ RECOMENDACIONES : "recibe"
     INSTITUCIONES ||--o{ PROGRAMAS : "ofrece"
     PROGRAMAS ||--o{ CONVOCATORIAS : "tiene"
     PROGRAMAS ||--o{ RECOMENDACIONES : "es_recomendado_en"
@@ -114,18 +112,17 @@ erDiagram
 
 ## 📋 Resumen de Entidades
 
-### Entidades Core (9 tablas MVP)
+### Entidades Core (8 tablas MVP)
 
 1. **AUTH_USERS** - Gestión de autenticación (Supabase)
 2. **PERFILES_USUARIO** - Datos adicionales del estudiante
 3. **INSTITUCIONES** - Instituciones educativas curadas
-4. **AREAS_ESTUDIO** - Áreas y campos de conocimiento
-5. **PROGRAMAS** - Programas académicos ofrecidos
-6. **CONVOCATORIAS** - Períodos de inscripción (separado de programas)
-7. **CUESTIONARIOS** - Versiones del cuestionario vocacional
-8. **PREGUNTAS** - Preguntas del cuestionario
-9. **RESULTADOS** - Respuestas y perfiles generados
-10. **RECOMENDACIONES** - Recomendaciones personalizadas
+4. **PROGRAMAS** - Programas académicos ofrecidos
+5. **CONVOCATORIAS** - Períodos de inscripción (separado de programas)
+6. **CUESTIONARIOS** - Versiones del cuestionario vocacional
+7. **PREGUNTAS** - Preguntas del cuestionario
+8. **RESULTADOS** - Respuestas y perfiles generados
+9. **RECOMENDACIONES** - Recomendaciones personalizadas
 
 ## 🔗 Relaciones Clave
 
@@ -133,14 +130,14 @@ erDiagram
 
 - **AUTH_USERS → PERFILES_USUARIO**: 1:1 (un usuario tiene un perfil)
 - **PERFILES_USUARIO → RESULTADOS**: 1:N (un usuario puede hacer múltiples cuestionarios)
-- **PERFILES_USUARIO → RECOMENDACIONES**: 1:N (un usuario recibe múltiples recomendaciones)
 - **CUESTIONARIOS → PREGUNTAS**: 1:N (un cuestionario tiene múltiples preguntas)
 - **CUESTIONARIOS → RESULTADOS**: 1:N (un cuestionario produce múltiples resultados)
 - **INSTITUCIONES → PROGRAMAS**: 1:N (una institución ofrece múltiples programas)
-- **AREAS_ESTUDIO → PROGRAMAS**: 1:N (un área de estudio agrupa múltiples programas)
 - **PROGRAMAS → CONVOCATORIAS**: 1:N ⚠️ CRÍTICO (un programa tiene múltiples convocatorias)
 - **PROGRAMAS → RECOMENDACIONES**: 1:N (un programa aparece en múltiples recomendaciones)
 - **RESULTADOS → RECOMENDACIONES**: 1:N (un resultado genera múltiples recomendaciones)
+
+*Nota: La relación directa entre Perfiles de Usuario y Recomendaciones se eliminó para evitar relaciones circulares. Ahora de un Perfil se accede a Recomendación mediante sus Resultados correspondientes.*
 
 ## ✅ Validación del Modelo
 
@@ -152,6 +149,7 @@ erDiagram
 ✅ **JSONB para flexibilidad**: perfil_vocacional, respuestas, condiciones_socioeconomicas  
 ✅ **Integración Supabase Auth**: AUTH_USERS separado de PERFILES_USUARIO  
 ✅ **Campo activa en convocatorias**: Para ocultamiento automático
+✅ **Eliminación de Redundancias**: Se removieron dependencias circulares simplificando relaciones críticas.
 
 ### Entidades Fuera del MVP (No incluidas):
 
@@ -161,6 +159,7 @@ erDiagram
 ❌ ProgresoUsuario  
 ❌ Favorito  
 ❌ Comparacion
+❌ Áreas de Estudio (Simplificado a un campo VARCHAR 'area_academica' en Programas)
 
 ---
 
@@ -190,7 +189,7 @@ Instala la extensión "Markdown Preview Mermaid Support" para ver el diagrama en
 
 ## 📝 Notas de Implementación
 
-Este diagrama refleja exactamente el esquema SQL definido en `backend/modelo_datos.md`.
+Este diagrama refleja exactamente el esquema SQL actualizado y libre de relaciones circulares definido en `backend/modelo_datos.md` y `backend/setup_database.sql`.
 
 Para implementar:
 
