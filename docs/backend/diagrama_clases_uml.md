@@ -12,7 +12,7 @@ classDiagram
         -String role
         -DateTime createdAt
         +login(String email, String pwd) Boolean
-        +logout() void
+        +logout() Boolean
         +changePassword(String newPwd) Boolean
     }
 
@@ -25,9 +25,9 @@ classDiagram
         -Integer age
         -String educationalLevel
         -JSONB socioeconomicConditions
-        +startQuestionnaire(Questionnaire q) void
+        +startQuestionnaire(Questionnaire q) UUID
         +viewRecommendations() List~Recommendation~
-        +updateFutureOptions() void
+        +updateFutureOptions(List~Program~ programs) Boolean
     }
 
     class Administrator {
@@ -86,8 +86,8 @@ classDiagram
         -String city
         -String address
         -Boolean isActive
-        +addProgram(Program p) void
-        +deactivate() void
+        +addProgram(Program p) Program
+        +deactivate() Boolean
     }
 
     class StudyArea {
@@ -131,7 +131,7 @@ classDiagram
         -Float compatibility
         -String reasons
         -Boolean isViewed
-        +markAsViewed() void
+        +markAsViewed() Boolean
     }
 
     %% ========================================
