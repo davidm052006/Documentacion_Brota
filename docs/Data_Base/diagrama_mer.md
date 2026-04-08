@@ -23,7 +23,7 @@ erDiagram
         UUID id PK
         VARCHAR nombre
         VARCHAR version
-        TEXT descripcion
+        VARCHAR descripcion
         BOOLEAN activo
         TIMESTAMPTZ created_at
         TIMESTAMPTZ updated_at
@@ -31,7 +31,7 @@ erDiagram
     PREGUNTAS {
         UUID id PK
         UUID cuestionario_id FK
-        TEXT texto
+        VARCHAR texto
         VARCHAR tipo
         INTEGER orden
         VARCHAR categoria
@@ -53,10 +53,10 @@ erDiagram
         VARCHAR tipo
         VARCHAR ciudad
         VARCHAR departamento
-        TEXT direccion
+        VARCHAR direccion
         VARCHAR telefono
         VARCHAR email
-        TEXT sitio_web
+        VARCHAR sitio_web
         INTEGER costo_promedio
         BOOLEAN activa
         TIMESTAMPTZ created_at
@@ -70,8 +70,8 @@ erDiagram
         VARCHAR area_academica
         VARCHAR duracion
         VARCHAR modalidad
-        TEXT descripcion
-        TEXT requisitos
+        VARCHAR descripcion
+        VARCHAR requisitos
         INTEGER costo_matricula
         JSONB perfil_compatible
         BOOLEAN activo
@@ -85,7 +85,7 @@ erDiagram
         DATE fecha_apertura
         DATE fecha_cierre
         INTEGER cupos
-        TEXT informacion_adicional
+        VARCHAR informacion_adicional
         BOOLEAN activa
         TIMESTAMPTZ created_at
         TIMESTAMPTZ updated_at
@@ -95,7 +95,7 @@ erDiagram
         UUID programa_id FK
         UUID resultado_id FK
         DECIMAL compatibilidad
-        TEXT razones
+        VARCHAR razones
         BOOLEAN vista
         TIMESTAMPTZ created_at
     }
