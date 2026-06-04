@@ -7,15 +7,17 @@ const variants = {
   outline: "bg-transparent text-black border-2 border-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-black"
 };
 
-function Button({ children, onClick, type = "button", variant = "primary", className = "" }) {
+function Button({ children, onClick, type = "button", variant = "primary", className = "", disabled = false }) {
   const baseClasses = "inline-flex items-center justify-center gap-2 px-5 py-2.5 text-base font-semibold rounded-[var(--radius-md)] cursor-pointer transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0";
   const variantClass = variants[variant] || variants.primary;
+  const disabledClass = disabled ? "opacity-50 cursor-not-allowed hover:-translate-y-0" : "";
 
   return (
     <button
       type={type}
       onClick={onClick}
-      className={`${baseClasses} ${variantClass} ${className}`}
+      disabled={disabled}
+      className={`${baseClasses} ${variantClass} ${disabledClass} ${className}`}
     >
       {children}
     </button>

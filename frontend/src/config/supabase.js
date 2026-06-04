@@ -3,6 +3,9 @@
 // ============================================
 // Este archivo crea y exporta el cliente de Supabase
 // para que los componentes de React puedan usarlo
+//
+// 📱 MODO DEMO: Si no hay variables de entorno, 
+// Supabase queda deshabilitado y App.jsx entra en MODO DEMO
 
 // --------------------------------------------
 // 1. IMPORTAR LA LIBRERÍA DE SUPABASE
@@ -27,27 +30,40 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 // Solo tiene permisos básicos (no puede hacer operaciones de admin)
 
 // --------------------------------------------
-// 3. VALIDAR QUE LAS VARIABLES EXISTAN
-// --------------------------------------------
+// 3. CREAR EL CLIENTE DE SUPABASE
+// ========================================----
 
-// Si falta alguna variable, lanzamos un error
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('❌ Faltan variables de entorno de Supabase en frontend');
+let supabase;
+
+// Si tenemos ambas variables configuradas, crear cliente real
+if (supabaseUrl && supabaseAnonKey) {
+  console.log('✅ Conectando a Supabase...');
+  supabase = createClient(supabaseUrl, supabaseAnonKey);
+} else {
+  // Si no hay variables, crear un cliente "dummy" para modo demo
+  console.warn('📱 MODO DEMO: No hay variables de entorno de Supabase. Usando cliente deshabilitado.');
+  
+  // Cliente dummy que no hace nada pero no lanza error
+  supabase = {
+    auth: {
+      getSession: async () => ({ data: { session: null } }),
+      signInWithPassword: async () => ({ error: { message: 'Modo demo: usar el modo real' } }),
+      signUp: async () => ({ data: null, error: { message: 'Modo demo: usar el modo real' } }),
+      signOut: async () => ({ error: null }),
+      onAuthStateChange: (callback) => ({ data: { subscription: { unsubscribe: () => {} } } }),
+    },
+    from: () => ({
+      select: () => ({ eq: () => ({ single: async () => ({ data: null, error: null }) }) }),
+      insert: async () => ({ data: null, error: null }),
+      update: async () => ({ data: null, error: null }),
+    }),
+  };
 }
-
-// --------------------------------------------
-// 4. CREAR EL CLIENTE DE SUPABASE
-// --------------------------------------------
-
-// createClient() crea una conexión con Supabase
-// Parámetros:
-//   1. URL de tu proyecto en Supabase
-//   2. Llave de acceso (ANON_KEY para frontend)
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // export const permite que otros archivos importen este cliente
 // Ejemplo de uso en un componente:
 //   import { supabase } from './config/supabase'
+export { supabase };
 //   const { data } = await supabase.from('programas').select('*')
 
 // Mensaje de confirmación en la consola del navegador
