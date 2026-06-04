@@ -6,6 +6,7 @@
 // 1. Las rutas (qué página ver según la URL)
 // 2. La lógica de autenticación (si el usuario está logueado)
 // 3. Las redirecciones (por ejemplo, si accedes a /login pero ya estás logueado, te lleva a /)
+// 4. MODO DEMO: Si no hay keys de Supabase, funciona con datos ficticios
 
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -26,6 +27,9 @@ function App() {
   // Esto evita "parpadeos" de la pantalla mientras cargamos
   const [loading, setLoading] = useState(true);
 
+  // isDemoMode: si no hay keys de Supabase, activamos modo demo
+  const [isDemoMode, setIsDemoMode] = useState(false);
+
   // ==========================================
   // EFECTO: VERIFICAR USUARIO AL CARGAR LA APP
   // ==========================================
@@ -33,14 +37,43 @@ function App() {
     // Función auxiliar para obtener la sesión del usuario
     const checkUser = async () => {
       try {
-        // getSession() pregunta a Supabase: "¿hay alguien logueado?"
-        // Si hay sesión, devuelve session.user con email, id, etc.
+        // Verificar si hay keys de Supabase configuradas
+        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+        const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+        // Si NO hay keys, activar MODO DEMO
+        if (!supabaseUrl || !supabaseKey) {
+          console.warn('⚠️ MODO DEMO: No hay keys de Supabase. Usando datos ficticios.');
+          setIsDemoMode(true);
+          
+          // En modo demo, verificar si el usuario hizo login
+          const demoLoggedIn = localStorage.getItem('demoModeLoggedIn') === 'true';
+          if (demoLoggedIn) {
+            setUser({
+              id: 'demo-user-123',
+              email: localStorage.getItem('demoUserEmail') || 'demo@brota.com',
+              user_metadata: { 
+                nombre: localStorage.getItem('demoUserName') || 'Demo User'
+              }
+            });
+          } else {
+            setUser(null);
+          }
+          
+          setLoading(false);
+          return;
+        }
+
+        // Si hay keys, conectar con Supabase real
         const { data: { session } } = await supabase.auth.getSession();
         
         // Guardamos el usuario (o null si no hay sesión)
         setUser(session?.user || null);
       } catch (error) {
         console.error('Error al verificar usuario:', error);
+        // En error, NO forzar modo demo con usuario auto-logueado
+        // Dejar que intente de nuevo o muestre el login
+        setIsDemoMode(false);
       } finally {
         // Ya terminamos de cargar, indicamos que loading = false
         setLoading(false);
@@ -55,17 +88,23 @@ function App() {
     // ==========================================
     // Esto es como suscribirse a un "canal" de Supabase que dice:
     // "Hey, el usuario acaba de loguearse" o "Hey, el usuario se deslogueó"
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        // event puede ser: SIGNED_IN, SIGNED_OUT, TOKEN_REFRESHED
-        // session contiene los datos del usuario si está logueado
-        setUser(session?.user || null);
-      }
-    );
+    try {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(
+        (event, session) => {
+          // event puede ser: SIGNED_IN, SIGNED_OUT, TOKEN_REFRESHED
+          // session contiene los datos del usuario si está logueado
+          setUser(session?.user || null);
+          setIsDemoMode(false);
+        }
+      );
 
-    // LIMPIEZA: cuando el componente se desmonta, cancelamos la suscripción
-    // Esto evita "memory leaks" (fugas de memoria)
-    return () => subscription?.unsubscribe();
+      // LIMPIEZA: cuando el componente se desmonta, cancelamos la suscripción
+      // Esto evita "memory leaks" (fugas de memoria)
+      return () => subscription?.unsubscribe();
+    } catch (err) {
+      console.warn('Supabase no disponible, usando modo demo');
+      setIsDemoMode(true);
+    }
   }, []); // El [] significa: ejecutar SOLO una vez al cargar la app
 
   // ==========================================
@@ -95,7 +134,7 @@ function App() {
         */}
         <Route 
           path="/" 
-          element={user ? <Dashboard user={user} /> : <PreLoguin />} 
+          element={user ? <Dashboard user={user} isDemoMode={isDemoMode} /> : <PreLoguin isDemoMode={isDemoMode} />} 
         />
 
         {/* 
@@ -105,7 +144,7 @@ function App() {
         */}
         <Route 
           path="/login" 
-          element={user ? <Navigate to="/" replace /> : <PreLoguin />} 
+          element={user ? <Navigate to="/" replace /> : <PreLoguin isDemoMode={isDemoMode} />} 
         />
 
         {/* 

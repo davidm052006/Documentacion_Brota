@@ -16,7 +16,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../config/supabase';
 import { useNavigate } from 'react-router-dom';
 
-function Dashboard({ user }) {
+function Dashboard({ user, isDemoMode = false }) {
   // ==========================================
   // ESTADOS DEL COMPONENTE
   // ==========================================
@@ -35,11 +35,36 @@ function Dashboard({ user }) {
   const navigate = useNavigate();
 
   // ==========================================
+  // DATOS FICTICIOS PARA MODO DEMO
+  // ==========================================
+  const demoProfile = {
+    id: 'demo-123',
+    user_id: 'demo-user-123',
+    nombre: 'Juan',
+    apellido: 'Pérez',
+    edad: 19,
+    ciudad: 'Bogotá',
+    nivel_educativo: 'Bachiller',
+    condiciones_socioeconomicas: { estrato: 3 },
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  };
+
+  // ==========================================
   // EFECTO: CARGAR PERFIL DEL USUARIO DESDE LA BASE DE DATOS
   // ==========================================
   useEffect(() => {
     const getProfile = async () => {
       try {
+        // ========== MODO DEMO ==========
+        if (isDemoMode) {
+          console.log('📱 MODO DEMO: Usando datos ficticios');
+          setProfile(demoProfile);
+          setLoadingProfile(false);
+          return;
+        }
+
+        // ========== MODO REAL (Supabase) ==========
         // Consultamos la tabla PERFILES_USUARIO
         // Buscamos el perfil que tenga user_id igual al id del usuario actual
         const { data, error: err } = await supabase
@@ -62,13 +87,25 @@ function Dashboard({ user }) {
     if (user?.id) {
       getProfile();
     }
-  }, [user?.id]); // Solo ejecutar si user.id cambia
+  }, [user?.id, isDemoMode]); // Solo ejecutar si user.id cambia
 
   // ==========================================
   // FUNCIÓN: CERRAR SESIÓN
   // ==========================================
   const handleLogout = async () => {
     try {
+      // ========== MODO DEMO ==========
+      if (isDemoMode) {
+        console.log('📱 MODO DEMO: Cerrando sesión simulada');
+        // Limpiar localStorage
+        localStorage.removeItem('demoModeLoggedIn');
+        localStorage.removeItem('demoUserEmail');
+        localStorage.removeItem('demoUserName');
+        navigate('/');
+        return;
+      }
+
+      // ========== MODO REAL (Supabase) ==========
       // signOut() de Supabase cierra la sesión
       await supabase.auth.signOut();
       
@@ -131,6 +168,11 @@ function Dashboard({ user }) {
             <p className="text-xl text-gray-600">
               {profile?.nombre ? `Hola, ${profile.nombre}` : 'Tu plataforma de orientación vocacional'}
             </p>
+            {isDemoMode && (
+              <span className="inline-block mt-2 bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold">
+                📱 MODO DEMO - Datos ficticios
+              </span>
+            )}
           </div>
           
           <button

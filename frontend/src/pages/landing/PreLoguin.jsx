@@ -23,7 +23,7 @@ import Button from '../../components/Shared/Button';
 import Input from '../../components/Shared/Input';
 import PreLoginNavbar from './components/PreLoginNavbar';
 
-function PreLoguin() {
+function PreLoguin({ isDemoMode = false }) {
     // ==========================================
     // ESTADOS DEL COMPONENTE
     // ==========================================
@@ -102,6 +102,22 @@ function PreLoguin() {
         setLoading(true);
 
         try {
+            // ========== MODO DEMO ==========
+            if (isDemoMode) {
+                // En modo demo, solo simulamos login
+                console.log('📱 MODO DEMO: Simulando login con', email);
+                // Guardar en localStorage para que App.jsx lo vea después del refresh
+                localStorage.setItem('demoModeLoggedIn', 'true');
+                localStorage.setItem('demoUserEmail', email);
+                localStorage.setItem('demoUserName', 'Juan Demo');
+                setTimeout(() => {
+                    setLoading(false);
+                    window.location.href = '/';
+                }, 1500);
+                return;
+            }
+
+            // ========== MODO REAL (Supabase) ==========
             // Enviar credenciales a Supabase
             // signInWithPassword: Supabase valida el email/contraseña y crea la sesión
             const { error } = await supabase.auth.signInWithPassword({
@@ -142,6 +158,22 @@ function PreLoguin() {
         setLoading(true);
 
         try {
+            // ========== MODO DEMO ==========
+            if (isDemoMode) {
+                // En modo demo, solo simulamos signup
+                console.log('📱 MODO DEMO: Simulando registro de', nombre, apellido);
+                // Guardar en localStorage para que App.jsx lo vea después del refresh
+                localStorage.setItem('demoModeLoggedIn', 'true');
+                localStorage.setItem('demoUserEmail', email);
+                localStorage.setItem('demoUserName', nombre + ' ' + apellido);
+                setTimeout(() => {
+                    setLoading(false);
+                    window.location.href = '/';
+                }, 1500);
+                return;
+            }
+
+            // ========== MODO REAL (Supabase) ==========
             // Paso 1: Crear usuario en Supabase Auth
             // signUp crea un registro en la tabla auth.users
             const { data: authData, error: authError } = await supabase.auth.signUp({
@@ -189,7 +221,7 @@ function PreLoguin() {
     // RENDERIZACIÓN
     // ==========================================
     return (
-        <div className="flex w-full min-h-screen bg-[url('/fondo-planta-crema.jpg')] bg-cover bg-center bg-no-repeat relative">
+        <div className="flex w-full min-h-screen bg-[url('/fondo-planta-crema.jpg')] bg-cover bg-center relative">
             <PreLoginNavbar />
 
             {/* Contenedor principal dividido en dos grandes columnas */}
@@ -197,7 +229,7 @@ function PreLoguin() {
 
                 {/* --- CAJA IZQUIERDA (Información de Brota) --- */}
                 <div className="w-1/2 flex flex-col justify-center pr-10">
-                    <h1 className="text-[var(--color-primary)] mb-4 text-6xl font-bold tracking-tight">
+                    <h1 className="text-green-600 mb-4 text-6xl font-bold tracking-tight">
                         🌱 BROTA
                     </h1>
                     <h2 className="text-3xl font-medium text-black mb-10 leading-snug">
