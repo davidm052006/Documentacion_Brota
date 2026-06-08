@@ -512,4 +512,4 @@ const handleSendReset = async (e) => {
 
 **Estado**: 🟢 Proyecto listo para empezar
 **Última actualización**: 07-06-2026
-**Responsable**: David
+**Responsable**: 
