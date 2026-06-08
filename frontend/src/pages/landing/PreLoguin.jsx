@@ -344,7 +344,7 @@ function PreLoguin({ isDemoMode = false }) {
                                     : 'Crear cuenta'}
                             </Button>
                         </form>
-
+                        
                         {/* ENLACE PARA CAMBIAR DE MODO (entre login y signup) */}
                         <p className="text-sm text-center text-black mt-2">
                             {mode === 'login' ? (
@@ -376,6 +376,32 @@ function PreLoguin({ isDemoMode = false }) {
                                     </button>
                                 </>
                             )}
+                            {/* Botón de recuperar contraseña */}
+                        {mode === 'login' && (
+                            <p className="flex items-center justify-center text-sm text-black mt-1">
+                                <button
+                                    onClick={() => {
+                                        setMode('forgotPassword');
+                                        setError(null);
+                                        setValidationErrors({});
+                                    }}
+                                    className="text-[var(--color-primary)] font-bold hover:underline bg-transparent border-none cursor-pointer"
+                                >
+                                    ¿Olvidaste tu contraseña?
+                                </button>
+                            </p>
+                        )}
+                        {/* Enlaces debajo del botón */}
+                        <div className="text-right">
+                            {mode === 'forgotPassword' && (
+                                <>
+                                    <p className="text-center text- black-700 font-bold mb-4">
+                                    Ingresa tu correo electrónico y te enviaremos instrucciones para restablecer tu contraseña.
+                                    </p>
+                                </>
+                                
+                            )}
+                        </div>
                         </p>
                     </div>
 
