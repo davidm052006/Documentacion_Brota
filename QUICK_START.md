@@ -1,9 +1,9 @@
-# ⚡ QUICK START - PARA DAVID (Lee esto primero - 2 minutos)
+#  QUICK START - PARA DAVID (Lee esto primero - 2 minutos)
 
-## 🎯 Situación Actual
+## Situación Actual
 El equipo necesita trabajar en paralelo. He organizado todo en documentación.
 
-## 📋 Lo que ya hice
+##  Lo que ya hice
 
 Creé 7 documentos en `docs/` que explican:
 - Qué debe hacer Brayan (Backend)
@@ -11,7 +11,7 @@ Creé 7 documentos en `docs/` que explican:
 - Cómo coordinarse entre ellos
 - Cómo supervisar diariamente
 
-**Total:** ~21,000 palabras de documentación + código listo para usar
+**Total:** ~21000 palabras de documentación + código listo para usar
 
 ## 🚀 QUÉ HACER HOY
 
