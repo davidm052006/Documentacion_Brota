@@ -108,6 +108,7 @@ CREATE TABLE IF NOT EXISTS programas (
 -- ============================================
 -- 7. TABLA: convocatorias
 -- ============================================
+-- Validación BD: reemplazada expresión GENERATED STORED por BOOLEAN DEFAULT true debido al error PostgreSQL 42P17; la vigencia pública se controla mediante fecha_cierre >= CURRENT_DATE en la política RLS.
 CREATE TABLE IF NOT EXISTS convocatorias (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   programa_id UUID REFERENCES programas(id) ON DELETE CASCADE,
@@ -116,7 +117,7 @@ CREATE TABLE IF NOT EXISTS convocatorias (
   fecha_cierre DATE NOT NULL,
   cupos INTEGER,
   informacion_adicional TEXT,
-  activa BOOLEAN GENERATED ALWAYS AS (fecha_cierre >= CURRENT_DATE) STORED,
+  activa BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -191,7 +192,7 @@ CREATE POLICY "Usuarios pueden insertar su propio perfil" ON perfiles_usuario FO
 
 CREATE POLICY "Todos pueden ver instituciones activas" ON instituciones FOR SELECT USING (activa = true);
 CREATE POLICY "Todos pueden ver programas activos" ON programas FOR SELECT USING (activo = true);
-CREATE POLICY "Todos pueden ver convocatorias activas" ON convocatorias FOR SELECT USING (activa = true);
+CREATE POLICY "Todos pueden ver convocatorias activas" ON convocatorias FOR SELECT USING (fecha_cierre >= CURRENT_DATE);
 CREATE POLICY "Todos pueden ver cuestionarios activos" ON cuestionarios FOR SELECT USING (activo = true);
 CREATE POLICY "Todos pueden ver preguntas" ON preguntas FOR SELECT USING (true);
 
