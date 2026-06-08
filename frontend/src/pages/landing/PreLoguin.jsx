@@ -112,7 +112,7 @@ function PreLoguin({ isDemoMode = false }) {
                 localStorage.setItem('demoUserName', 'Juan Demo');
                 setTimeout(() => {
                     setLoading(false);
-                    window.location.href = '/';
+                    window.location.href = '/dashboard';
                 }, 1500);
                 return;
             }
@@ -129,9 +129,12 @@ function PreLoguin({ isDemoMode = false }) {
                 // Si Supabase rechaza las credenciales, mostramos el error
                 // (usuario no existe, contraseña incorrecta, etc.)
                 setError(error.message);
+            } else {
+                // Login exitoso - redirigir al dashboard
+                setTimeout(() => {
+                    window.location.href = '/dashboard';
+                }, 500);
             }
-            // Si no hay error, la sesión se crea automáticamente
-            // App.jsx detecta que user != null y redirige a Dashboard
         } catch (err) {
             console.error('Error en login:', err);
             setError('Ocurrió un error. Intenta nuevamente.');
@@ -168,7 +171,7 @@ function PreLoguin({ isDemoMode = false }) {
                 localStorage.setItem('demoUserName', nombre + ' ' + apellido);
                 setTimeout(() => {
                     setLoading(false);
-                    window.location.href = '/';
+                    window.location.href = '/dashboard';
                 }, 1500);
                 return;
             }

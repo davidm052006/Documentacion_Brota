@@ -128,29 +128,28 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* 
-          Ruta raíz (/) - La página principal
-          Si el usuario ESTÁ logueado → muestra Dashboard
-          Si el usuario NO está logueado → muestra PreLoguin (login)
+          Ruta raíz (/) - SIEMPRE muestra el LOGIN
+          Este es el primer punto de entrada de la aplicación
         */}
         <Route 
           path="/" 
-          element={user ? <Dashboard user={user} isDemoMode={isDemoMode} /> : <PreLoguin isDemoMode={isDemoMode} />} 
+          element={<PreLoguin isDemoMode={isDemoMode} />} 
         />
 
         {/* 
-          Ruta /login - Página de login
-          Si ya estás logueado, te redirige a / (no tiene sentido ir a login)
-          Si no estás logueado, muestra PreLoguin
+          Ruta /dashboard - Dashboard protegido
+          Si el usuario ESTÁ logueado → muestra Dashboard
+          Si NO está logueado → redirige a / (login)
         */}
         <Route 
-          path="/login" 
-          element={user ? <Navigate to="/" replace /> : <PreLoguin isDemoMode={isDemoMode} />} 
+          path="/dashboard" 
+          element={user ? <Dashboard user={user} isDemoMode={isDemoMode} /> : <Navigate to="/" replace />} 
         />
 
         {/* 
           Ruta comodín (*) - Cualquier ruta que no exista
           Por ejemplo: /xyz, /random, etc.
-          Te redirige a / (la página principal)
+          Te redirige a / (la página de login)
         */}
         <Route 
           path="*" 
