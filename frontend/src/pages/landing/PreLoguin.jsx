@@ -343,6 +343,7 @@ function PreLoguin({ isDemoMode = false }) {
                                     ? 'Ingresar'
                                     : 'Crear cuenta'}
                             </Button>
+
                         </form>
                         
                         {/* ENLACE PARA CAMBIAR DE MODO (entre login y signup) */}

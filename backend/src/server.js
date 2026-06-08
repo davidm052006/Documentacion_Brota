@@ -15,6 +15,9 @@ const express = require('express');
 // Sin esto, el navegador bloquearía las peticiones por seguridad
 const cors = require('cors');
 
+// Rutas de autenticación y recuperación de contraseña
+const authRoutes = require('./routes/auth');
+
 // dotenv: Lee el archivo .env y carga las variables de entorno
 require('dotenv').config();
 
@@ -40,6 +43,9 @@ app.use(cors());
 // express.json(): Permite recibir datos en formato JSON en las peticiones
 // Ejemplo: cuando el frontend envía { email: "user@example.com" }
 app.use(express.json());
+
+// Usar las rutas de auth para los endpoints de recuperación de contraseña
+app.use('/api', authRoutes);
 
 // --------------------------------------------
 // 4. RUTAS (ENDPOINTS) - Aquí defines las URLs
