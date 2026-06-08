@@ -13,5 +13,5 @@ function PreLoginNavbar() {
     )
 }
 
-// ¡ESTA ES LA LÍNEA QUE FALTABA!
+
 export default PreLoginNavbar;

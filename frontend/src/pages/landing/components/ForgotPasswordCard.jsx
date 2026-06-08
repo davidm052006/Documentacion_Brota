@@ -37,7 +37,7 @@ function ForgotPasswordCard({
           error={validationErrors.email}
         />
         <Button variant="secondary" className="w-full mt-2" disabled={loading} type="submit">
-          {loading ? 'Enviando...' : 'Enviar instrucciones'}
+          {loading ? 'Enviando...' : 'Enviar correo'}
         </Button>
       </form>
 
