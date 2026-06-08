@@ -173,7 +173,7 @@ function PreLoguin({ isDemoMode = false }) {
     setLoading(true);
     try {
       if (isDemoMode) {
-        setSuccessMessage('Se ha enviado un correo de recuperación simulado.');
+        setSuccessMessage('Se ha enviado un correo.');
         return;
       }
 
