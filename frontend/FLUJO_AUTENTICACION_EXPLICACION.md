@@ -1,6 +1,6 @@
-# 📚 EXPLICACIÓN COMPLETA DEL FLUJO DE AUTENTICACIÓN Y RUTAS
+# EXPLICACIÓN COMPLETA DEL FLUJO DE AUTENTICACIÓN Y RUTAS
 
-## 🎯 Resumen Rápido
+##  Resumen Rápido
 
 Cuando el usuario abre la app:
 
