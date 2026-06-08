@@ -142,8 +142,8 @@ function App() {
           Si NO está logueado → redirige a / (login)
         */}
         <Route 
-          path="/dashboard" 
-          element={user ? <Dashboard user={user} isDemoMode={isDemoMode} /> : <Navigate to="/" replace />} 
+          path="/dashboard/*" 
+          element={(user || isDemoMode) ? <Dashboard user={user} isDemoMode={isDemoMode} /> : <Navigate to="/" replace />} 
         />
 
         {/* 

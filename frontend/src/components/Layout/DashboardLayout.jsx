@@ -1,13 +1,18 @@
 // src/components/Layout/DashboardLayout.jsx
-import Sidebar from './Sidebar';
+import Sidebar from "./Sidebar";
 
 export default function DashboardLayout({ children, isDemoMode = false }) {
   return (
-    <div class="flex min-h-screen bg-gray-50">
-      <Sidebar isDemoMode={isDemoMode} />
-      <main className="flex-1 ml-56 min-h-screen">
-        {children}
-      </main>
+    <div className="relative min-h-screen bg-[url('/fondo-planta-crema.jpg')] bg-cover bg-center bg-fixed">
+      <div className="absolute inset-0 bg-transparent" />
+
+      <div className="relative flex min-h-screen z-10">
+        <Sidebar isDemoMode={isDemoMode} />
+        {/* Margen izquierdo igual al ancho del sidebar (w-56 = 224px) */}
+        <main className="flex-1 ml-56 min-h-screen bg-transparent">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }

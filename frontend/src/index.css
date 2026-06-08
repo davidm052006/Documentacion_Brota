@@ -9,3 +9,22 @@
   --color-surface: #ffffff;
   --radius-md: 8px;
 }
+
+/* Global background image for dashboard and app */
+html,
+body,
+#root {
+  min-height: 100vh;
+}
+
+body,
+#root {
+  background-image: url('/fondo-planta-crema.jpg');
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed;
+}
+
+body {
+  background-color: #faf3e6;
+}
