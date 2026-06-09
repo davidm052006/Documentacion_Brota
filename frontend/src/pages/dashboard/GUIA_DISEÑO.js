@@ -1,7 +1,7 @@
 // ==========================================
 // GUÍA PARA DISEÑADOR - CÓMO TRABAJAR EN DASHBOARD.JSX
 // ==========================================
-// Tu compañero de diseño debe leer esto para entender dónde y cómo agregar componentes visuales
+// Esta guía explica la estructura actual del dashboard y cómo agregar componentes.
 
 /*
 ╔═════════════════════════════════════════════════════════════════════════════╗
@@ -13,196 +13,163 @@
 Frontend > src > pages > dashboard > Dashboard.jsx
 
 
-📌 QUÉ ES EL DASHBOARD
-──────────────────────
-Es la página principal que VE EL USUARIO después de loguearse.
-Aquí puede ver su perfil, hacer cuestionarios, ver recomendaciones de carreras, etc.
-
-
-📌 CÓMO FUNCIONA ACTUALMENTE
+📌 QUÉ ES EL DASHBOARD ACTUAL
 ────────────────────────────
-Dashboard.jsx ya tiene:
+El Dashboard se muestra después del login y se renderiza dentro de
+DashboardLayout. El diseño actual incluye:
 
-✅ Autenticación integrada (recibe el usuario logueado)
-✅ Carga de perfil desde la BD (nombre, edad, ciudad, etc.)
-✅ Botón de cerrar sesión
-✅ Estructura HTML básica con Tailwind CSS
-✅ Manejo de errores
-
-
-📌 QUÉ FALTA (AQUÍ ENTRA TÚ)
-─────────────────────────────
-❌ Componentes visuales profesionales
-❌ Cuestionario vocacional
-❌ Vista de recomendaciones
-❌ Progreso del usuario
-❌ Navegación interna (pestañas, secciones)
-❌ Gráficos / estadísticas
+• Barra superior con saludo y notificaciones
+• HeroBanner (bienvenida / resumen)
+• ProfileCard (datos del usuario)
+• QuickActions (accesos rápidos)
+• ContinueSection (siguiente paso)
 
 
-📌 PASOS PARA DISEÑAR EL DASHBOARD
-──────────────────────────────────
+📌 DÓNDE TRABAJAR
+────────────────────────
+Modifica / amplía esta página aquí:
 
-1️⃣ ABRE EL ARCHIVO
-   Frontend > src > pages > dashboard > Dashboard.jsx
+Frontend > src > pages > dashboard > Dashboard.jsx
 
+También puedes crear componentes nuevos en:
 
-2️⃣ BUSCA ESTA SECCIÓN (ALREDEDOR DE LA LÍNEA 150)
-   /* ==================== ZONA DE DISEÑO PERSONALIZADO ==================== */
+Frontend > src > pages > dashboard > components
 
-   Es la sección azul con borde punteado donde dice "Área de Diseño Personalizado"
+Y luego importarlos con rutas relativas:
 
-
-3️⃣ REEMPLAZA ESA SECCIÓN CON TUS COMPONENTES
-   
-   Ejemplo básico:
-   ──────────────
-   <div className="grid grid-cols-3 gap-8">
-     {/* Card 1: Cuestionario */}
-     <div className="bg-white rounded-lg shadow p-6">
-       <h3 className="text-xl font-bold">📝 Cuestionario Vocacional</h3>
-       <p className="text-gray-600 mt-2">Descubre tu carrera ideal</p>
-       <button className="bg-green-500 text-white px-4 py-2 rounded mt-4">
-         Comenzar
-       </button>
-     </div>
-
-     {/* Card 2: Mis Resultados */}
-     <div className="bg-white rounded-lg shadow p-6">
-       <h3 className="text-xl font-bold">📊 Mis Resultados</h3>
-       <p className="text-gray-600 mt-2">Ver mis evaluaciones</p>
-       <button className="bg-blue-500 text-white px-4 py-2 rounded mt-4">
-         Ver
-       </button>
-     </div>
-
-     {/* Card 3: Recomendaciones */}
-     <div className="bg-white rounded-lg shadow p-6">
-       <h3 className="text-xl font-bold">⭐ Recomendaciones</h3>
-       <p className="text-gray-600 mt-2">Carreras sugeridas para ti</p>
-       <button className="bg-purple-500 text-white px-4 py-2 rounded mt-4">
-         Explorar
-       </button>
-     </div>
-   </div>
+import MiCard from './components/MiCard';
 
 
-4️⃣ USA TAILWIND CSS PARA ESTILOS
-   
-   No importes CSS adicional, ya está configurado Tailwind.
-   
-   Ejemplos útiles:
-   ───────────────
-   • Colores: bg-green-500, text-white, border-blue-300
-   • Espaciado: p-6 (padding), m-4 (margin), gap-8 (espacio entre items)
-   • Grid: grid grid-cols-3 (3 columnas), grid-cols-2 (2 columnas)
-   • Flexbox: flex flex-col (columna), flex-row (fila), justify-center, items-center
-   • Tamaños: w-1/2 (50% ancho), max-w-2xl (ancho máximo)
-   • Rounded: rounded-lg, rounded-xl
-   • Shadow: shadow, shadow-lg
-   • Hover: hover:bg-green-600, hover:shadow-xl
-   
-   📖 Documentación: https://tailwindcss.com
+📌 ESTADO Y DATOS DISPONIBLES
+────────────────────────────
+Dentro de Dashboard.jsx ya tienes:
+
+• profile: datos del usuario cargados desde la DB o modo demo
+• user: datos de sesión
+• isDemoMode: modo demo si no hay keys de Supabase
+
+Campos útiles:
+
+• profile?.nombre
+• profile?.edad
+• profile?.ciudad
+• profile?.nivel_educativo
+• profile?.condiciones_socioeconomicas
+• user?.email
 
 
-5️⃣ SI NECESITAS DATOS DEL USUARIO
-   
-   Ya los tienes disponibles:
-   
-   • profile.nombre (nombre completo)
-   • profile.edad
-   • profile.ciudad
-   • profile.nivel_educativo
-   • profile.condiciones_socioeconomicas (es JSON)
-   • user.email (correo del usuario)
-   
-   Ejemplo uso:
-   ───────────
-   <p>Hola, {profile?.nombre}</p>
-   <p>Tu ciudad: {profile?.ciudad}</p>
-
-
-6️⃣ SI NECESITAS AGREGAR MÁS FUNCIONALIDAD
-   
-   • Usa useState() para estados internos
-   • Usa useEffect() para cargar datos
-   • Consulta a la BD con supabase
-   
-   Ejemplo:
-   ───────
-   import { useEffect, useState } from 'react';
-   import { supabase } from '../../config/supabase';
-   
-   // Dentro del componente:
-   const [resultados, setResultados] = useState(null);
-   
-   useEffect(() => {
-     const fetchResultados = async () => {
-       const { data } = await supabase
-         .from('RESULTADOS')
-         .select('*')
-         .eq('perfil_usuario_id', profile.id);
-       setResultados(data);
-     };
-     if (profile?.id) fetchResultados();
-   }, [profile?.id]);
-
-
-7️⃣ CÓMO CONECTAR CON COMPONENTES
-   
-   Si el compañero crea componentes reutilizables en:
-   Frontend > src > components > ...
-   
-   Puedes importarlos:
-   ──────────────────
-   import MiComponente from '../../components/MiComponente';
-   
-   // Usar en el JSX
-   <MiComponente data={resultados} />
-
-
-📋 CHECKLIST ANTES DE COMMITEAR
+📌 CÓMO AGREGAR SECCIONES VISUALES
 ────────────────────────────────
+Reemplaza o amplía el contenido dentro de:
+
+<DashboardLayout isDemoMode={isDemoMode}>
+  <div className="p-6 max-w-6xl mx-auto">
+    ...
+  </div>
+</DashboardLayout>
+
+Por ejemplo, después de QuickActions podrías añadir:
+
+<div className="grid gap-6 lg:grid-cols-3 mb-6">
+  <div className="bg-white rounded-2xl shadow p-6">
+    <h3 className="text-xl font-bold">📝 Cuestionario Vocacional</h3>
+    <p className="text-gray-600 mt-2">Avanza en tu prueba</p>
+    <button className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg">
+      Comenzar
+    </button>
+  </div>
+  <div className="bg-white rounded-2xl shadow p-6">
+    <h3 className="text-xl font-bold">📊 Mi progreso</h3>
+    <p className="text-gray-600 mt-2">Sigue tus resultados</p>
+  </div>
+  <div className="bg-white rounded-2xl shadow p-6">
+    <h3 className="text-xl font-bold">⭐ Recomendaciones</h3>
+    <p className="text-gray-600 mt-2">Carreras sugeridas para ti</p>
+  </div>
+</div>
+
+
+📌 USA TAILWIND PARA ESTILOS
+──────────────────────────
+No necesitas CSS extra. Usa clases ya disponibles:
+
+• Espaciado: p-6, m-4, gap-6
+• Layout: grid, grid-cols-3, flex, items-center, justify-between
+• Fondo: bg-white, bg-green-50, bg-gray-50
+• Texto: text-gray-600, text-xl, font-bold
+• Bordes: rounded-lg, rounded-2xl
+• Sombras: shadow, shadow-lg
+• Hover: hover:bg-green-600, transition, duration-200
+
+
+📌 SI QUIERES CREAR COMPONENTES REUTILIZABLES
+──────────────────────────────────────────────
+Crea archivos nuevos en:
+
+Frontend > src > pages > dashboard > components
+
+Por ejemplo:
+
+src/pages/dashboard/components/ProgressCard.jsx
+
+Importa con:
+
+import ProgressCard from './components/ProgressCard';
+
+Y úsalo en el JSX:
+
+<ProgressCard profile={profile} />
+
+
+📌 SI NECESITAS MODIFICAR EL LAYOUT GENERAL
+────────────────────────────────────────────
+El layout principal está en:
+
+Frontend > src > components > Layout > DashboardLayout.jsx
+
+Ahí se define:
+
+• Fondo de la página
+• Sidebar fijo
+• Contenedor principal
+
+Sólo edítalo si necesitas cambiar el wrapper del dashboard,
+no para modificar contenido específico de la página.
+
+
+📌 CHECKLIST ANTES DE COMMITEAR
+──────────────────────────────
 ☐ El dashboard carga sin errores
-☐ Se ve bien en diferentes tamaños de pantalla (responsive)
-☐ Los datos del usuario se muestran correctamente
-☐ Los botones funcionan (al menos el de cerrar sesión)
-☐ No hay console.error() o advertencias
-☐ El código tiene comentarios donde sea necesario
+☐ El diseño es responsive
+☐ Los datos del perfil se muestran bien
+☐ No hay warnings importantes en la consola
+☐ Todo se ve bien en móvil y escritorio
 
 
-❓ PREGUNTAS FRECUENTES
+📌 CONSEJOS IMPORTANTES
 ──────────────────────
-
-P: ¿Puedo agregar JavaScript personalizado?
-R: Sí, usa useState() y useEffect() como en cualquier componente React.
-
-P: ¿Cómo hago un "modal" (ventana emergente)?
-R: Usa estado para mostrar/ocultar, y posicionamiento con Tailwind (fixed, z-50, etc.)
-
-P: ¿Cómo consulto la base de datos?
-R: Usa supabase. Ejemplos: supabase.from('TABLA').select('*'), .insert(), .update()
-
-P: ¿Debo modificar App.jsx?
-R: No es necesario. Trabaja solo en Dashboard.jsx a menos que necesites nuevas rutas.
-
-P: ¿Cómo importo componentes?
-R: import NombreComponente from '../../ruta/al/componente';
-
-P: El componente no se actualiza cuando cambio el código
-R: Guarda el archivo (Ctrl+S) y espera a que Vite lo recargue (unos 2-3 segundos)
+• Usa componentes pequeños y claros.
+• Evita duplicar código: extrae cards y bloques grandes.
+• Mantén el JSX limpio y ordenado.
+• Usa comentarios si agregas lógica compleja.
 
 
-🎨 INSPIRACIÓN Y RECURSOS
-─────────────────────────
-• Tailwind UI: https://tailwindui.com (ejemplos de componentes)
-• Tailwind CSS: https://tailwindcss.com/docs (documentación completa)
-• React: https://react.dev (si necesitas revisar hooks como useState)
-• Supabase: https://supabase.com/docs (para consultas a BD)
+🎨 IDEA RÁPIDA
+──────────────────────────────
+Agrega una sección nueva con tarjetas:
+
+<div className="grid gap-6 lg:grid-cols-2 mb-6">
+  <div className="bg-white rounded-2xl shadow p-6">
+    <h3 className="text-xl font-bold">Mi progreso</h3>
+    <p className="text-gray-600 mt-2">Tus avances y metas.</p>
+  </div>
+  <div className="bg-white rounded-2xl shadow p-6">
+    <h3 className="text-xl font-bold">Recomendaciones</h3>
+    <p className="text-gray-600 mt-2">Carreras y rutas formativas.</p>
+  </div>
+</div>
 
 
-═════════════════════════════════════════════════════════════════════════════
-
-¡Ahora estás listo para diseñar! 🚀
-
+¡Listo! Ya puedes diseñar el dashboard con la estructura real y sin depender
+de secciones antiguas que ya no existen.
 */
