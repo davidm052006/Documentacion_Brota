@@ -40,7 +40,7 @@ export default function Dashboard({ user, isDemoMode = false }) {
           return;
         }
         const { data, error: err } = await supabase
-          .from('PERFILES_USUARIO')
+          .from('perfiles_usuario')
           .select('*')
           .eq('user_id', user.id)
           .single();
