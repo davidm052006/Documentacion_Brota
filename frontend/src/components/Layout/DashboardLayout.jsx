@@ -3,7 +3,7 @@ import Sidebar from "./Sidebar";
 
 export default function DashboardLayout({ children, isDemoMode = false }) {
   return (
-    <div className="relative min-h-screen bg-[url('/fondo-planta-crema.jpg')] bg-cover bg-center bg-fixed">
+    <div className="relative min-h-screen bg-gradient-to-b from-emerald-100 to-emerald-300">
       <div className="absolute inset-0 bg-transparent" />
 
       <div className="relative flex min-h-screen z-10">
