@@ -11,7 +11,7 @@ function Input({ type = "text", value, onChange, placeholder, error, className =
                 className={`bg-[var(--color-surface)] text-black border px-4 py-3 text-base rounded-[var(--radius-md)] outline-none transition-all duration-200 w-full focus:ring-3 focus:ring-[var(--color-primary)]/30 placeholder:text-slate-400 ${
                     error
                         ? 'border-red-500 focus:border-red-500'
-                        : 'border-[var(--color-border)] focus:border-[var(--color-primary)]'
+                        : 'border-black focus:border-black'
                 } ${className}`}
             />
             {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
