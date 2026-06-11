@@ -10,9 +10,10 @@
 
 // createClient: Función que crea una conexión con Supabase
 const { createClient } = require('@supabase/supabase-js');
+const path = require('path');
 
-// dotenv: Lee el archivo .env
-require('dotenv').config();
+// dotenv: Lee el archivo .env en backend/src/.env
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
 // --------------------------------------------
 // 2. LEER VARIABLES DE ENTORNO
@@ -22,9 +23,8 @@ require('dotenv').config();
 // Estas variables contienen las "llaves" para conectarse a Supabase
 
 const supabaseUrl = process.env.SUPABASE_URL;
-// Ejemplo: 'https://mebwuyegutwgimqhvjlv.supabase.co'
-
 const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
+
 // Esta es la llave PRIVADA (solo para el backend)
 // Tiene permisos de administrador
 

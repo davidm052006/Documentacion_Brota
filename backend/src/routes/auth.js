@@ -5,7 +5,7 @@ const router = express.Router();
 const {
   forgotPassword,
   resetPassword
-} = require('../controllers/authController');
+} = require('../controllers/autocontroller');
 
 router.post(
   '/forgot-password',
