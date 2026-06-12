@@ -1,4 +1,5 @@
 // src/pages/dashboard/test-vocacional/TestVocacional.jsx
+// ── ORQUESTADOR VISUAL — la lógica va aquí cuando el backend la entregue ──
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../../../components/Layout/DashboardLayout';
@@ -7,45 +8,48 @@ import TestQuestion from './components/TestQuestion';
 import TestProgress from './components/TestProgress';
 import TestResult   from './components/TestResult';
 
+// ── Preguntas de demo (tu compañero las reemplazará con datos reales) ──
 const PREGUNTAS_DEMO = [
   {
     id: 'p1', texto: '¿Qué actividades disfrutas hacer en tu tiempo libre?',
     tipo: 'multiple',
     opciones: [
-      { id: 'a', label: 'Dibujar, diseñar o crear cosas',                icon: '🎨' },
-      { id: 'b', label: 'Pasar tiempo con amigos o conocer gente nueva',  icon: '🤝' },
-      { id: 'c', label: 'Jugar videojuegos',                              icon: '🎮' },
-      { id: 'd', label: 'Leer, escribir o aprender sobre temas nuevos',   icon: '📚' },
-      { id: 'e', label: 'Resolver problemas o retos mentales',            icon: '🧩' },
-      { id: 'f', label: 'Tomar fotos, grabar videos o editar contenido',  icon: '📷' },
-      { id: 'g', label: 'Programar, usar tecnología o investigar',        icon: '💻' },
-      { id: 'h', label: 'Hacer deporte o actividades al aire libre',      icon: '🏃' },
+      { id: 'a', label: 'Dibujar, diseñar o crear cosas',               icon: '🎨' },
+      { id: 'b', label: 'Pasar tiempo con amigos o conocer gente nueva', icon: '🤝' },
+      { id: 'c', label: 'Jugar videojuegos',                             icon: '🎮' },
+      { id: 'd', label: 'Leer, escribir o aprender sobre temas nuevos',  icon: '📚' },
+      { id: 'e', label: 'Resolver problemas o retos mentales',           icon: '🧩' },
+      { id: 'f', label: 'Tomar fotos, grabar videos o editar contenido', icon: '📷' },
+      { id: 'g', label: 'Programar, usar tecnología o investigar',       icon: '💻' },
+      { id: 'h', label: 'Hacer deporte o actividades al aire libre',     icon: '🏃' },
     ],
   },
   {
     id: 'p2', texto: '¿Cómo prefieres trabajar en tu día a día?',
     tipo: 'single',
     opciones: [
-      { id: 'a', label: 'Solo/a, con concentración total',           icon: '🧘' },
-      { id: 'b', label: 'En equipo colaborando con otros',           icon: '👥' },
-      { id: 'c', label: 'Siguiendo un plan organizado',              icon: '📋' },
-      { id: 'd', label: 'Con libertad creativa, sin reglas fijas',   icon: '🎨' },
-      { id: 'e', label: 'Con retos constantes y situaciones nuevas', icon: '⚡' },
-      { id: 'f', label: 'Ayudando o enseñando a otras personas',    icon: '🤲' },
+      { id: 'a', label: 'Solo/a, con concentración total',          icon: '🧘' },
+      { id: 'b', label: 'En equipo colaborando con otros',          icon: '👥' },
+      { id: 'c', label: 'Siguiendo un plan organizado',             icon: '📋' },
+      { id: 'd', label: 'Con libertad creativa, sin reglas fijas',  icon: '🎨' },
+      { id: 'e', label: 'Con retos constantes y situaciones nuevas',icon: '⚡' },
+      { id: 'f', label: 'Ayudando o enseñando a otras personas',   icon: '🤲' },
     ],
   },
 ];
 
 export default function TestVocacional({ user, isDemoMode = false }) {
+  console.log('🟢 TestVocacional montado');
   const navigate = useNavigate();
 
-  const [fase, setFase]                   = useState('intro');
-  const [preguntaIdx, setPreguntaIdx]     = useState(0);
-  const [seleccionadas, setSeleccionadas] = useState({});
+  // ── Estado de UI (tu compañero reemplazará esto con el hook real) ──
+  const [fase, setFase]               = useState('intro');   // intro | test | resultado
+  const [preguntaIdx, setPreguntaIdx] = useState(0);
+  const [seleccionadas, setSeleccionadas] = useState({});    // { [preguntaId]: string[] }
 
   const totalPreguntas = PREGUNTAS_DEMO.length;
   const preguntaActual = PREGUNTAS_DEMO[preguntaIdx];
-  const progreso       = Math.round((preguntaIdx / totalPreguntas) * 100);
+  const progreso       = Math.round(((preguntaIdx) / totalPreguntas) * 100);
   const idsActuales    = seleccionadas[preguntaActual?.id] ?? [];
   const puedeAvanzar   = idsActuales.length > 0;
 
@@ -77,7 +81,7 @@ export default function TestVocacional({ user, isDemoMode = false }) {
     <DashboardLayout isDemoMode={isDemoMode}>
       <div className="p-6 max-w-6xl mx-auto">
 
-        {/* Top bar */}
+        {/* ── Top bar ── */}
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-lg font-bold text-gray-800">Cuestionario vocacional</h1>
@@ -95,14 +99,18 @@ export default function TestVocacional({ user, isDemoMode = false }) {
           )}
         </div>
 
-        {/* Intro */}
+        {/* ── FASE: Intro ── */}
         {fase === 'intro' && (
-          <TestIntro onStart={() => setFase('test')} loading={false} />
+          <TestIntro
+            onStart={() => setFase('test')}
+            loading={false}
+          />
         )}
 
-        {/* Preguntas */}
+        {/* ── FASE: Preguntas ── */}
         {fase === 'test' && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Pregunta (2/3) */}
             <div className="lg:col-span-2">
               <TestQuestion
                 pregunta={preguntaActual}
@@ -117,6 +125,7 @@ export default function TestVocacional({ user, isDemoMode = false }) {
                 esUltima={preguntaIdx === totalPreguntas - 1}
               />
             </div>
+            {/* Progreso (1/3) */}
             <div className="lg:col-span-1">
               <TestProgress
                 preguntaActual={preguntaIdx}
@@ -127,7 +136,7 @@ export default function TestVocacional({ user, isDemoMode = false }) {
           </div>
         )}
 
-        {/* Resultado */}
+        {/* ── FASE: Resultado ── */}
         {fase === 'resultado' && (
           <TestResult
             onVerRutas={() => navigate('/dashboard/rutas')}
