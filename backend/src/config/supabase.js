@@ -21,7 +21,7 @@ require('dotenv').config();
 // process.env.VARIABLE_NAME lee variables del archivo .env
 // Estas variables contienen las "llaves" para conectarse a Supabase
 
-const supabaseUrl = process.env.SUPABASE_URL; https://mebwuyegutwgimqhvjlv.supabase.co
+const supabaseUrl = process.env.SUPABASE_URL;
 // Ejemplo: 'https://mebwuyegutwgimqhvjlv.supabase.co'
 
 const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
