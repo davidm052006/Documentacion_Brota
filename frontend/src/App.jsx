@@ -5,6 +5,22 @@ import { supabase } from './config/supabase';
 import Login          from './pages/landing/Login';
 import Dashboard      from './pages/dashboard/Dashboard';
 import TestVocacional from './pages/dashboard/test-vocacional/TestVocacional';
+import DashboardLayout from './components/Layout/DashboardLayout';
+
+// Placeholder para rutas aún no implementadas
+function PaginaEnConstruccion({ titulo }) {
+  return (
+    <DashboardLayout>
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center">
+          <p className="text-4xl mb-4">🚧</p>
+          <p className="text-gray-700 font-semibold text-lg">{titulo}</p>
+          <p className="text-gray-400 text-sm mt-1">Esta sección está en construcción</p>
+        </div>
+      </div>
+    </DashboardLayout>
+  );
+}
 
 function App() {
   const [user, setUser]             = useState(null);
@@ -52,7 +68,7 @@ function App() {
       const { data: { subscription } } = supabase.auth.onAuthStateChange(
         (event, session) => {
           setUser(session?.user || null);
-          setIsDemoMode(false);
+          // No tocar isDemoMode aquí para no interrumpir sesiones activas
         }
       );
       return () => subscription?.unsubscribe();
@@ -78,9 +94,13 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login isDemoMode={isDemoMode} />} />
+        {/* Punto de entrada */}
+        <Route
+          path="/"
+          element={<Login isDemoMode={isDemoMode} />}
+        />
 
-        {/* Test vocacional — ANTES que /dashboard para evitar conflictos */}
+        {/* Test vocacional — DEBE ir antes que /dashboard */}
         <Route
           path="/dashboard/test"
           element={puedeAcceder ? <TestVocacional user={user} isDemoMode={isDemoMode} /> : <Navigate to="/" replace />}
@@ -92,6 +112,24 @@ function App() {
           element={puedeAcceder ? <Dashboard user={user} isDemoMode={isDemoMode} /> : <Navigate to="/" replace />}
         />
 
+        {/* Rutas del dashboard — en construcción */}
+        {[
+          { path: '/dashboard/profesiones', titulo: 'Explorar profesiones' },
+          { path: '/dashboard/rutas',       titulo: 'Rutas formativas' },
+          { path: '/dashboard/recursos',    titulo: 'Recursos' },
+          { path: '/dashboard/favoritos',   titulo: 'Favoritos' },
+          { path: '/dashboard/comunidad',   titulo: 'Comunidad' },
+          { path: '/dashboard/mensajes',    titulo: 'Mensajes' },
+          { path: '/dashboard/ajustes',     titulo: 'Ajustes' },
+        ].map(({ path, titulo }) => (
+          <Route
+            key={path}
+            path={path}
+            element={puedeAcceder ? <PaginaEnConstruccion titulo={titulo} /> : <Navigate to="/" replace />}
+          />
+        ))}
+
+        {/* Comodín */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
