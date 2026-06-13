@@ -43,11 +43,24 @@ export const sendPasswordReset = async (email) => {
     if (typeof supabase.auth.resetPasswordForEmail !== 'function') {
       return { success: false, error: 'Funcionalidad de recuperación no disponible.' };
     }
-    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
     if (error) return { success: false, error: translateAuthError(error.message) };
     return { success: true };
   } catch (err) {
     console.error('authService.sendPasswordReset:', err);
+    return { success: false, error: 'Error de conexión. Intenta nuevamente.' };
+  }
+};
+
+export const updatePassword = async (newPassword) => {
+  try {
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) return { success: false, error: translateAuthError(error.message) };
+    return { success: true };
+  } catch (err) {
+    console.error('authService.updatePassword:', err);
     return { success: false, error: 'Error de conexión. Intenta nuevamente.' };
   }
 };

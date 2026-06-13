@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { supabase } from './config/supabase';
 import Login          from './pages/landing/Login';
+import ResetPassword  from './pages/landing/ResetPassword';
 import Dashboard      from './pages/dashboard/Dashboard';
 import TestVocacional from './pages/dashboard/test-vocacional/TestVocacional';
 import DashboardLayout from './components/Layout/DashboardLayout';
@@ -66,7 +67,7 @@ function App() {
 
     try {
       const { data: { subscription } } = supabase.auth.onAuthStateChange(
-        (event, session) => {
+        (_event, session) => {
           setUser(session?.user || null);
           // No tocar isDemoMode aquí para no interrumpir sesiones activas
         }
@@ -98,6 +99,12 @@ function App() {
         <Route
           path="/"
           element={<Login isDemoMode={isDemoMode} />}
+        />
+
+        {/* Recuperación de contraseña — accesible sin sesión */}
+        <Route
+          path="/reset-password"
+          element={<ResetPassword />}
         />
 
         {/* Test vocacional — DEBE ir antes que /dashboard */}
