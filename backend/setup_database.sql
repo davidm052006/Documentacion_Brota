@@ -138,6 +138,39 @@ CREATE TABLE IF NOT EXISTS recomendaciones (
 );
 
 -- ============================================
+-- 8. TABLA: opciones
+-- ============================================
+CREATE TABLE IF NOT EXISTS opciones (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  pregunta_id UUID REFERENCES preguntas(id) ON DELETE CASCADE,
+  label       TEXT NOT NULL,
+  icon        TEXT,
+  orden       INTEGER NOT NULL DEFAULT 0
+);
+
+-- ============================================
+-- 8. TABLA: pesos_opciones
+-- ============================================
+CREATE TABLE IF NOT EXISTS pesos_opciones (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  opcion_id  UUID REFERENCES opciones(id) ON DELETE CASCADE,
+  categoria  TEXT NOT NULL,  -- 'tecnologia', 'diseño', 'negocios', etc.
+  puntos     INTEGER NOT NULL DEFAULT 1 CHECK (puntos > 0)
+);
+
+-- ============================================
+-- 8. TABLA: perfiles_vocacionales
+-- ============================================
+CREATE TABLE IF NOT EXISTS perfiles_vocacionales (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  categoria   TEXT UNIQUE NOT NULL,  
+  emoji       TEXT NOT NULL,
+  titulo      TEXT NOT NULL,
+  descripcion TEXT NOT NULL,
+  color       TEXT NOT NULL DEFAULT 'emerald'
+    CHECK (color IN ('amber','emerald','blue','purple','rose','teal'))
+);
+-- ============================================
 -- ÍNDICES PARA OPTIMIZACIÓN
 -- ============================================
 
@@ -148,6 +181,9 @@ CREATE INDEX IF NOT EXISTS idx_convocatorias_activa ON convocatorias(activa);
 CREATE INDEX IF NOT EXISTS idx_preguntas_cuestionario ON preguntas(cuestionario_id);
 CREATE INDEX IF NOT EXISTS idx_resultados_perfil ON resultados(perfil_usuario_id);
 CREATE INDEX IF NOT EXISTS idx_recomendaciones_resultado ON recomendaciones(resultado_id);
+CREATE INDEX IF NOT EXISTS idx_opciones_pregunta ON opciones(pregunta_id);
+CREATE INDEX IF NOT EXISTS idx_pesos_opcion ON pesos_opciones(opcion_id);
+CREATE INDEX IF NOT EXISTS idx_programas_categoria ON programas(categoria);
 
 -- ============================================
 -- TRIGGERS PARA UPDATED_AT AUTOMÁTICO
@@ -184,6 +220,12 @@ ALTER TABLE cuestionarios ENABLE ROW LEVEL SECURITY;
 ALTER TABLE preguntas ENABLE ROW LEVEL SECURITY;
 ALTER TABLE resultados ENABLE ROW LEVEL SECURITY;
 ALTER TABLE recomendaciones ENABLE ROW LEVEL SECURITY;
+ALTER TABLE programas
+  ADD COLUMN IF NOT EXISTS categoria TEXT;
+ALTER TABLE opciones            ENABLE ROW LEVEL SECURITY;
+ALTER TABLE pesos_opciones      ENABLE ROW LEVEL SECURITY;
+ALTER TABLE perfiles_vocacionales ENABLE ROW LEVEL SECURITY;
+
 
 -- Políticas
 CREATE POLICY "Usuarios pueden ver su propio perfil" ON perfiles_usuario FOR SELECT USING (auth.uid() = user_id);
@@ -213,6 +255,15 @@ CREATE POLICY "Usuarios pueden ver sus propias recomendaciones" ON recomendacion
       )
     )
   );
+
+CREATE POLICY "Todos pueden ver opciones"
+  ON opciones FOR SELECT USING (true);
+
+CREATE POLICY "Todos pueden ver pesos"
+  ON pesos_opciones FOR SELECT USING (true);
+
+CREATE POLICY "Todos pueden ver perfiles vocacionales"
+  ON perfiles_vocacionales FOR SELECT USING (true);
 
 -- ============================================
 -- VERIFICACIÓN

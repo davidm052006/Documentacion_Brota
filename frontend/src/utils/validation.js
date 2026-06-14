@@ -4,6 +4,20 @@ export const isValidEmail = (value) => {
 };
 
 export const isValidPassword = (value) => value.length >= 6;
+export const getPasswordStrength = (password) => {
+  let score = 0;
+
+  if (password.length >= 8) score++;
+  if (/[a-z]/.test(password)) score++;
+  if (/[A-Z]/.test(password)) score++;
+  if (/\d/.test(password)) score++;
+  if (/[^A-Za-z0-9]/.test(password)) score++;
+
+  if (score <= 2) return 'Débil';
+  if (score === 3) return 'Media';
+  return 'Fuerte';
+};
+
 
 export const validateFields = (fields, mode) => {
   const { email, password, nombre, apellido, confirmPassword,

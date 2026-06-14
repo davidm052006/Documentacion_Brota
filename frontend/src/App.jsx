@@ -3,12 +3,13 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { supabase } from './config/supabase';
 import Login          from './pages/landing/Login';
+import Servicios      from './pages/landing/Servicios';
+import SaberMas       from './pages/landing/SaberMas';   // ← NUEVO
 import ResetPassword  from './pages/landing/ResetPassword';
 import Dashboard      from './pages/dashboard/Dashboard';
 import TestVocacional from './pages/dashboard/test-vocacional/TestVocacional';
 import DashboardLayout from './components/Layout/DashboardLayout';
 
-// Placeholder para rutas aún no implementadas
 function PaginaEnConstruccion({ titulo }) {
   return (
     <DashboardLayout>
@@ -67,10 +68,7 @@ function App() {
 
     try {
       const { data: { subscription } } = supabase.auth.onAuthStateChange(
-        (_event, session) => {
-          setUser(session?.user || null);
-          // No tocar isDemoMode aquí para no interrumpir sesiones activas
-        }
+        (_event, session) => { setUser(session?.user || null); }
       );
       return () => subscription?.unsubscribe();
     } catch (err) {
@@ -95,31 +93,18 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Punto de entrada */}
-        <Route
-          path="/"
-          element={<Login isDemoMode={isDemoMode} />}
-        />
-
-        {/* Recuperación de contraseña — accesible sin sesión */}
-        <Route
-          path="/reset-password"
-          element={<ResetPassword />}
-        />
-
-        {/* Test vocacional — DEBE ir antes que /dashboard */}
+        <Route path="/"           element={<Login isDemoMode={isDemoMode} />} />
+        <Route path="/servicios"  element={<Servicios />} />
+        <Route path="/saber-mas"  element={<SaberMas />} />   {/* ← NUEVO */}
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route
           path="/dashboard/test"
           element={puedeAcceder ? <TestVocacional user={user} isDemoMode={isDemoMode} /> : <Navigate to="/" replace />}
         />
-
-        {/* Dashboard principal */}
         <Route
           path="/dashboard"
           element={puedeAcceder ? <Dashboard user={user} isDemoMode={isDemoMode} /> : <Navigate to="/" replace />}
         />
-
-        {/* Rutas del dashboard — en construcción */}
         {[
           { path: '/dashboard/profesiones', titulo: 'Explorar profesiones' },
           { path: '/dashboard/rutas',       titulo: 'Rutas formativas' },
@@ -135,8 +120,6 @@ function App() {
             element={puedeAcceder ? <PaginaEnConstruccion titulo={titulo} /> : <Navigate to="/" replace />}
           />
         ))}
-
-        {/* Comodín */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

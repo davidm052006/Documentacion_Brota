@@ -1,17 +1,5 @@
-// ============================================================
-// Login.jsx
-// Página de autenticación — login, registro y recuperación.
-//
-// RESPONSABILIDAD: layout y selección de tarjeta. Nada más.
-// Toda la lógica vive en useAuth (hooks/useAuth.js) y
-// toda la conexión con Supabase vive en authService (services/).
-//
-// TARJETAS:
-//   'login'          → LoginCard
-//   'signup'         → SignupCard
-//   'forgotPassword' → ForgotPasswordCard
-// ============================================================
-
+// src/pages/landing/Login.jsx
+import { useNavigate } from 'react-router-dom';   // ← NUEVO
 import LoginNavbar from './components/LoginNavbar';
 import LoginCard from './components/LoginCard';
 import SignupCard from './components/SignupCard';
@@ -19,6 +7,7 @@ import ForgotPasswordCard from './components/ForgotPasswordCard';
 import { useAuth } from '../../hooks/useAuth';
 
 function Login() {
+  const navigate = useNavigate();   // ← NUEVO
   const {
     mode, email, password, confirmPassword, nombre, apellido,
     nivelEducativo, grado, edad, ciudad, telefono,
@@ -85,10 +74,17 @@ function Login() {
             Potenciando el crecimiento digital <br /> de tu negocio desde la raíz.
           </h2>
           <div className="flex gap-4">
-            <button className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-base font-semibold rounded-[var(--radius-md)] bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] shadow-[0_4px_6px_-1px_rgba(43,207,43,0.3)] hover:shadow-[0_6px_8px_-1px_rgba(43,207,43,0.4)] transition-all duration-200">
+            {/* ← onClick actualizado */}
+            <button
+              onClick={() => navigate('/servicios')}
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-base font-semibold rounded-[var(--radius-md)] bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] shadow-[0_4px_6px_-1px_rgba(43,207,43,0.3)] hover:shadow-[0_6px_8px_-1px_rgba(43,207,43,0.4)] transition-all duration-200"
+            >
               Nuestros Servicios
             </button>
-            <button className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-base font-semibold rounded-[var(--radius-md)] bg-transparent text-black border-2 border-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-black transition-all duration-200">
+            <button
+              onClick={() => navigate('/saber-mas')}
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-base font-semibold rounded-[var(--radius-md)] bg-transparent text-black border-2 border-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-black transition-all duration-200"
+            >
               Saber más
             </button>
           </div>
