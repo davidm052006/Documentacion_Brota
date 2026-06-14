@@ -58,8 +58,6 @@ function SignupCard({
           onChange={onEmailChange}
           error={validationErrors.email}
         />
-<<<<<<< HEAD
-=======
         
         <Input
         placeholder="Contraseña..."
@@ -98,7 +96,7 @@ function SignupCard({
         onChange={onConfirmPasswordChange}
         error={validationErrors.confirmPassword}
         />
->>>>>>> 252ba5125f97a964cc0a65472c9eb57998493980
+
         
         <Input
         placeholder="Contraseña..."
