@@ -76,7 +76,7 @@ function Login() {
               Nuestros Servicios
             </button>
             <button
-              onClick={() => navigate('/servicios')}
+              onClick={() => navigate('/saber-mas')}
               className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-base font-semibold rounded-[var(--radius-md)] bg-transparent text-black border-2 border-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-black transition-all duration-200"
             >
               Saber más

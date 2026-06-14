@@ -144,9 +144,12 @@ export default function Servicios() {
                 <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center text-2xl mb-3">{s.icon}</div>
                 <h3 className="font-bold text-gray-800 text-sm mb-2">{s.titulo}</h3>
                 <p className="text-xs text-gray-500 mb-4">{s.descripcion}</p>
-                <div className="flex items-center gap-2 text-xs text-green-600 font-medium">
+                <button
+                  onClick={() => navigate('/saber-mas')}
+                  className="flex items-center gap-2 text-xs text-green-600 font-medium hover:underline"
+                >
                   <span>→</span> <span>Saber más</span>
-                </div>
+                </button>
               </div>
             ))}
           </div>
