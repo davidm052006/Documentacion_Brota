@@ -63,10 +63,17 @@ function SignupCard({
         />
         
         <Input
-          placeholder="Formación académica..."
-          value={validationErrors.formacionAcademica}
-          onChange={() => {}}
-          error={validationErrors.formacionAcademica}
+        placeholder="Nivel educativo..."
+        value={validationErrors.nivelEducativo}
+        onChange={() => {}}
+        error={validationErrors.nivelEducativo}
+        />
+
+        <Input
+        placeholder="Grado..."
+        value={validationErrors.grado}
+        onChange={() => {}}
+        error={validationErrors.grado}
         />
 
         <Input 
