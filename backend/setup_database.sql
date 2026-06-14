@@ -152,7 +152,11 @@ CREATE TABLE IF NOT EXISTS recomendaciones (
 );
 
 -- ============================================
+<<<<<<< HEAD
 -- 10. TABLA: opciones
+=======
+-- 9. TABLA: opciones
+>>>>>>> 5495e16218e46b319ac9ee1d4fcc03369b7aa602
 -- ============================================
 CREATE TABLE IF NOT EXISTS opciones (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -163,7 +167,11 @@ CREATE TABLE IF NOT EXISTS opciones (
 );
 
 -- ============================================
+<<<<<<< HEAD
 -- 11. TABLA: pesos_opciones
+=======
+-- 10. TABLA: pesos_opciones
+>>>>>>> 5495e16218e46b319ac9ee1d4fcc03369b7aa602
 -- ============================================
 CREATE TABLE IF NOT EXISTS pesos_opciones (
   id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -173,7 +181,11 @@ CREATE TABLE IF NOT EXISTS pesos_opciones (
 );
 
 -- ============================================
+<<<<<<< HEAD
 -- 12. TABLA: perfiles_vocacionales
+=======
+-- 11. TABLA: perfiles_vocacionales
+>>>>>>> 5495e16218e46b319ac9ee1d4fcc03369b7aa602
 -- ============================================
 CREATE TABLE IF NOT EXISTS perfiles_vocacionales (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),

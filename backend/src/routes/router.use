@@ -1,0 +1,150 @@
+// Helper para manejar errores de Supabase
+async function handleSupabase(res, promise) {
+  const { data, error } = await promise;
+  if (error) return res.status(500).json({ error: error.message });
+  res.json(data || { success: true });
+}
+
+// ============ USUARIOS ============
+router.get('/usuarios', async (req, res) => {
+  await handleSupabase(res, supabase.from('perfiles').select(', perfiles_usuario()').order('created_at', { ascending: false }));
+});
+
+router.patch('/usuarios/:id/rol', async (req, res) => {
+  await handleSupabase(res, supabase.from('perfiles').update({ rol: req.body.rol }).eq('id', req.params.id).select());
+});
+
+router.patch('/usuarios/:id/activo', async (req, res) => {
+  await handleSupabase(res, supabase.from('perfiles').update({ activo: req.body.activo }).eq('id', req.params.id).select());
+});
+
+router.delete('/usuarios/:id', async (req, res) => {
+  await supabase.rpc('delete_user', { user_id: req.params.id });
+  await handleSupabase(res, supabase.from('perfiles').delete().eq('id', req.params.id));
+});
+
+// ============ INSTITUCIONES ============
+router.get('/instituciones', async (req, res) => {
+  await handleSupabase(res, supabase.from('instituciones').select('*').order('nombre'));
+});
+
+router.post('/instituciones', async (req, res) => {
+  await handleSupabase(res, supabase.from('instituciones').insert(req.body).select().single());
+});
+
+router.patch('/instituciones/:id', async (req, res) => {
+  await handleSupabase(res, supabase.from('instituciones').update(req.body).eq('id', req.params.id).select().single());
+});
+
+router.delete('/instituciones/:id', async (req, res) => {
+  await handleSupabase(res, supabase.from('instituciones').delete().eq('id', req.params.id));
+});
+
+// ============ PROGRAMAS ============
+router.get('/programas', async (req, res) => {
+  await handleSupabase(res, supabase.from('programas').select('*, instituciones(nombre)').order('nombre'));
+});
+
+router.post('/programas', async (req, res) => {
+  await handleSupabase(res, supabase.from('programas').insert(req.body).select().single());
+});
+
+router.patch('/programas/:id', async (req, res) => {
+  await handleSupabase(res, supabase.from('programas').update(req.body).eq('id', req.params.id).select().single());
+});
+
+router.delete('/programas/:id', async (req, res) => {
+  await handleSupabase(res, supabase.from('programas').delete().eq('id', req.params.id));
+});
+
+// ============ CONVOCATORIAS ============
+router.get('/convocatorias', async (req, res) => {
+  await handleSupabase(res, supabase.from('convocatorias').select('*, programas(nombre, instituciones(nombre))').order('fecha_apertura', { ascending: false }));
+});
+
+router.post('/convocatorias', async (req, res) => {
+  await handleSupabase(res, supabase.from('convocatorias').insert(req.body).select().single());
+});
+
+router.patch('/convocatorias/:id', async (req, res) => {
+  await handleSupabase(res, supabase.from('convocatorias').update(req.body).eq('id', req.params.id).select().single());
+});
+
+router.delete('/convocatorias/:id', async (req, res) => {
+  await handleSupabase(res, supabase.from('convocatorias').delete().eq('id', req.params.id));
+});
+
+// ============ CUESTIONARIOS ============
+router.get('/cuestionarios', async (req, res) => {
+  await handleSupabase(res, supabase.from('cuestionarios').select('*').order('created_at', { ascending: false }));
+});
+
+router.post('/cuestionarios', async (req, res) => {
+  await handleSupabase(res, supabase.from('cuestionarios').insert(req.body).select().single());
+});
+
+router.patch('/cuestionarios/:id', async (req, res) => {
+  await handleSupabase(res, supabase.from('cuestionarios').update(req.body).eq('id', req.params.id).select().single());
+});
+
+router.delete('/cuestionarios/:id', async (req, res) => {
+  await handleSupabase(res, supabase.from('cuestionarios').delete().eq('id', req.params.id));
+});
+
+// ============ PREGUNTAS ============
+router.get('/preguntas', async (req, res) => {
+  const { cuestionario_id } = req.query;
+  let query = supabase.from('preguntas').select(', opciones()').order('orden');
+  if (cuestionario_id) query = query.eq('cuestionario_id', cuestionario_id);
+  await handleSupabase(res, query);
+});
+
+router.post('/preguntas', async (req, res) => {
+  await handleSupabase(res, supabase.from('preguntas').insert(req.body).select().single());
+});
+
+router.patch('/preguntas/:id', async (req, res) => {
+  await handleSupabase(res, supabase.from('preguntas').update(req.body).eq('id', req.params.id).select().single());
+});
+
+router.delete('/preguntas/:id', async (req, res) => {
+  await handleSupabase(res, supabase.from('preguntas').delete().eq('id', req.params.id));
+});
+
+// ============ OPCIONES ============
+router.post('/opciones', async (req, res) => {
+  await handleSupabase(res, supabase.from('opciones').insert(req.body).select().single());
+});
+
+router.patch('/opciones/:id', async (req, res) => {
+  await handleSupabase(res, supabase.from('opciones').update(req.body).eq('id', req.params.id).select().single());
+});
+
+router.delete('/opciones/:id', async (req, res) => {
+  await handleSupabase(res, supabase.from('opciones').delete().eq('id', req.params.id));
+});
+
+// ============ PERFILES VOCACIONALES ============
+router.get('/perfiles-vocacionales', async (req, res) => {
+  await handleSupabase(res, supabase.from('perfiles_vocacionales').select('*').order('categoria'));
+});
+
+router.post('/perfiles-vocacionales', async (req, res) => {
+  await handleSupabase(res, supabase.from('perfiles_vocacionales').insert(req.body).select().single());
+});
+
+router.patch('/perfiles-vocacionales/:id', async (req, res) => {
+  await handleSupabase(res, supabase.from('perfiles_vocacionales').update(req.body).eq('id', req.params.id).select().single());
+});
+
+router.delete('/perfiles-vocacionales/:id', async (req, res) => {
+  await handleSupabase(res, supabase.from('perfiles_vocacionales').delete().eq('id', req.params.id));
+});
+
+module.exports = router;
+Actualizar backend/src/server.js
+Agrega esta línea junto a las otras rutas:
+JavaScript
+const adminRoutes = require('./routes/admin');
+// ... después de app.use('/api/perfil', perfilRoutes);
+app.use('/api/admin', adminRoutes);

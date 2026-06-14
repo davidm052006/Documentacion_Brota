@@ -89,28 +89,6 @@ function SignupCard({
           </div>
         )}
 
-        {password && (
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-medium text-gray-700">Fortaleza de contraseña</p>
-              <span className={`text-xs font-semibold px-2 py-1 rounded ${
-                getPasswordStrength(password) === 'Débil' ? 'bg-red-100 text-red-700' :
-                getPasswordStrength(password) === 'Media' ? 'bg-yellow-100 text-yellow-700' :
-                'bg-[var(--color-primary)]/10 text-[var(--color-primary)]'
-              }`}>
-                {getPasswordStrength(password)}
-              </span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-              <div className={`h-full transition-all duration-300 ${
-                getPasswordStrength(password) === 'Débil' ? 'w-1/3 bg-red-500' :
-                getPasswordStrength(password) === 'Media' ? 'w-2/3 bg-yellow-500' :
-                'w-full bg-[var(--color-primary)]'
-              }`} />
-            </div>
-          </div>
-        )}
-
         <Input
         placeholder="Confirma tu contraseña..."
         type="password"
@@ -119,18 +97,18 @@ function SignupCard({
         error={validationErrors.confirmPassword}
         />
 
-        <div className="w-full">
-          <select
-            value={nivelEducativo}
-            onChange={(e) => onNivelEducativoChange(e.target.value)}
-            className={`w-full px-4 py-3 rounded-md border text-base font-sans 
-            bg-[var(--color-surface)] text-gray-400 outline-none transition-all duration-200
-              ${validationErrors.nivelEducativo 
-                ? 'border-black -500 focus:border-black-500' 
-                : 'border-black  focus:border-black'}
-            `}
-          >
-    <option value="">Selecciona tu nivel educativo</option>
+<div className="w-full relative">
+  <select
+    value={nivelEducativo}
+    onChange={(e) => onNivelEducativoChange(e.target.value)}
+    className={`bg-[var(--color-surface)] text-gray-400 border px-4 py-3 text-base rounded-[var(--radius-md)]
+    outline-none transition-all duration-200 w-full focus:ring-3 focus:ring-[var(--color-primary)]/30 appearance-none ${
+      validationErrors.nivelEducativo
+        ? 'border-red-500 focus:border-red-500'
+        : 'border-black focus:border-black'
+    }`}
+  >
+    <option value="" className="text-slate-400">Selecciona tu nivel educativo</option>
     <option value="Educación media">Educación media</option>
     <option value="Tecnico">Técnico</option>
   </select>
