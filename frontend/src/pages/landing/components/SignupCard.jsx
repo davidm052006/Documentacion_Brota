@@ -89,23 +89,6 @@ function SignupCard({
           </div>
         )}
 
-        <Input
-        placeholder="Confirma tu contraseña..."
-        type="password"
-        value={confirmPassword}
-        onChange={onConfirmPasswordChange}
-        error={validationErrors.confirmPassword}
-        />
-
-        
-        <Input
-        placeholder="Contraseña..."
-        type="password"
-        value={password}
-        onChange={onPasswordChange}
-        error={validationErrors.password}
-        />
-
         {password && (
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
