@@ -39,3 +39,22 @@ const verifyToken = (req, res, next) => {
 };
 
 module.exports = verifyToken;
+
+async function requireAdmin(req, res, next) {
+  const token = req.headers.authorization?.replace('Bearer ', '');
+  if (!token) return res.status(401).json({ error: 'No autorizado' });
+
+  const { data: { user }, error } = await supabase.auth.getUser(token);
+  if (error || !user) return res.status(401).json({ error: 'Token inválido' });
+
+  const { data: perfil } = await supabase
+    .from('perfiles')
+    .select('rol')
+    .eq('id', user.id)
+    .single();
+
+  if (perfil?.rol !== 'admin') return res.status(403).json({ error: 'Acceso denegado' });
+
+  req.user = user;
+  next();
+}
