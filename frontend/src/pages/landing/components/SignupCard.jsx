@@ -9,6 +9,11 @@ function SignupCard({
   email,
   password,
   confirmPassword,
+  nivelEducativo,
+  grado,
+  edad,
+  ciudad,
+  telefono,
   validationErrors,
   error,
   loading,
@@ -17,6 +22,11 @@ function SignupCard({
   onEmailChange,
   onPasswordChange,
   onConfirmPasswordChange,
+  onNivelEducativoChange,
+  onGradoChange,
+  onEdadChange,
+  onCiudadChange,
+  onTelefonoChange,
   onSubmit,
   onSwitchToLogin,
 }) {
@@ -61,40 +71,51 @@ function SignupCard({
           onChange={onConfirmPasswordChange}
           error={validationErrors.confirmPassword}
         />
-        
-        <Input
-        placeholder="Nivel educativo..."
-        value={validationErrors.nivelEducativo}
-        onChange={() => {}}
-        error={validationErrors.nivelEducativo}
-        />
+
+        <div className="w-full">
+          <select
+            value={nivelEducativo}
+            onChange={(e) => onNivelEducativoChange(e.target.value)}
+            className={`w-full px-4 py-3 rounded-md border text-base font-sans 
+            bg-[var(--color-surface)] text-gray-400 outline-none transition-all duration-200
+              ${validationErrors.nivelEducativo 
+                ? 'border-black -500 focus:border-black-500' 
+                : 'border-black  focus:border-black'}
+            `}
+          >
+    <option value="">Selecciona tu nivel educativo</option>
+    <option value="Educación media">Educación media</option>
+    <option value="Tecnico">Técnico</option>
+  </select>
+
+  {validationErrors.nivelEducativo && (
+    <p className="text-red-500 text-sm mt-1">{validationErrors.nivelEducativo}</p>
+  )}
+</div>
 
         <Input
-        placeholder="Grado..."
-        value={validationErrors.grado}
-        onChange={() => {}}
-        error={validationErrors.grado}
+          placeholder="Grado..."
+          value={grado}
+          onChange={onGradoChange}
+          error={validationErrors.grado}
         />
-
-        <Input 
-        placeholder="Edad..."
-        value={validationErrors.edad}
-        onChange={() => {}}
-        error={validationErrors.edad}
+        <Input
+          placeholder="Edad..."
+          value={edad}
+          onChange={onEdadChange}
+          error={validationErrors.edad}
         />
-
-        <Input 
-        placeholder="Ciudad..."
-        value={validationErrors.ciudad}
-        onChange={() => {}}
-        error={validationErrors.ciudad}
+        <Input
+          placeholder="Ciudad..."
+          value={ciudad}
+          onChange={onCiudadChange}
+          error={validationErrors.ciudad}
         />
-
-        <Input 
-        placeholder="Numero de telefono..."
-        value={validationErrors.telefono}
-        onChange={() => {}}
-        error={validationErrors.telefono}
+        <Input
+          placeholder="Numero de telefono..."
+          value={telefono}
+          onChange={onTelefonoChange}
+          error={validationErrors.telefono}
         />
 
         <Button variant="secondary" className="w-full mt-2" disabled={loading} type="submit">

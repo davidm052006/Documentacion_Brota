@@ -7,9 +7,12 @@ import { useAuth } from '../../hooks/useAuth';
 function PreLogin({ isDemoMode = false }) {
   const {
     mode, email, password, confirmPassword, nombre, apellido,
+    nivelEducativo, grado, edad, ciudad, telefono,
     loading, error, successMessage, validationErrors,
     onNombreChange, onApellidoChange, onEmailChange,
     onPasswordChange, onConfirmPasswordChange,
+    onNivelEducativoChange, onGradoChange, onEdadChange,
+    onCiudadChange, onTelefonoChange,
     handleLogin, handleSignup, handlePasswordRecovery,
     changeMode,
   } = useAuth(isDemoMode);
@@ -21,10 +24,15 @@ function PreLogin({ isDemoMode = false }) {
           <SignupCard
             nombre={nombre} apellido={apellido} email={email}
             password={password} confirmPassword={confirmPassword}
+            nivelEducativo={nivelEducativo} grado={grado} edad={edad}
+            ciudad={ciudad} telefono={telefono}
             validationErrors={validationErrors} error={error} loading={loading}
             onNombreChange={onNombreChange} onApellidoChange={onApellidoChange}
             onEmailChange={onEmailChange} onPasswordChange={onPasswordChange}
             onConfirmPasswordChange={onConfirmPasswordChange}
+            onNivelEducativoChange={onNivelEducativoChange}
+            onGradoChange={onGradoChange} onEdadChange={onEdadChange}
+            onCiudadChange={onCiudadChange} onTelefonoChange={onTelefonoChange}
             onSubmit={handleSignup}
             onSwitchToLogin={() => changeMode('login')}
           />

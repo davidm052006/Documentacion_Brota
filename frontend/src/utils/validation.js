@@ -6,7 +6,8 @@ export const isValidEmail = (value) => {
 export const isValidPassword = (value) => value.length >= 6;
 
 export const validateFields = (fields, mode) => {
-  const { email, password, nombre, apellido, confirmPassword } = fields;
+  const { email, password, nombre, apellido, confirmPassword,
+          nivelEducativo, grado, edad, ciudad, telefono } = fields;
   const errors = {};
 
   if (mode !== 'forgotPassword') {
@@ -27,6 +28,11 @@ export const validateFields = (fields, mode) => {
     if (!apellido) errors.apellido = 'El apellido es requerido';
     if (!confirmPassword) errors.confirmPassword = 'Confirma tu contraseña';
     else if (password !== confirmPassword) errors.confirmPassword = 'Las contraseñas no coinciden';
+    if (!nivelEducativo) errors.nivelEducativo = 'El nivel educativo es requerido';
+    if (!grado) errors.grado = 'El grado es requerido';
+    if (!edad) errors.edad = 'La edad es requerida';
+    if (!ciudad) errors.ciudad = 'La ciudad es requerida';
+    if (!telefono) errors.telefono = 'El número de teléfono es requerido';
   }
 
   return errors;

@@ -12,13 +12,22 @@ export const loginWithEmail = async (email, password) => {
   }
 };
 
-export const signUpWithEmail = async (email, password, nombre, apellido) => {
+export const signUpWithEmail = async (email, password, nombre, apellido, nivelEducativo, grado, edad, ciudad, telefono) => {
   try {
     const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
     if (authError) return { success: false, error: translateAuthError(authError.message) };
 
     const { error: profileError } = await supabase.from('perfiles_usuario').insert([
-      { user_id: authData.user.id, nombre, apellido },
+      {
+        user_id: authData.user.id,
+        nombre,
+        apellido,
+        nivel_educativo: nivelEducativo,
+        grado,
+        edad,
+        ciudad,
+        telefono,
+      },
     ]);
 
     if (profileError) {
