@@ -58,6 +58,47 @@ function SignupCard({
           onChange={onEmailChange}
           error={validationErrors.email}
         />
+<<<<<<< HEAD
+=======
+        
+        <Input
+        placeholder="Contraseña..."
+        type="password"
+        value={password}
+        onChange={onPasswordChange}
+        error={validationErrors.password}
+        />
+
+        {password && (
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-medium text-gray-700">Fortaleza de contraseña</p>
+              <span className={`text-xs font-semibold px-2 py-1 rounded ${
+                getPasswordStrength(password) === 'Débil' ? 'bg-red-100 text-red-700' :
+                getPasswordStrength(password) === 'Media' ? 'bg-yellow-100 text-yellow-700' :
+                'bg-[var(--color-primary)]/10 text-[var(--color-primary)]'
+              }`}>
+                {getPasswordStrength(password)}
+              </span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+              <div className={`h-full transition-all duration-300 ${
+                getPasswordStrength(password) === 'Débil' ? 'w-1/3 bg-red-500' :
+                getPasswordStrength(password) === 'Media' ? 'w-2/3 bg-yellow-500' :
+                'w-full bg-[var(--color-primary)]'
+              }`} />
+            </div>
+          </div>
+        )}
+
+        <Input
+        placeholder="Confirma tu contraseña..."
+        type="password"
+        value={confirmPassword}
+        onChange={onConfirmPasswordChange}
+        error={validationErrors.confirmPassword}
+        />
+>>>>>>> 252ba5125f97a964cc0a65472c9eb57998493980
         
         <Input
         placeholder="Contraseña..."
