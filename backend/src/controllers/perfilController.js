@@ -7,6 +7,7 @@
 // - Obtener recomendaciones
 
 const supabase = require('../config/supabase');
+const { calcularPorcentajes } = require('../utils/perfilvocacional');
 
 // --------------------------------------------
 // OBTENER PREGUNTAS DEL CUESTIONARIO ACTIVO
@@ -82,13 +83,20 @@ const guardarResultado = async (req, res) => {
       });
     }
 
+    const perfilCalculado = calcularPorcentajes(perfil_vocacional);
+    const perfilNormalizado = perfil_vocacional?.perfil || perfil_vocacional;
+
     const { data, error } = await supabase
       .from('resultados')
       .insert([{
         perfil_usuario_id,
         cuestionario_id,
         respuestas,
-        perfil_vocacional,
+        perfil_vocacional: {
+          ...perfil_vocacional,
+          perfil: perfilNormalizado,
+          porcentajes: perfilCalculado
+        },
         fecha_realizacion: new Date().toISOString()
       }])
       .select()
