@@ -1,5 +1,6 @@
 // src/components/Layout/DashboardLayout.jsx
 import Sidebar from "./Sidebar";
+import UserMenu from "../Shared/UserMenu"; // tu componente de menú
 
 export default function DashboardLayout({ children, isDemoMode = false }) {
   return (
@@ -8,8 +9,13 @@ export default function DashboardLayout({ children, isDemoMode = false }) {
 
       <div className="relative flex min-h-screen z-10">
         <Sidebar isDemoMode={isDemoMode} />
-        {/* Margen izquierdo igual al ancho del sidebar (w-56 = 224px) */}
+        
         <main className="flex-1 ml-56 min-h-screen bg-transparent">
+          {/* Header con menú de usuario */}
+          <header className="flex justify-end p-4 bg-emerald-200">
+            <UserMenu />
+          </header>
+
           {children}
         </main>
       </div>
