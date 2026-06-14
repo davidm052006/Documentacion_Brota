@@ -61,6 +61,34 @@ function SignupCard({
           onChange={onConfirmPasswordChange}
           error={validationErrors.confirmPassword}
         />
+        
+        <Input
+          placeholder="Formación académica..."
+          value={validationErrors.formacionAcademica}
+          onChange={() => {}}
+          error={validationErrors.formacionAcademica}
+        />
+
+        <Input 
+        placeholder="Edad..."
+        value={validationErrors.edad}
+        onChange={() => {}}
+        error={validationErrors.edad}
+        />
+
+        <Input 
+        placeholder="Ciudad..."
+        value={validationErrors.ciudad}
+        onChange={() => {}}
+        error={validationErrors.ciudad}
+        />
+
+        <Input 
+        placeholder="Numero de telefono..."
+        value={validationErrors.telefono}
+        onChange={() => {}}
+        error={validationErrors.telefono}
+        />
 
         <Button variant="secondary" className="w-full mt-2" disabled={loading} type="submit">
           {loading ? 'Creando cuenta...' : 'Crear cuenta'}
