@@ -3,7 +3,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { supabase } from './config/supabase';
 import Login          from './pages/landing/Login';
-import Servicios      from './pages/landing/Servicios';   // ← NUEVO
+import Servicios      from './pages/landing/Servicios';
+import SaberMas       from './pages/landing/SaberMas';   // ← NUEVO
 import ResetPassword  from './pages/landing/ResetPassword';
 import Dashboard      from './pages/dashboard/Dashboard';
 import TestVocacional from './pages/dashboard/test-vocacional/TestVocacional';
@@ -67,9 +68,7 @@ function App() {
 
     try {
       const { data: { subscription } } = supabase.auth.onAuthStateChange(
-        (_event, session) => {
-          setUser(session?.user || null);
-        }
+        (_event, session) => { setUser(session?.user || null); }
       );
       return () => subscription?.unsubscribe();
     } catch (err) {
@@ -94,28 +93,18 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Punto de entrada */}
-        <Route path="/" element={<Login isDemoMode={isDemoMode} />} />
-
-        {/* Página de servicios — pública */}
-        <Route path="/servicios" element={<Servicios />} />   {/* ← NUEVO */}
-
-        {/* Recuperación de contraseña */}
+        <Route path="/"           element={<Login isDemoMode={isDemoMode} />} />
+        <Route path="/servicios"  element={<Servicios />} />
+        <Route path="/saber-mas"  element={<SaberMas />} />   {/* ← NUEVO */}
         <Route path="/reset-password" element={<ResetPassword />} />
-
-        {/* Test vocacional */}
         <Route
           path="/dashboard/test"
           element={puedeAcceder ? <TestVocacional user={user} isDemoMode={isDemoMode} /> : <Navigate to="/" replace />}
         />
-
-        {/* Dashboard principal */}
         <Route
           path="/dashboard"
           element={puedeAcceder ? <Dashboard user={user} isDemoMode={isDemoMode} /> : <Navigate to="/" replace />}
         />
-
-        {/* Rutas en construcción */}
         {[
           { path: '/dashboard/profesiones', titulo: 'Explorar profesiones' },
           { path: '/dashboard/rutas',       titulo: 'Rutas formativas' },
@@ -131,7 +120,6 @@ function App() {
             element={puedeAcceder ? <PaginaEnConstruccion titulo={titulo} /> : <Navigate to="/" replace />}
           />
         ))}
-
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
