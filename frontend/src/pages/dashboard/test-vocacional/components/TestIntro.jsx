@@ -25,7 +25,7 @@ export default function TestIntro({ onStart, loading }) {
         {/* Fichas informativas */}
         <div className="grid grid-cols-3 gap-3 mb-8">
           {[
-            { icon: '❓', label: '24 preguntas' },
+            { icon: '❓', label: '30 preguntas' },
             { icon: '⏱️', label: '10–15 min' },
             { icon: '🎯', label: 'Perfil único' },
           ].map(({ icon, label }) => (
