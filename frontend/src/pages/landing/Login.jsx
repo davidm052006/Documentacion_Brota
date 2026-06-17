@@ -10,11 +10,9 @@ function Login() {
   const navigate = useNavigate();   // ← NUEVO
   const {
     mode, email, password, confirmPassword, nombre, apellido,
-    nivelEducativo, grado, edad, ciudad, telefono,
     loading, error, successMessage, validationErrors,
     onNombreChange, onApellidoChange, onEmailChange,
     onPasswordChange, onConfirmPasswordChange,
-    onNivelEducativoChange, onGradoChange, onEdadChange, onCiudadChange, onTelefonoChange,
     handleLogin, handleSignup, handlePasswordRecovery,
     changeMode,
   } = useAuth();
@@ -26,15 +24,10 @@ function Login() {
           <SignupCard
             nombre={nombre} apellido={apellido}
             email={email} password={password} confirmPassword={confirmPassword}
-            nivelEducativo={nivelEducativo} grado={grado} edad={edad}
-            ciudad={ciudad} telefono={telefono}
             validationErrors={validationErrors} error={error} loading={loading}
             onNombreChange={onNombreChange} onApellidoChange={onApellidoChange}
             onEmailChange={onEmailChange} onPasswordChange={onPasswordChange}
             onConfirmPasswordChange={onConfirmPasswordChange}
-            onNivelEducativoChange={onNivelEducativoChange}
-            onGradoChange={onGradoChange} onEdadChange={onEdadChange}
-            onCiudadChange={onCiudadChange} onTelefonoChange={onTelefonoChange}
             onSubmit={handleSignup}
             onSwitchToLogin={() => changeMode('login')}
           />
@@ -68,6 +61,7 @@ function Login() {
       <LoginNavbar />
       <div className="flex w-full pt-24 pb-12 px-20">
 
+        {/* Columna izquierda: hero text */}
         <div className="w-1/2 flex flex-col justify-center pr-10">
           <h1 className="text-green-600 mb-4 text-6xl font-bold tracking-tight">🌱 BROTA</h1>
           <h2 className="text-3xl font-medium text-black mb-10 leading-snug">
@@ -90,6 +84,7 @@ function Login() {
           </div>
         </div>
 
+        {/* Columna derecha: tarjeta de autenticación */}
         <div className="w-1/2 flex flex-col justify-center items-center">
           {renderAuthCard()}
         </div>
