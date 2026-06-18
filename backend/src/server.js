@@ -24,7 +24,7 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 3001; // ← Cambiado a 3001 para que coincida con el frontend
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`🚀 Servidor iniciado en http://localhost:${PORT}`);
