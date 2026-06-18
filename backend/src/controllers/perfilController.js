@@ -210,9 +210,45 @@ const obtenerPerfil = async (req, res) => {
   }
 };
 
+// --------------------------------------------
+// ELIMINAR TODOS LOS RESULTADOS DE UN USUARIO
+// DELETE /api/perfil/resultado/:perfilUsuarioId
+// --------------------------------------------
+const eliminarResultado = async (req, res) => {
+  try {
+    const { perfilUsuarioId } = req.params;
+
+    // Primero obtener los IDs de resultados para borrar sus recomendaciones
+    const { data: resultados } = await supabase
+      .from('resultados')
+      .select('id')
+      .eq('perfil_usuario_id', perfilUsuarioId);
+
+    if (resultados?.length) {
+      const ids = resultados.map(r => r.id);
+      await supabase.from('recomendaciones').delete().in('resultado_id', ids);
+    }
+
+    const { error } = await supabase
+      .from('resultados')
+      .delete()
+      .eq('perfil_usuario_id', perfilUsuarioId);
+
+    if (error) {
+      return res.status(500).json({ success: false, message: error.message });
+    }
+
+    return res.json({ success: true, message: 'Resultados eliminados' });
+  } catch (error) {
+    console.error('perfilController.eliminarResultado:', error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   obtenerCuestionario,
   guardarResultado,
   obtenerResultado,
+  eliminarResultado,
   obtenerPerfil
 };

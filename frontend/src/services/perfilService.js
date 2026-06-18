@@ -122,6 +122,23 @@ export const obtenerResultado = async (perfilUsuarioId) => {
 };
 
 // --------------------------------------------
+// ELIMINAR TODOS LOS RESULTADOS DEL USUARIO
+// --------------------------------------------
+export const eliminarResultado = async (perfilUsuarioId) => {
+  try {
+    const response = await fetch(`${API_URL}/api/perfil/resultado/${perfilUsuarioId}`, {
+      method: 'DELETE',
+    });
+    const data = await response.json();
+    if (!response.ok) return { success: false, error: data.message };
+    return { success: true };
+  } catch (err) {
+    console.error('perfilService.eliminarResultado:', err);
+    return { success: false, error: 'Error de conexión con el servidor' };
+  }
+};
+
+// --------------------------------------------
 // OBTENER PERFIL COMPLETO DEL USUARIO
 // --------------------------------------------
 export const obtenerPerfil = async (userId) => {

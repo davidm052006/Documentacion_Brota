@@ -1,18 +1,17 @@
-// src/pages/dashboard/test-vocacional/TestVocacional.jsx
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../../config/supabase';
-import { obtenerCuestionario, guardarResultado } from '../../../services/perfilService';
+import { obtenerCuestionario, guardarResultado, obtenerResultado } from '../../../services/perfilService';
 import DashboardLayout from '../../../components/Layout/DashboardLayout';
 import TestIntro    from './components/TestIntro';
 import TestQuestion from './components/TestQuestion';
 import TestProgress from './components/TestProgress';
 import TestResult   from './components/TestResult';
+import { getCategoriaInfo, storageKey } from '../../../utils/vocacionalCategorias';
 
 // ── Calcula los scores sumando los pesos de cada opción elegida ──────────────
 function calcularResultado(preguntas, seleccionadas) {
   const scores = {};
-
   preguntas.forEach((pregunta) => {
     const respuestasUsuario = seleccionadas[pregunta.id] ?? [];
     respuestasUsuario.forEach((opcionId) => {
@@ -38,56 +37,97 @@ function calcularResultado(preguntas, seleccionadas) {
   };
 }
 
+// ── Convierte el calculo interno al formato que espera TestResult ─────────────
+function calcToUI(calculo) {
+  if (!calculo) return null;
+  const principal  = getCategoriaInfo(calculo.categoriaPrincipal, 0);
+  const secundaria = calculo.categoriaSecundaria
+    ? getCategoriaInfo(calculo.categoriaSecundaria, 1)
+    : null;
+  const scores = (calculo.scores ?? []).slice(0, 5).map(({ categoria, porcentaje }, i) => ({
+    categoria: getCategoriaInfo(categoria, i).titulo,
+    porcentaje,
+    emoji:     getCategoriaInfo(categoria, i).emoji,
+  }));
+  return { perfilPrincipal: principal, perfilSecundario: secundaria, scores };
+}
+
 export default function TestVocacional({ user, isDemoMode = false }) {
   const navigate = useNavigate();
 
-  // ── Estado principal ────────────────────────────────────────────────────────
-  const [fase, setFase]                       = useState('intro'); // intro | test | resultado
-  const [preguntaIdx, setPreguntaIdx]         = useState(0);
-  const [seleccionadas, setSeleccionadas]     = useState({});      // { [preguntaId]: string[] }
+  const [fase, setFase]                         = useState('intro');
+  const [preguntaIdx, setPreguntaIdx]           = useState(0);
+  const [seleccionadas, setSeleccionadas]       = useState({});
+  const [preguntas, setPreguntas]               = useState([]);
+  const [cuestionarioId, setCuestionarioId]     = useState(null);
+  const [cargando, setCargando]                 = useState(true);
+  const [errorCarga, setErrorCarga]             = useState(null);
+  const [resultado, setResultado]               = useState(null);
+  const [perfilUsuarioId, setPerfilUsuarioId]   = useState(null);
+  const [guardando, setGuardando]               = useState(false);
 
-  // ── Estado de datos desde el backend ───────────────────────────────────────
-  const [preguntas, setPreguntas]             = useState([]);
-  const [cuestionarioId, setCuestionarioId]   = useState(null);
-  const [cargando, setCargando]               = useState(true);
-  const [errorCarga, setErrorCarga]           = useState(null);
-  const [resultado, setResultado]             = useState(null);
-  const [perfilUsuarioId, setPerfilUsuarioId] = useState(null);
+  // Estado de borrador / resultado previo en BD
+  const [tieneBorrador, setTieneBorrador]             = useState(false);
+  const [tieneResultadoPrevio, setTieneResultadoPrevio] = useState(false);
+  const [resultadoGuardadoDB, setResultadoGuardadoDB]   = useState(null);
 
-  // ── Derivaciones ────────────────────────────────────────────────────────────
   const totalPreguntas = preguntas.length;
   const preguntaActual = preguntas[preguntaIdx];
-  const progreso       = totalPreguntas > 0
-    ? Math.round((preguntaIdx / totalPreguntas) * 100)
-    : 0;
-  const idsActuales  = seleccionadas[preguntaActual?.id] ?? [];
-  const puedeAvanzar = idsActuales.length > 0;
+  const progreso       = totalPreguntas > 0 ? Math.round((preguntaIdx / totalPreguntas) * 100) : 0;
+  const idsActuales    = seleccionadas[preguntaActual?.id] ?? [];
+  const puedeAvanzar   = idsActuales.length > 0;
 
-  // ── Cargar datos al montar ──────────────────────────────────────────────────
+  // ── Cargar al montar ────────────────────────────────────────────────────────
   useEffect(() => {
     const inicializar = async () => {
       try {
-        // 1. Obtener el id de perfiles_usuario (distinto al auth user.id)
+        // 1. Obtener perfilUsuarioId
+        let pUid = null;
         if (!isDemoMode && user?.id) {
           const { data: perfil } = await supabase
             .from('perfiles_usuario')
             .select('id')
             .eq('user_id', user.id)
             .single();
-          if (perfil) setPerfilUsuarioId(perfil.id);
+          if (perfil) { setPerfilUsuarioId(perfil.id); pUid = perfil.id; }
         }
 
-        // 2. Cargar preguntas desde el backend
+        // 2. Cargar preguntas
         const { success, data, error } = await obtenerCuestionario();
-        if (!success) {
-          setErrorCarga(error ?? 'No se pudo cargar el cuestionario.');
-          return;
+        if (!success) { setErrorCarga(error ?? 'No se pudo cargar el cuestionario.'); return; }
+        const pregs = data.preguntas ?? [];
+        const cId   = data.cuestionario?.id ?? data.id ?? null;
+        setPreguntas(pregs);
+        setCuestionarioId(cId);
+
+        // 3. Verificar borrador en localStorage
+        if (user?.id) {
+          try {
+            const raw = localStorage.getItem(storageKey(user.id));
+            if (raw) {
+              const draft = JSON.parse(raw);
+              if (draft.cuestionarioId === cId && Object.keys(draft.seleccionadas ?? {}).length > 0) {
+                setTieneBorrador(true);
+              } else {
+                localStorage.removeItem(storageKey(user.id));
+              }
+            }
+          } catch { localStorage.removeItem(storageKey(user.id)); }
         }
-        setPreguntas(data.preguntas ?? []);
-        setCuestionarioId(data.cuestionario?.id ?? data.id ?? null);
+
+        // 4. Verificar resultado previo en BD
+        if (pUid) {
+          try {
+            const { data: resPrevio } = await obtenerResultado(pUid);
+            if (resPrevio) {
+              setResultadoGuardadoDB(resPrevio);
+              setTieneResultadoPrevio(true);
+            }
+          } catch { /* No bloquea si falla */ }
+        }
       } catch (err) {
-        console.error('TestVocacional — error al inicializar:', err);
-        setErrorCarga('Ocurrió un error al cargar el test.');
+        console.error('TestVocacional init:', err);
+        setErrorCarga('Error al cargar el test.');
       } finally {
         setCargando(false);
       }
@@ -96,7 +136,50 @@ export default function TestVocacional({ user, isDemoMode = false }) {
     inicializar();
   }, [user?.id, isDemoMode]);
 
-  // ── Navegación entre preguntas ──────────────────────────────────────────────
+  // ── Guardar progreso en localStorage mientras el test está activo ────────────
+  useEffect(() => {
+    if (fase !== 'test' || !user?.id || !cuestionarioId) return;
+    localStorage.setItem(storageKey(user.id), JSON.stringify({
+      cuestionarioId,
+      preguntaIdx,
+      seleccionadas,
+      savedAt: Date.now(),
+    }));
+  }, [fase, preguntaIdx, seleccionadas, cuestionarioId, user?.id]);
+
+  // ── Acciones del intro ───────────────────────────────────────────────────────
+  const continuarBorrador = () => {
+    if (!user?.id) return;
+    try {
+      const raw = localStorage.getItem(storageKey(user.id));
+      if (!raw) return;
+      const draft = JSON.parse(raw);
+      setPreguntaIdx(draft.preguntaIdx ?? 0);
+      setSeleccionadas(draft.seleccionadas ?? {});
+    } catch {}
+    setFase('test');
+  };
+
+  const empezarNuevo = () => {
+    if (user?.id) localStorage.removeItem(storageKey(user.id));
+    setPreguntaIdx(0);
+    setSeleccionadas({});
+    setFase('test');
+  };
+
+  const verResultadoPrevio = () => {
+    if (!resultadoGuardadoDB) return;
+    const pfVoc = resultadoGuardadoDB.perfil_vocacional;
+    const calculo = {
+      categoriaPrincipal:  pfVoc?.categoriaPrincipal  ?? pfVoc?.perfil?.categoriaPrincipal,
+      categoriaSecundaria: pfVoc?.categoriaSecundaria ?? pfVoc?.perfil?.categoriaSecundaria,
+      scores:              pfVoc?.scores              ?? pfVoc?.perfil?.scores ?? [],
+    };
+    setResultado(calcToUI(calculo));
+    setFase('resultado');
+  };
+
+  // ── Navegación entre preguntas ───────────────────────────────────────────────
   const toggleOpcion = (opcionId) => {
     const pregId = preguntaActual.id;
     const tipo   = preguntaActual.tipo;
@@ -112,9 +195,7 @@ export default function TestVocacional({ user, isDemoMode = false }) {
     });
   };
 
-  const irAnterior = () => {
-    if (preguntaIdx > 0) setPreguntaIdx((i) => i - 1);
-  };
+  const irAnterior = () => { if (preguntaIdx > 0) setPreguntaIdx((i) => i - 1); };
 
   const irSiguiente = async () => {
     if (preguntaIdx < totalPreguntas - 1) {
@@ -122,31 +203,34 @@ export default function TestVocacional({ user, isDemoMode = false }) {
       return;
     }
 
-    // Última pregunta — calcular resultado
+    // Última pregunta → calcular, guardar y mostrar resultado
     const calculo = calcularResultado(preguntas, seleccionadas);
+    setResultado(calcToUI(calculo));
 
-    // Guardar en el backend (no bloquea si falla)
     if (perfilUsuarioId && cuestionarioId) {
-      guardarResultado(perfilUsuarioId, cuestionarioId, seleccionadas, calculo);
+      setGuardando(true);
+      await guardarResultado(perfilUsuarioId, cuestionarioId, seleccionadas, calculo);
+      setGuardando(false);
     }
 
-    setResultado(calculo);
+    if (user?.id) localStorage.removeItem(storageKey(user.id));
     setFase('resultado');
   };
 
   const reiniciarTest = () => {
+    if (user?.id) localStorage.removeItem(storageKey(user.id));
     setFase('intro');
     setPreguntaIdx(0);
     setSeleccionadas({});
     setResultado(null);
+    setTieneBorrador(false);
   };
 
-  // ── Render ──────────────────────────────────────────────────────────────────
+  // ── Render ───────────────────────────────────────────────────────────────────
   return (
     <DashboardLayout isDemoMode={isDemoMode}>
       <div className="p-6 max-w-6xl mx-auto">
 
-        {/* ── Top bar ── */}
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-lg font-bold text-gray-800">Cuestionario vocacional</h1>
@@ -164,23 +248,24 @@ export default function TestVocacional({ user, isDemoMode = false }) {
           )}
         </div>
 
-        {/* ── Error de carga ── */}
         {errorCarga && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-5 py-4 rounded-2xl text-sm text-center">
             {errorCarga}
           </div>
         )}
 
-        {/* ── FASE: Intro ── */}
         {fase === 'intro' && !errorCarga && (
           <TestIntro
-            onStart={() => setFase('test')}
+            onStart={empezarNuevo}
+            onContinuar={continuarBorrador}
+            onVerResultado={verResultadoPrevio}
             loading={cargando}
             totalPreguntas={totalPreguntas}
+            tieneBorrador={tieneBorrador}
+            tieneResultado={tieneResultadoPrevio}
           />
         )}
 
-        {/* ── FASE: Preguntas ── */}
         {fase === 'test' && preguntaActual && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
@@ -193,7 +278,7 @@ export default function TestVocacional({ user, isDemoMode = false }) {
                 onAnterior={irAnterior}
                 onSiguiente={irSiguiente}
                 puedeAvanzar={puedeAvanzar}
-                guardando={false}
+                guardando={guardando && preguntaIdx === totalPreguntas - 1}
                 esUltima={preguntaIdx === totalPreguntas - 1}
               />
             </div>
@@ -207,10 +292,12 @@ export default function TestVocacional({ user, isDemoMode = false }) {
           </div>
         )}
 
-        {/* ── FASE: Resultado ── */}
         {fase === 'resultado' && resultado && (
           <TestResult
-            resultado={resultado}
+            perfilPrincipal={resultado.perfilPrincipal}
+            perfilSecundario={resultado.perfilSecundario}
+            scores={resultado.scores}
+            recomendaciones={[]}
             onVerRutas={() => navigate('/dashboard/rutas')}
             onReiniciar={reiniciarTest}
           />
