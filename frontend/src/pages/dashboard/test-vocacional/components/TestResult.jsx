@@ -1,71 +1,153 @@
 // src/pages/dashboard/test-vocacional/components/TestResult.jsx
-// ── SOLO VISUAL ───────────────────────────────────────────────
-// Props esperadas:
-//   perfilPrincipal: { emoji, titulo, descripcion, color }
-//   perfilSecundario: { emoji, titulo } | null
-//   scores: [{ categoria, porcentaje, emoji }]   — max 5 items
-//   recomendaciones: [{ nombre, institucion, area, duracion, compatibilidad }]
-//   onVerRutas: () => void
-//   onReiniciar: () => void
+// Conectado a Supabase via perfilService — carga recomendaciones reales.
 
-const RESULTADO_DEMO = {
-  perfilPrincipal: {
-    emoji: '🚀',
-    titulo: 'Emprendedor Nato',
-    descripcion: 'Tienes visión de futuro y te emociona construir cosas con impacto real. Eres creativo, ambicioso y sabes motivar a quienes te rodean.',
-    color: 'amber',
-  },
-  perfilSecundario: { emoji: '🧠', titulo: 'Pensador Analítico' },
-  scores: [
-    { categoria: 'Vocación',     porcentaje: 92, emoji: '🚀' },
-    { categoria: 'Habilidades',  porcentaje: 78, emoji: '🧠' },
-    { categoria: 'Valores',      porcentaje: 65, emoji: '❤️' },
-    { categoria: 'Intereses',    porcentaje: 54, emoji: '🎯' },
-    { categoria: 'Académico',    porcentaje: 41, emoji: '📚' },
-  ],
-  recomendaciones: [
-    { nombre: 'Administración de Empresas', institucion: 'Universidad de los Andes', area: 'Ciencias Económicas', duracion: '8 semestres', compatibilidad: 95 },
-    { nombre: 'Ingeniería Industrial',      institucion: 'Universidad Nacional',     area: 'Ingeniería',         duracion: '10 semestres', compatibilidad: 88 },
-    { nombre: 'Marketing Digital',          institucion: 'EAFIT',                   area: 'Comunicación',       duracion: '8 semestres', compatibilidad: 82 },
-    { nombre: 'Diseño de Producto',         institucion: 'Universidad Jorge Tadeo',  area: 'Diseño',             duracion: '8 semestres', compatibilidad: 75 },
-  ],
-};
+import { useEffect, useState } from 'react';
+import { obtenerRecomendaciones, marcarRecomendacionVista } from '../../../../services/perfilService';
 
+// ── Color map por perfil ─────────────────────────────────────────────────────
 const COLOR_STYLES = {
-  amber:   { bg: 'bg-amber-50',   border: 'border-amber-200',   text: 'text-amber-700',   bar: 'bg-amber-400'   },
-  emerald: { bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-700', bar: 'bg-emerald-500' },
-  blue:    { bg: 'bg-blue-50',    border: 'border-blue-200',    text: 'text-blue-700',    bar: 'bg-blue-400'    },
-  purple:  { bg: 'bg-purple-50',  border: 'border-purple-200',  text: 'text-purple-700',  bar: 'bg-purple-400'  },
-  rose:    { bg: 'bg-rose-50',    border: 'border-rose-200',    text: 'text-rose-700',    bar: 'bg-rose-400'    },
-  teal:    { bg: 'bg-teal-50',    border: 'border-teal-200',    text: 'text-teal-700',    bar: 'bg-teal-400'    },
+  amber:   { bg: 'bg-amber-50',   border: 'border-amber-200',   text: 'text-amber-700',   bar: 'bg-amber-400',   badge: 'bg-amber-100 text-amber-700'   },
+  emerald: { bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-700', bar: 'bg-emerald-500', badge: 'bg-emerald-100 text-emerald-700' },
+  blue:    { bg: 'bg-blue-50',    border: 'border-blue-200',    text: 'text-blue-700',    bar: 'bg-blue-400',    badge: 'bg-blue-100 text-blue-700'       },
+  purple:  { bg: 'bg-purple-50',  border: 'border-purple-200',  text: 'text-purple-700',  bar: 'bg-purple-400',  badge: 'bg-purple-100 text-purple-700'   },
+  rose:    { bg: 'bg-rose-50',    border: 'border-rose-200',    text: 'text-rose-700',    bar: 'bg-rose-400',    badge: 'bg-rose-100 text-rose-700'       },
+  teal:    { bg: 'bg-teal-50',    border: 'border-teal-200',    text: 'text-teal-700',    bar: 'bg-teal-400',    badge: 'bg-teal-100 text-teal-700'       },
 };
 
+// ── Skeleton de carga ────────────────────────────────────────────────────────
+function SkeletonCard({ className = '' }) {
+  return (
+    <div className={`animate-pulse bg-gray-100 rounded-2xl ${className}`} />
+  );
+}
+
+// ── Tarjeta de programa recomendado ─────────────────────────────────────────
+function ProgramaCard({ rec, c, onVer }) {
+  const pct = rec.compatibilidad;
+  const ringColor =
+    pct >= 85 ? 'border-emerald-300 hover:bg-emerald-50/40' :
+    pct >= 70 ? 'border-blue-200 hover:bg-blue-50/30' :
+                'border-gray-100 hover:bg-gray-50/60';
+  const badgeBg =
+    pct >= 85 ? 'bg-emerald-100 text-emerald-700' :
+    pct >= 70 ? 'bg-blue-100 text-blue-700' :
+                'bg-gray-100 text-gray-500';
+
+  return (
+    <div
+      className={`border ${ringColor} rounded-2xl p-4 transition cursor-pointer group`}
+      onClick={() => onVer(rec)}
+    >
+      <div className="flex items-start justify-between gap-2 mb-2">
+        <p className="text-sm font-semibold text-gray-800 leading-snug group-hover:text-emerald-700 transition">
+          {rec.nombre}
+        </p>
+        <span className={`text-xs px-2 py-0.5 rounded-full flex-shrink-0 font-semibold ${badgeBg}`}>
+          {pct}%
+        </span>
+      </div>
+      <p className="text-xs text-gray-600 font-medium mb-0.5">{rec.institucion}</p>
+      {rec.ciudad && (
+        <p className="text-xs text-gray-400 mb-1">{rec.ciudad}</p>
+      )}
+      <div className="flex flex-wrap gap-1 mt-2">
+        {rec.area && (
+          <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+            {rec.area}
+          </span>
+        )}
+        {rec.nivel && (
+          <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+            {rec.nivel}
+          </span>
+        )}
+        {rec.duracion && (
+          <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+            {rec.duracion}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── Componente principal ─────────────────────────────────────────────────────
+// Props:
+//   resultadoId      : string (UUID de resultados) — requerido para cargar recomendaciones
+//   perfilPrincipal  : { emoji, titulo, descripcion, color }
+//   perfilSecundario : { emoji, titulo } | null
+//   scores           : [{ categoria, porcentaje, emoji }]  — máx 5
+//   onVerRutas       : () => void
+//   onReiniciar      : () => void
+//   onVerPrograma    : (rec) => void   — llamado al hacer clic en un programa
 export default function TestResult({
-  perfilPrincipal  = RESULTADO_DEMO.perfilPrincipal,
-  perfilSecundario = RESULTADO_DEMO.perfilSecundario,
-  scores           = RESULTADO_DEMO.scores,
-  recomendaciones  = RESULTADO_DEMO.recomendaciones,
-  onVerRutas       = () => {},
-  onReiniciar      = () => {},
+  resultadoId,
+  perfilPrincipal,
+  perfilSecundario  = null,
+  scores            = [],
+  onVerRutas        = () => {},
+  onReiniciar       = () => {},
+  onVerPrograma     = () => {},
 }) {
-  const c = COLOR_STYLES[perfilPrincipal.color] ?? COLOR_STYLES.emerald;
+  const [recomendaciones, setRecomendaciones] = useState([]);
+  const [cargando, setCargando]               = useState(!!resultadoId);
+  const [error, setError]                     = useState(null);
+
+  // Cargar recomendaciones desde Supabase cuando llegue el resultadoId
+  useEffect(() => {
+    if (!resultadoId) return;
+    let cancelado = false;
+
+    (async () => {
+      setCargando(true);
+      setError(null);
+      const res = await obtenerRecomendaciones(resultadoId);
+      if (cancelado) return;
+      if (res.success) {
+        setRecomendaciones(res.data);
+      } else {
+        setError(res.error);
+      }
+      setCargando(false);
+    })();
+
+    return () => { cancelado = true; };
+  }, [resultadoId]);
+
+  // Marcar como vista + propagar al padre
+  const handleVerPrograma = async (rec) => {
+    if (!rec.vista) {
+      await marcarRecomendacionVista(rec.id);
+      setRecomendaciones(prev =>
+        prev.map(r => r.id === rec.id ? { ...r, vista: true } : r)
+      );
+    }
+    onVerPrograma(rec);
+  };
+
+  // Fallback seguro si no llega perfilPrincipal
+  const perfil = perfilPrincipal ?? {
+    emoji: '🎯', titulo: 'Tu perfil', descripcion: '', color: 'emerald',
+  };
+  const c = COLOR_STYLES[perfil.color] ?? COLOR_STYLES.emerald;
 
   return (
     <div className="max-w-3xl mx-auto space-y-5">
 
-      {/* ── Tarjeta de perfil principal ── */}
+      {/* ── Perfil principal ── */}
       <div className={`${c.bg} border ${c.border} rounded-3xl p-8 text-center`}>
-        <div className="text-5xl mb-4">{perfilPrincipal.emoji}</div>
+        <div className="text-5xl mb-4">{perfil.emoji}</div>
         <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">
           Tu perfil vocacional
         </p>
         <h1 className={`text-2xl font-bold ${c.text} mb-3`}>
-          {perfilPrincipal.titulo}
+          {perfil.titulo}
         </h1>
-        <p className="text-sm text-gray-600 leading-relaxed max-w-md mx-auto">
-          {perfilPrincipal.descripcion}
-        </p>
-
+        {perfil.descripcion && (
+          <p className="text-sm text-gray-600 leading-relaxed max-w-md mx-auto">
+            {perfil.descripcion}
+          </p>
+        )}
         {perfilSecundario && (
           <div className="mt-5 inline-flex items-center gap-2 bg-white rounded-full px-4 py-2 text-xs text-gray-500 border border-gray-100">
             <span>{perfilSecundario.emoji}</span>
@@ -88,13 +170,13 @@ export default function TestResult({
                   <div className="flex justify-between mb-1.5">
                     <span className="text-xs font-medium text-gray-700">{categoria}</span>
                     {idx === 0 && (
-                      <span className="text-xs text-emerald-600 font-semibold">Principal</span>
+                      <span className={`text-xs font-semibold ${c.text}`}>Principal</span>
                     )}
                   </div>
                   <div className="w-full bg-gray-100 rounded-full h-2">
                     <div
-                      className={`${c.bar} h-2 rounded-full`}
-                      style={{ width: `${porcentaje}%`, transition: 'width 0.7s ease' }}
+                      className={`${c.bar} h-2 rounded-full transition-all duration-700`}
+                      style={{ width: `${porcentaje}%` }}
                     />
                   </div>
                 </div>
@@ -106,32 +188,68 @@ export default function TestResult({
       )}
 
       {/* ── Recomendaciones ── */}
-      {recomendaciones.length > 0 && (
-        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
-          <h2 className="text-sm font-semibold text-gray-700 mb-4">
-            🎓 Programas recomendados para ti
-          </h2>
+      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
+        <h2 className="text-sm font-semibold text-gray-700 mb-4">
+          🎓 Programas recomendados para ti
+        </h2>
+
+        {/* Estado: cargando */}
+        {cargando && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {recomendaciones.map((rec, i) => (
-              <div
-                key={i}
-                className="border border-gray-100 rounded-2xl p-4 hover:border-emerald-200 hover:bg-emerald-50/30 transition cursor-pointer"
-              >
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <p className="text-sm font-semibold text-gray-800 leading-snug">
-                    {rec.nombre}
-                  </p>
-                  <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full flex-shrink-0">
-                    {rec.compatibilidad}%
-                  </span>
-                </div>
-                <p className="text-xs text-gray-500 mb-0.5">{rec.institucion}</p>
-                <p className="text-xs text-gray-400">{rec.area} · {rec.duracion}</p>
-              </div>
+            {[1, 2, 3, 4].map(i => (
+              <SkeletonCard key={i} className="h-28" />
             ))}
           </div>
-        </div>
-      )}
+        )}
+
+        {/* Estado: error */}
+        {!cargando && error && (
+          <div className="text-center py-8">
+            <p className="text-sm text-gray-400 mb-3">
+              No pudimos cargar los programas en este momento.
+            </p>
+            <button
+              onClick={() => {
+                setError(null);
+                setCargando(true);
+                obtenerRecomendaciones(resultadoId).then(res => {
+                  if (res.success) setRecomendaciones(res.data);
+                  else setError(res.error);
+                  setCargando(false);
+                });
+              }}
+              className="text-xs text-emerald-600 underline"
+            >
+              Reintentar
+            </button>
+          </div>
+        )}
+
+        {/* Estado: sin resultados (algoritmo aún procesando) */}
+        {!cargando && !error && recomendaciones.length === 0 && (
+          <div className="text-center py-8 space-y-2">
+            <p className="text-2xl">⏳</p>
+            <p className="text-sm text-gray-500">
+              Estamos generando tus recomendaciones personalizadas.
+            </p>
+            <p className="text-xs text-gray-400">Vuelve en unos momentos.</p>
+          </div>
+        )}
+
+        {/* Estado: recomendaciones cargadas */}
+        {!cargando && !error && recomendaciones.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {recomendaciones.map((rec) => (
+              <ProgramaCard
+                key={rec.id}
+                rec={rec}
+                c={c}
+                onVer={handleVerPrograma}
+              />
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* ── Acciones ── */}
       <div className="flex flex-col sm:flex-row gap-3 pb-4">
