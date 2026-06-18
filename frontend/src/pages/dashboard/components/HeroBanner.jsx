@@ -6,7 +6,7 @@
 
 export default function HeroBanner({ name = '' }) {
   return (
-    <div className="relative bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden p-8 flex items-center justify-between min-h-[180px]">
+    <div className="relative bg-white dark:bg-[#1a2e1f] rounded-2xl border border-gray-100 dark:border-[#334155] shadow-sm overflow-hidden p-8 flex items-center justify-between min-h-[180px]">
 
       {/* Texto */}
       <div className="relative z-10 max-w-sm">

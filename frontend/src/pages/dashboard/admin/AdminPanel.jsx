@@ -102,7 +102,7 @@ export default function AdminPanel({ user, profile }) {
 
   return (
     <DashboardLayout profile={profile}>
-      <div className="p-6 bg-green-50 min-h-screen">
+      <div className="p-6 min-h-screen" style={{ backgroundColor: 'inherit' }}>
 
         {/* Encabezado del panel */}
         <div className="mb-6">

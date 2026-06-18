@@ -25,7 +25,7 @@ export default function ContinueSection() {
         Continúa donde lo dejaste
       </h2>
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex gap-4 items-center">
+        <div className="bg-white dark:bg-[#1a2e1f] rounded-2xl border border-gray-100 dark:border-[#334155] shadow-sm p-5 flex gap-4 items-center">
           <div className="w-20 h-20 rounded-xl bg-green-50 flex items-center justify-center text-4xl shrink-0 overflow-hidden">
             🧑‍🎓
           </div>
@@ -43,7 +43,7 @@ export default function ContinueSection() {
           </div>
         </div>
 
-        <div className="bg-gray-50 rounded-2xl border border-gray-100 p-5 flex items-center gap-3 relative overflow-hidden">
+        <div className="bg-gray-50 dark:bg-[#111c14] rounded-2xl border border-gray-100 dark:border-[#334155] p-5 flex items-center gap-3 relative overflow-hidden">
           <span className="text-4xl opacity-10 absolute top-2 left-3 select-none">❝</span>
           <p className="text-sm text-gray-600 leading-relaxed italic relative z-10">
             {MOTIVATIONAL_QUOTE}

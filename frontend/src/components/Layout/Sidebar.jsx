@@ -2,6 +2,7 @@
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "../../config/supabase";
 import { useAdmin } from "../../hooks/useAdmin";
+import { useDarkMode } from "../../hooks/useDarkMode";
 
 const NAV_ITEMS = [
   { to: "/dashboard",            icon: "⊞", label: "Inicio" },
@@ -19,6 +20,7 @@ export default function Sidebar({ isDemoMode = false }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { isAdmin, loading: adminLoading } = useAdmin();
+  const [dark, toggleDark] = useDarkMode();
 
   const handleLogout = async () => {
     if (isDemoMode) {
@@ -34,11 +36,11 @@ export default function Sidebar({ isDemoMode = false }) {
   const isAdminRoute = location.pathname.startsWith('/dashboard/admin');
 
   return (
-    <aside className="w-56 min-h-screen bg-white border-r border-gray-100 flex flex-col fixed left-0 top-0 z-30">
-      <div className="px-5 pt-7 pb-5 border-b border-gray-100">
+    <aside className="w-56 min-h-screen bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 flex flex-col fixed left-0 top-0 z-30">
+      <div className="px-5 pt-7 pb-5 border-b border-gray-100 dark:border-gray-800">
         <div className="flex items-center gap-2 mb-1">
           <span className="text-2xl">🌿</span>
-          <span className="text-xl font-bold text-gray-900 tracking-tight">BROTA</span>
+          <span className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">BROTA</span>
         </div>
         <p className="text-[11px] text-gray-400 leading-tight pl-9">
           Descubre tu camino,<br />construye tu futuro
@@ -80,8 +82,16 @@ export default function Sidebar({ isDemoMode = false }) {
         ))}
 
         <button
+          onClick={toggleDark}
+          className="flex items-center gap-3 px-5 py-2.5 mx-2 rounded-lg text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-200 transition-all w-[calc(100%-16px)] mt-2"
+        >
+          <span className="text-base w-5 text-center">{dark ? '☀️' : '🌙'}</span>
+          {dark ? 'Modo claro' : 'Modo oscuro'}
+        </button>
+
+        <button
           onClick={handleLogout}
-          className="flex items-center gap-3 px-5 py-2.5 mx-2 rounded-lg text-sm text-gray-500 hover:bg-red-50 hover:text-red-600 transition-all w-[calc(100%-16px)] mt-2"
+          className="flex items-center gap-3 px-5 py-2.5 mx-2 rounded-lg text-sm text-gray-500 hover:bg-red-50 hover:text-red-600 transition-all w-[calc(100%-16px)] mt-1"
         >
           <span className="text-base w-5 text-center">↪</span>
           Cerrar sesión

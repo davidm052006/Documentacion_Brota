@@ -10,7 +10,7 @@ export default function ProfileCard({ profile, userEmail }) {
   ];
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+    <div className="bg-white dark:bg-[#1a2e1f] rounded-2xl border border-gray-100 dark:border-[#334155] shadow-sm p-6">
       <div className="flex items-center gap-2 mb-5">
         <span className="text-gray-400 text-lg">👤</span>
         <h2 className="text-base font-semibold text-gray-800">Tu perfil</h2>
