@@ -36,7 +36,7 @@ export default function Sidebar({ isDemoMode = false }) {
   const isAdminRoute = location.pathname.startsWith('/dashboard/admin');
 
   return (
-    <aside className="w-56 min-h-screen bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 flex flex-col fixed left-0 top-0 z-30">
+    <aside className="w-56 h-screen bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 flex flex-col fixed left-0 top-0 z-30 overflow-hidden">
       <div className="px-5 pt-7 pb-5 border-b border-gray-100 dark:border-gray-800">
         <div className="flex items-center gap-2 mb-1">
           <span className="text-2xl">🌿</span>
