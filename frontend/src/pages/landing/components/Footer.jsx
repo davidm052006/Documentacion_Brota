@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 function Footer() {
   return (
     <footer className="w-full bg-gray-950 text-gray-400">
@@ -55,8 +57,8 @@ function Footer() {
       <div className="border-t border-gray-800 px-20 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-gray-600">
         <span>© {new Date().getFullYear()} BROTA — Todos los derechos reservados.</span>
         <div className="flex gap-4">
-          <a href="#" className="hover:text-gray-400 transition-colors">Privacidad</a>
-          <a href="#" className="hover:text-gray-400 transition-colors">Términos de uso</a>
+          <Link to="/privacidad" className="hover:text-gray-400 transition-colors">Privacidad</Link>
+          <Link to="/terminos" className="hover:text-gray-400 transition-colors">Términos de uso</Link>
         </div>
       </div>
 

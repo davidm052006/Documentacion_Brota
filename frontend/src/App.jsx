@@ -6,6 +6,8 @@ import Login          from './pages/landing/Login';
 import Servicios      from './pages/landing/Servicios';
 import SaberMas      from './pages/landing/SaberMas';
 import ResetPassword  from './pages/landing/ResetPassword';
+import Terminos       from './pages/landing/components/Terminos';
+import Privacidad     from './pages/landing/components/Privacidad';
 import Dashboard      from './pages/dashboard/Dashboard';
 import TestVocacional from './pages/dashboard/test-vocacional/TestVocacional';
 import DashboardLayout from './components/Layout/DashboardLayout';
@@ -103,6 +105,8 @@ function App() {
         {/* Páginas públicas de información */}
         <Route path="/servicios" element={<Servicios />} />
         <Route path="/saber-mas" element={<SaberMas />} />
+        <Route path="/terminos" element={<Terminos />} />
+        <Route path="/privacidad" element={<Privacidad />} />
 
         {/* Recuperación de contraseña */}
         <Route path="/reset-password" element={<ResetPassword />} />

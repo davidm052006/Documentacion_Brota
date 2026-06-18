@@ -8,7 +8,7 @@ import ProfileCard from "./components/ProfileCard";
 import QuickActions from "./components/QuickActions";
 import ContinueSection from "./components/ContinueSection";
 
-export default function Dashboard({ user }) {
+export default function Dashboard({ user, isDemoMode = false }) {
   const [profile, setProfile] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [error, setError] = useState(null);
@@ -39,7 +39,7 @@ export default function Dashboard({ user }) {
   // ─── Estados de carga / error ───────────────────────────────────────────────
   if (loadingProfile) {
     return (
-      <DashboardLayout>
+      <DashboardLayout isDemoMode={isDemoMode}>
         <div className="flex items-center justify-center min-h-screen">
           <p className="text-gray-400 text-sm animate-pulse">
             Cargando tu perfil…
@@ -51,7 +51,7 @@ export default function Dashboard({ user }) {
 
   if (error) {
     return (
-      <DashboardLayout>
+      <DashboardLayout isDemoMode={isDemoMode}>
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
             <p className="text-red-500 font-semibold mb-2">Ocurrió un error</p>
@@ -70,7 +70,7 @@ export default function Dashboard({ user }) {
 
   // ─── Render principal ───────────────────────────────────────────────────────
   return (
-    <DashboardLayout profile={profile}>
+    <DashboardLayout profile={{ ...profile, email: user?.email }} isDemoMode={isDemoMode}>
       <div className="p-6 max-w-6xl mx-auto">
         {/* ── Hero + Perfil (lado a lado) ── */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 mb-6">
