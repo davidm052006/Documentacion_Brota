@@ -13,7 +13,7 @@ const ROL_COLORS = {
 
 const FORM_VACIO = {
   nombre: '', apellido: '', ciudad: '', nivel_educativo: '',
-  grado: '', edad: '', telefono: '', rol: 'estudiante',
+  condiciones_socioeconomicas: '', edad: '', rol: 'estudiante',
 };
 
 const FORM_NUEVO_VACIO = {
@@ -98,14 +98,13 @@ export default function UsuariosSection() {
   // ─── UPDATE ───────────────────────────────────────────────────────────────
   const abrirEditar = (usuario) => {
     setFormEditar({
-      nombre:          usuario.nombre          || '',
-      apellido:        usuario.apellido        || '',
-      ciudad:          usuario.ciudad          || '',
-      nivel_educativo: usuario.nivel_educativo || '',
-      grado:           usuario.grado           || '',
-      edad:            usuario.edad            || '',
-      telefono:        usuario.telefono        || '',
-      rol:             usuario.rol             || 'estudiante',
+      nombre:                      usuario.nombre                      || '',
+      apellido:                    usuario.apellido                    || '',
+      ciudad:                      usuario.ciudad                      || '',
+      nivel_educativo:             usuario.nivel_educativo             || '',
+      condiciones_socioeconomicas: usuario.condiciones_socioeconomicas || '',
+      edad:                        usuario.edad                        || '',
+      rol:                         usuario.rol                         || 'estudiante',
     });
     setFormError(null);
     setModalEditar(usuario);
@@ -308,10 +307,9 @@ export default function UsuariosSection() {
           <div className="space-y-1">
             <Detalle label="Nombre completo"  value={`${modalVer.nombre} ${modalVer.apellido}`} />
             <Detalle label="Ciudad"           value={modalVer.ciudad} />
-            <Detalle label="Nivel educativo"  value={modalVer.nivel_educativo} />
-            <Detalle label="Grado"            value={modalVer.grado} />
-            <Detalle label="Edad"             value={modalVer.edad} />
-            <Detalle label="Teléfono"         value={modalVer.telefono} />
+            <Detalle label="Nivel educativo"          value={modalVer.nivel_educativo} />
+            <Detalle label="Cond. socioeconómicas"    value={modalVer.condiciones_socioeconomicas} />
+            <Detalle label="Edad"                     value={modalVer.edad} />
             <Detalle label="Rol"
               value={
                 <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${ROL_COLORS[modalVer.rol] || 'bg-gray-100'}`}>
@@ -330,11 +328,10 @@ export default function UsuariosSection() {
           <div className="grid grid-cols-2 gap-3">
             <Campo label="Nombre"          name="nombre"          form={formEditar} setForm={setFormEditar} />
             <Campo label="Apellido"        name="apellido"        form={formEditar} setForm={setFormEditar} />
-            <Campo label="Ciudad"          name="ciudad"          form={formEditar} setForm={setFormEditar} />
-            <Campo label="Nivel educativo" name="nivel_educativo" form={formEditar} setForm={setFormEditar} />
-            <Campo label="Grado"           name="grado"           form={formEditar} setForm={setFormEditar} />
-            <Campo label="Edad"            name="edad"   type="number" form={formEditar} setForm={setFormEditar} />
-            <Campo label="Teléfono"        name="telefono"        form={formEditar} setForm={setFormEditar} />
+            <Campo label="Ciudad"                    name="ciudad"                      form={formEditar} setForm={setFormEditar} />
+            <Campo label="Nivel educativo"          name="nivel_educativo"             form={formEditar} setForm={setFormEditar} />
+            <Campo label="Cond. socioeconómicas"    name="condiciones_socioeconomicas" form={formEditar} setForm={setFormEditar} />
+            <Campo label="Edad"                     name="edad" type="number"          form={formEditar} setForm={setFormEditar} />
             <div>
               <label className="block text-xs font-semibold text-gray-600 mb-1">Rol</label>
               <select
@@ -389,11 +386,10 @@ export default function UsuariosSection() {
             <Campo label="Contraseña" name="password" type="password" form={formNuevo} setForm={setFormNuevo} required />
             <Campo label="Nombre"   name="nombre"   form={formNuevo} setForm={setFormNuevo} required />
             <Campo label="Apellido" name="apellido" form={formNuevo} setForm={setFormNuevo} required />
-            <Campo label="Ciudad"          name="ciudad"          form={formNuevo} setForm={setFormNuevo} />
-            <Campo label="Nivel educativo" name="nivel_educativo" form={formNuevo} setForm={setFormNuevo} />
-            <Campo label="Grado"    name="grado"    form={formNuevo} setForm={setFormNuevo} />
-            <Campo label="Edad"     name="edad"     type="number" form={formNuevo} setForm={setFormNuevo} />
-            <Campo label="Teléfono" name="telefono" form={formNuevo} setForm={setFormNuevo} />
+            <Campo label="Ciudad"                 name="ciudad"                      form={formNuevo} setForm={setFormNuevo} />
+            <Campo label="Nivel educativo"       name="nivel_educativo"             form={formNuevo} setForm={setFormNuevo} />
+            <Campo label="Cond. socioeconómicas" name="condiciones_socioeconomicas" form={formNuevo} setForm={setFormNuevo} />
+            <Campo label="Edad"                  name="edad" type="number"          form={formNuevo} setForm={setFormNuevo} />
             <div>
               <label className="block text-xs font-semibold text-gray-600 mb-1">Rol</label>
               <select

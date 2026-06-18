@@ -128,7 +128,7 @@ const createUsuario = async (req, res) => {
   try {
     const {
       email, password, nombre, apellido,
-      ciudad, nivel_educativo, grado, edad, telefono,
+      ciudad, nivel_educativo, condiciones_socioeconomicas, edad,
       rol = 'estudiante',
     } = req.body;
 
@@ -162,7 +162,7 @@ const createUsuario = async (req, res) => {
     // 2. Crear registro en perfiles_usuario
     const { error: perfilError } = await supabase
       .from('perfiles_usuario')
-      .insert([{ user_id: userId, nombre, apellido, ciudad, nivel_educativo, grado, edad, telefono }]);
+      .insert([{ user_id: userId, nombre, apellido, ciudad, nivel_educativo, condiciones_socioeconomicas, edad }]);
 
     if (perfilError) {
       // Rollback: eliminar el usuario de auth si el perfil no se pudo crear
@@ -201,7 +201,7 @@ const createUsuario = async (req, res) => {
 const updateUsuario = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre, apellido, ciudad, nivel_educativo, grado, edad, telefono, rol } = req.body;
+    const { nombre, apellido, ciudad, nivel_educativo, condiciones_socioeconomicas, edad, rol } = req.body;
 
     // Obtener user_id del perfil antes de actualizar
     const { data: perfil, error: findError } = await supabase
@@ -217,7 +217,7 @@ const updateUsuario = async (req, res) => {
     // Actualizar datos del perfil en perfiles_usuario
     const { error: updateError } = await supabase
       .from('perfiles_usuario')
-      .update({ nombre, apellido, ciudad, nivel_educativo, grado, edad, telefono })
+      .update({ nombre, apellido, ciudad, nivel_educativo, condiciones_socioeconomicas, edad })
       .eq('id', id);
 
     if (updateError) {
