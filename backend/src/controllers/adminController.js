@@ -162,7 +162,7 @@ const createUsuario = async (req, res) => {
     // 2. Crear registro en perfiles_usuario
     const { error: perfilError } = await supabase
       .from('perfiles_usuario')
-      .insert([{ user_id: userId, nombre, apellido, ciudad, nivel_educativo, condiciones_socioeconomicas, edad }]);
+      .insert([{ user_id: userId, nombre, apellido, ciudad, nivel_educativo, condiciones_socioeconomicas, edad: edad ? parseInt(edad) : null }]);
 
     if (perfilError) {
       // Rollback: eliminar el usuario de auth si el perfil no se pudo crear
@@ -217,7 +217,7 @@ const updateUsuario = async (req, res) => {
     // Actualizar datos del perfil en perfiles_usuario
     const { error: updateError } = await supabase
       .from('perfiles_usuario')
-      .update({ nombre, apellido, ciudad, nivel_educativo, condiciones_socioeconomicas, edad })
+      .update({ nombre, apellido, ciudad, nivel_educativo, condiciones_socioeconomicas, edad: edad ? parseInt(edad) : null })
       .eq('id', id);
 
     if (updateError) {
