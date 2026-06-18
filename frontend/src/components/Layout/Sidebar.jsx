@@ -2,7 +2,6 @@
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "../../config/supabase";
 import { useAdmin } from "../../hooks/useAdmin";
-import { useDarkMode } from "../../hooks/useDarkMode";
 
 const NAV_ITEMS = [
   { to: "/dashboard",            icon: "⊞", label: "Inicio" },
@@ -20,7 +19,6 @@ export default function Sidebar({ isDemoMode = false }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { isAdmin, loading: adminLoading } = useAdmin();
-  const [dark, toggleDark] = useDarkMode();
 
   const handleLogout = async () => {
     if (isDemoMode) {
@@ -80,14 +78,6 @@ export default function Sidebar({ isDemoMode = false }) {
             {label}
           </NavLink>
         ))}
-
-        <button
-          onClick={toggleDark}
-          className="flex items-center gap-3 px-5 py-2.5 mx-2 rounded-lg text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-200 transition-all w-[calc(100%-16px)] mt-2"
-        >
-          <span className="text-base w-5 text-center">{dark ? '☀️' : '🌙'}</span>
-          {dark ? 'Modo claro' : 'Modo oscuro'}
-        </button>
 
         <button
           onClick={handleLogout}
