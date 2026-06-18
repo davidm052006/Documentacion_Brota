@@ -5,8 +5,10 @@ import AuthCardShell from './AuthCardShell';
 import { getPasswordStrength } from '../../../utils/validation';
 
 function SignupCard({
-  nombre,
-  apellido,
+  primerNombre,
+  segundoNombre,
+  primerApellido,
+  segundoApellido,
   email,
   password,
   confirmPassword,
@@ -18,8 +20,10 @@ function SignupCard({
   validationErrors,
   error,
   loading,
-  onNombreChange,
-  onApellidoChange,
+  onPrimerNombreChange,
+  onSegundoNombreChange,
+  onPrimerApellidoChange,
+  onSegundoApellidoChange,
   onEmailChange,
   onPasswordChange,
   onConfirmPasswordChange,
@@ -41,17 +45,34 @@ function SignupCard({
 
       <form onSubmit={onSubmit} className="flex flex-col gap-4">
         <Input
-          placeholder="Nombre..."
-          value={nombre}
-          onChange={onNombreChange}
-          error={validationErrors.nombre}
+          placeholder="Primer nombre..."
+          value={primerNombre}
+          onChange={onPrimerNombreChange}
+          error={validationErrors.primerNombre}
         />
         <Input
-          placeholder="Apellido..."
-          value={apellido}
-          onChange={onApellidoChange}
-          error={validationErrors.apellido}
+          placeholder="Segundo nombre..."
+          value={segundoNombre}
+          onChange={onSegundoNombreChange}
+          error={validationErrors.segundoNombre}
         />
+
+
+        <Input
+          placeholder="Primer apellido..."
+          value={primerApellido}
+          onChange={onPrimerApellidoChange}
+          error={validationErrors.primerApellido}
+        />
+        <Input
+          placeholder="Segundo apellido..."
+          value={segundoApellido}
+          onChange={onSegundoApellidoChange}
+          error={validationErrors.segundoApellido}
+        />
+
+
+
         <Input
           placeholder="Escribe tu correo..."
           value={email}
