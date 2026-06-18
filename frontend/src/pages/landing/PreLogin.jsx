@@ -6,10 +6,13 @@ import { useAuth } from '../../hooks/useAuth';
 
 function PreLogin({ isDemoMode = false }) {
   const {
-    mode, email, password, confirmPassword, nombre, apellido,
+    mode, email, password, confirmPassword,
+    primerNombre, segundoNombre, primerApellido, segundoApellido,
     nivelEducativo, grado, edad, ciudad, telefono,
     loading, error, successMessage, validationErrors,
-    onNombreChange, onApellidoChange, onEmailChange,
+    onPrimerNombreChange, onSegundoNombreChange,
+    onPrimerApellidoChange, onSegundoApellidoChange,
+    onEmailChange,
     onPasswordChange, onConfirmPasswordChange,
     onNivelEducativoChange, onGradoChange, onEdadChange,
     onCiudadChange, onTelefonoChange,
@@ -22,12 +25,19 @@ function PreLogin({ isDemoMode = false }) {
       case 'signup':
         return (
           <SignupCard
-            nombre={nombre} apellido={apellido} email={email}
+            primerNombre={primerNombre}
+            segundoNombre={segundoNombre}
+            primerApellido={primerApellido}
+            segundoApellido={segundoApellido}
+            email={email}
             password={password} confirmPassword={confirmPassword}
             nivelEducativo={nivelEducativo} grado={grado} edad={edad}
             ciudad={ciudad} telefono={telefono}
             validationErrors={validationErrors} error={error} loading={loading}
-            onNombreChange={onNombreChange} onApellidoChange={onApellidoChange}
+            onPrimerNombreChange={onPrimerNombreChange}
+            onSegundoNombreChange={onSegundoNombreChange}
+            onPrimerApellidoChange={onPrimerApellidoChange}
+            onSegundoApellidoChange={onSegundoApellidoChange}
             onEmailChange={onEmailChange} onPasswordChange={onPasswordChange}
             onConfirmPasswordChange={onConfirmPasswordChange}
             onNivelEducativoChange={onNivelEducativoChange}

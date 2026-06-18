@@ -14,6 +14,24 @@ function Campo({ label, name, form, setForm }) {
   );
 }
 
+function FormCampos({ f, setF }) {
+  return (
+    <div className="space-y-3">
+      <Campo label="Nombre *"  name="nombre"  form={f} setForm={setF} />
+      <Campo label="Versión *" name="version" form={f} setForm={setF} />
+      <div>
+        <label className="block text-xs font-semibold text-gray-600 mb-1">Descripción</label>
+        <textarea value={f.descripcion} onChange={e => setF(p => ({ ...p, descripcion: e.target.value }))} rows={2}
+          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-300 resize-none" />
+      </div>
+      <div className="flex items-center gap-2">
+        <input type="checkbox" id="activo-c" checked={f.activo} onChange={e => setF(p => ({ ...p, activo: e.target.checked }))} className="accent-green-600" />
+        <label htmlFor="activo-c" className="text-sm text-gray-700">Activo (desactivará los demás)</label>
+      </div>
+    </div>
+  );
+}
+
 export default function CuestionariosSection() {
   const [cuestionarios, setCuestionarios] = useState([]);
   const [loading, setLoading]             = useState(true);
@@ -76,22 +94,6 @@ export default function CuestionariosSection() {
   };
 
   const abrirNuevo = () => { setForm(FORM_VACIO); setFormError(null); setModalNuevo(true); };
-
-  const FormCampos = ({ f, setF }) => (
-    <div className="space-y-3">
-      <Campo label="Nombre *"  name="nombre"  form={f} setForm={setF} />
-      <Campo label="Versión *" name="version" form={f} setForm={setF} />
-      <div>
-        <label className="block text-xs font-semibold text-gray-600 mb-1">Descripción</label>
-        <textarea value={f.descripcion} onChange={e => setF(prev => ({ ...prev, descripcion: e.target.value }))} rows={2}
-          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-300 resize-none" />
-      </div>
-      <div className="flex items-center gap-2">
-        <input type="checkbox" id="activo-c" checked={f.activo} onChange={e => setF(prev => ({ ...prev, activo: e.target.checked }))} className="accent-green-600" />
-        <label htmlFor="activo-c" className="text-sm text-gray-700">Activo (desactivará los demás)</label>
-      </div>
-    </div>
-  );
 
   return (
     <div className="bg-white rounded-xl shadow-sm">

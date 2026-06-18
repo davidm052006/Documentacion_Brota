@@ -21,6 +21,35 @@ function Campo({ label, name, type = 'text', form, setForm }) {
   );
 }
 
+function FormCampos({ f, setF, instituciones }) {
+  return (
+    <div className="grid grid-cols-2 gap-3">
+      <Campo label="Nombre *"       name="nombre"        form={f} setForm={setF} />
+      <Campo label="Tipo"           name="tipo"          form={f} setForm={setF} />
+      <Campo label="Área académica" name="area_academica" form={f} setForm={setF} />
+      <Campo label="Duración"       name="duracion"      form={f} setForm={setF} />
+      <Campo label="Modalidad"      name="modalidad"     form={f} setForm={setF} />
+      <div>
+        <label className="block text-xs font-semibold text-gray-600 mb-1">Institución</label>
+        <select value={f.institucion_id} onChange={e => setF(p => ({ ...p, institucion_id: e.target.value }))}
+          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-300 bg-white">
+          <option value="">Sin institución</option>
+          {instituciones.map(i => <option key={i.id} value={i.id}>{i.nombre}</option>)}
+        </select>
+      </div>
+      <div className="col-span-2">
+        <label className="block text-xs font-semibold text-gray-600 mb-1">Descripción</label>
+        <textarea value={f.descripcion} onChange={e => setF(p => ({ ...p, descripcion: e.target.value }))} rows={2}
+          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-300 resize-none" />
+      </div>
+      <div className="flex items-center gap-2">
+        <input type="checkbox" id="activo" checked={f.activo} onChange={e => setF(p => ({ ...p, activo: e.target.checked }))} className="accent-green-600" />
+        <label htmlFor="activo" className="text-sm text-gray-700">Activo</label>
+      </div>
+    </div>
+  );
+}
+
 export default function OportunidadesSection() {
   const [programas, setProgramas]   = useState([]);
   const [meta, setMeta]             = useState({ total: 0, pagina: 1, totalPaginas: 1 });
@@ -88,33 +117,6 @@ export default function OportunidadesSection() {
   };
 
   const abrirNuevo = () => { setForm(FORM_VACIO); setFormError(null); setModalNuevo(true); };
-
-  const FormCampos = ({ f, setF }) => (
-    <div className="grid grid-cols-2 gap-3">
-      <Campo label="Nombre *"      name="nombre"       form={f} setForm={setF} />
-      <Campo label="Tipo"          name="tipo"         form={f} setForm={setF} />
-      <Campo label="Área académica" name="area_academica" form={f} setForm={setF} />
-      <Campo label="Duración"      name="duracion"     form={f} setForm={setF} />
-      <Campo label="Modalidad"     name="modalidad"    form={f} setForm={setF} />
-      <div>
-        <label className="block text-xs font-semibold text-gray-600 mb-1">Institución</label>
-        <select value={f.institucion_id} onChange={e => setF(prev => ({ ...prev, institucion_id: e.target.value }))}
-          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-300 bg-white">
-          <option value="">Sin institución</option>
-          {instituciones.map(i => <option key={i.id} value={i.id}>{i.nombre}</option>)}
-        </select>
-      </div>
-      <div className="col-span-2">
-        <label className="block text-xs font-semibold text-gray-600 mb-1">Descripción</label>
-        <textarea value={f.descripcion} onChange={e => setF(prev => ({ ...prev, descripcion: e.target.value }))} rows={2}
-          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-300 resize-none" />
-      </div>
-      <div className="flex items-center gap-2">
-        <input type="checkbox" id="activo" checked={f.activo} onChange={e => setF(prev => ({ ...prev, activo: e.target.checked }))} className="accent-green-600" />
-        <label htmlFor="activo" className="text-sm text-gray-700">Activo</label>
-      </div>
-    </div>
-  );
 
   return (
     <div className="bg-white rounded-xl shadow-sm">
@@ -187,7 +189,7 @@ export default function OportunidadesSection() {
 
       {modalNuevo && (
         <Modal title="Nuevo programa" onClose={() => setModalNuevo(false)} size="lg">
-          <FormCampos f={form} setF={setForm} />
+          <FormCampos f={form} setF={setForm} instituciones={instituciones} />
           {formError && <p className="text-sm text-red-500 mt-3">{formError}</p>}
           <div className="flex justify-end gap-2 mt-4">
             <button onClick={() => setModalNuevo(false)} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
@@ -200,7 +202,7 @@ export default function OportunidadesSection() {
 
       {modalEditar && (
         <Modal title="Editar programa" onClose={() => setModalEditar(null)} size="lg">
-          <FormCampos f={form} setF={setForm} />
+          <FormCampos f={form} setF={setForm} instituciones={instituciones} />
           {formError && <p className="text-sm text-red-500 mt-3">{formError}</p>}
           <div className="flex justify-end gap-2 mt-4">
             <button onClick={() => setModalEditar(null)} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>

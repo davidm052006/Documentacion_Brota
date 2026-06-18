@@ -16,6 +16,54 @@ const CATEGORIA_COLORS = {
 
 const FORM_VACIO = { cuestionario_id: '', texto: '', tipo: 'opcion_multiple', orden: '', categoria: '', peso: '1.0' };
 
+function FormCampos({ f, setF, cuestionarios }) {
+  return (
+    <div className="space-y-3">
+      <div>
+        <label className="block text-xs font-semibold text-gray-600 mb-1">Cuestionario *</label>
+        <select value={f.cuestionario_id} onChange={e => setF(p => ({ ...p, cuestionario_id: e.target.value }))}
+          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-300 bg-white">
+          <option value="">Seleccionar cuestionario</option>
+          {cuestionarios.map(c => <option key={c.id} value={c.id}>{c.nombre} {c.version}</option>)}
+        </select>
+      </div>
+      <div>
+        <label className="block text-xs font-semibold text-gray-600 mb-1">Texto de la pregunta *</label>
+        <textarea value={f.texto} onChange={e => setF(p => ({ ...p, texto: e.target.value }))} rows={2}
+          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-300 resize-none" />
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="block text-xs font-semibold text-gray-600 mb-1">Tipo</label>
+          <select value={f.tipo} onChange={e => setF(p => ({ ...p, tipo: e.target.value }))}
+            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-300 bg-white">
+            <option value="opcion_multiple">Opción múltiple</option>
+            <option value="likert">Likert</option>
+          </select>
+        </div>
+        <div>
+          <label className="block text-xs font-semibold text-gray-600 mb-1">Categoría</label>
+          <select value={f.categoria} onChange={e => setF(p => ({ ...p, categoria: e.target.value }))}
+            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-300 bg-white">
+            <option value="">Sin categoría</option>
+            {['intereses', 'habilidades', 'vocacion', 'contexto'].map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+        </div>
+        <div>
+          <label className="block text-xs font-semibold text-gray-600 mb-1">Orden</label>
+          <input type="number" value={f.orden} onChange={e => setF(p => ({ ...p, orden: e.target.value }))}
+            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-300" />
+        </div>
+        <div>
+          <label className="block text-xs font-semibold text-gray-600 mb-1">Peso</label>
+          <input type="number" step="0.1" value={f.peso} onChange={e => setF(p => ({ ...p, peso: e.target.value }))}
+            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-300" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function PreguntasSection() {
   const [preguntas, setPreguntas]         = useState([]);
   const [cuestionarios, setCuestionarios] = useState([]);
@@ -87,52 +135,6 @@ export default function PreguntasSection() {
     setModalNuevo(true);
   };
 
-  const FormCampos = ({ f, setF }) => (
-    <div className="space-y-3">
-      <div>
-        <label className="block text-xs font-semibold text-gray-600 mb-1">Cuestionario *</label>
-        <select value={f.cuestionario_id} onChange={e => setF(p => ({ ...p, cuestionario_id: e.target.value }))}
-          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-300 bg-white">
-          <option value="">Seleccionar cuestionario</option>
-          {cuestionarios.map(c => <option key={c.id} value={c.id}>{c.nombre} {c.version}</option>)}
-        </select>
-      </div>
-      <div>
-        <label className="block text-xs font-semibold text-gray-600 mb-1">Texto de la pregunta *</label>
-        <textarea value={f.texto} onChange={e => setF(p => ({ ...p, texto: e.target.value }))} rows={2}
-          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-300 resize-none" />
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="block text-xs font-semibold text-gray-600 mb-1">Tipo</label>
-          <select value={f.tipo} onChange={e => setF(p => ({ ...p, tipo: e.target.value }))}
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-300 bg-white">
-            <option value="opcion_multiple">Opción múltiple</option>
-            <option value="likert">Likert</option>
-          </select>
-        </div>
-        <div>
-          <label className="block text-xs font-semibold text-gray-600 mb-1">Categoría</label>
-          <select value={f.categoria} onChange={e => setF(p => ({ ...p, categoria: e.target.value }))}
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-300 bg-white">
-            <option value="">Sin categoría</option>
-            {['intereses', 'habilidades', 'vocacion', 'contexto'].map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
-        </div>
-        <div>
-          <label className="block text-xs font-semibold text-gray-600 mb-1">Orden</label>
-          <input type="number" value={f.orden} onChange={e => setF(p => ({ ...p, orden: e.target.value }))}
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-300" />
-        </div>
-        <div>
-          <label className="block text-xs font-semibold text-gray-600 mb-1">Peso</label>
-          <input type="number" step="0.1" value={f.peso} onChange={e => setF(p => ({ ...p, peso: e.target.value }))}
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-300" />
-        </div>
-      </div>
-    </div>
-  );
-
   return (
     <div className="bg-white rounded-xl shadow-sm">
       <div className="flex items-center justify-between p-5 border-b border-gray-100">
@@ -199,7 +201,7 @@ export default function PreguntasSection() {
 
       {modalNuevo && (
         <Modal title="Nueva pregunta" onClose={() => setModalNuevo(false)} size="lg">
-          <FormCampos f={form} setF={setForm} />
+          <FormCampos f={form} setF={setForm} cuestionarios={cuestionarios} />
           {formError && <p className="text-sm text-red-500 mt-3">{formError}</p>}
           <div className="flex justify-end gap-2 mt-4">
             <button onClick={() => setModalNuevo(false)} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
@@ -212,7 +214,7 @@ export default function PreguntasSection() {
 
       {modalEditar && (
         <Modal title="Editar pregunta" onClose={() => setModalEditar(null)} size="lg">
-          <FormCampos f={form} setF={setForm} />
+          <FormCampos f={form} setF={setForm} cuestionarios={cuestionarios} />
           {formError && <p className="text-sm text-red-500 mt-3">{formError}</p>}
           <div className="flex justify-end gap-2 mt-4">
             <button onClick={() => setModalEditar(null)} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>

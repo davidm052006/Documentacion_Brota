@@ -25,6 +25,31 @@ function Campo({ label, name, type = 'text', form, setForm }) {
   );
 }
 
+function FormCampos({ f, setF }) {
+  return (
+    <div className="grid grid-cols-2 gap-3">
+      <Campo label="Nombre *"     name="nombre"      form={f} setForm={setF} />
+      <Campo label="Tipo"         name="tipo"        form={f} setForm={setF} />
+      <Campo label="Ciudad"       name="ciudad"      form={f} setForm={setF} />
+      <Campo label="Departamento" name="departamento" form={f} setForm={setF} />
+      <Campo label="Teléfono"     name="telefono"    form={f} setForm={setF} />
+      <Campo label="Email"        name="email"       type="email" form={f} setForm={setF} />
+      <div className="col-span-2">
+        <Campo label="Sitio web" name="sitio_web" form={f} setForm={setF} />
+      </div>
+      <div className="col-span-2">
+        <label className="block text-xs font-semibold text-gray-600 mb-1">Dirección</label>
+        <input value={f.direccion} onChange={e => setF(p => ({ ...p, direccion: e.target.value }))}
+          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-300" />
+      </div>
+      <div className="flex items-center gap-2">
+        <input type="checkbox" id="activa" checked={f.activa} onChange={e => setF(p => ({ ...p, activa: e.target.checked }))} className="accent-green-600" />
+        <label htmlFor="activa" className="text-sm text-gray-700">Activa</label>
+      </div>
+    </div>
+  );
+}
+
 export default function InstitucionesSection() {
   const [instituciones, setInstituciones] = useState([]);
   const [meta, setMeta]                   = useState({ total: 0, pagina: 1, totalPaginas: 1 });
@@ -85,29 +110,6 @@ export default function InstitucionesSection() {
   };
 
   const abrirNuevo = () => { setForm(FORM_VACIO); setFormError(null); setModalNuevo(true); };
-
-  const FormCampos = ({ f, setF }) => (
-    <div className="grid grid-cols-2 gap-3">
-      <Campo label="Nombre *" name="nombre" form={f} setForm={setF} />
-      <Campo label="Tipo"     name="tipo"   form={f} setForm={setF} />
-      <Campo label="Ciudad"   name="ciudad" form={f} setForm={setF} />
-      <Campo label="Departamento" name="departamento" form={f} setForm={setF} />
-      <Campo label="Teléfono" name="telefono" form={f} setForm={setF} />
-      <Campo label="Email"    name="email"    type="email" form={f} setForm={setF} />
-      <div className="col-span-2">
-        <Campo label="Sitio web" name="sitio_web" form={f} setForm={setF} />
-      </div>
-      <div className="col-span-2">
-        <label className="block text-xs font-semibold text-gray-600 mb-1">Dirección</label>
-        <input value={f.direccion} onChange={e => setF(prev => ({ ...prev, direccion: e.target.value }))}
-          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-300" />
-      </div>
-      <div className="flex items-center gap-2">
-        <input type="checkbox" id="activa" checked={f.activa} onChange={e => setF(prev => ({ ...prev, activa: e.target.checked }))} className="accent-green-600" />
-        <label htmlFor="activa" className="text-sm text-gray-700">Activa</label>
-      </div>
-    </div>
-  );
 
   return (
     <div className="bg-white rounded-xl shadow-sm">

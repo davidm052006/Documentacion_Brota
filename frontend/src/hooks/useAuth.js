@@ -34,8 +34,15 @@ export const useAuth = () => {
   const [email, setEmail]                     = useState('');
   const [password, setPassword]               = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [nombre, setNombre]                   = useState('');
-  const [apellido, setApellido]               = useState('');
+  const [primerNombre, setPrimerNombre]       = useState('');
+  const [segundoNombre, setSegundoNombre]     = useState('');
+  const [primerApellido, setPrimerApellido]   = useState('');
+  const [segundoApellido, setSegundoApellido] = useState('');
+  const [nivelEducativo, setNivelEducativo]   = useState('');
+  const [grado, setGrado]                     = useState('');
+  const [edad, setEdad]                       = useState('');
+  const [ciudad, setCiudad]                   = useState('');
+  const [telefono, setTelefono]               = useState('');
 
   // ── Estado de UI ─────────────────────────────────────────────
   const [loading, setLoading]                   = useState(false);
@@ -66,11 +73,18 @@ export const useAuth = () => {
   // Se pasan como props a los componentes hijos de PreLogin.jsx
 
   const fieldHandlers = {
-    onNombreChange:          (e) => { setNombre(e.target.value);          clearFieldError('nombre'); },
-    onApellidoChange:        (e) => { setApellido(e.target.value);        clearFieldError('apellido'); },
+    onPrimerNombreChange:    (e) => { setPrimerNombre(e.target.value);    clearFieldError('primerNombre'); clearFieldError('nombre'); },
+    onSegundoNombreChange:   (e) => { setSegundoNombre(e.target.value);   clearFieldError('segundoNombre'); },
+    onPrimerApellidoChange:  (e) => { setPrimerApellido(e.target.value);  clearFieldError('primerApellido'); clearFieldError('apellido'); },
+    onSegundoApellidoChange: (e) => { setSegundoApellido(e.target.value); clearFieldError('segundoApellido'); },
     onEmailChange:           (e) => { setEmail(e.target.value);           clearFieldError('email'); },
     onPasswordChange:        (e) => { setPassword(e.target.value);        clearFieldError('password'); },
     onConfirmPasswordChange: (e) => { setConfirmPassword(e.target.value); clearFieldError('confirmPassword'); },
+    onNivelEducativoChange:  (value) => { setNivelEducativo(value);       clearFieldError('nivelEducativo'); },
+    onGradoChange:           (e) => { setGrado(e.target.value);           clearFieldError('grado'); },
+    onEdadChange:            (e) => { setEdad(e.target.value);            clearFieldError('edad'); },
+    onCiudadChange:          (e) => { setCiudad(e.target.value);          clearFieldError('ciudad'); },
+    onTelefonoChange:        (e) => { setTelefono(e.target.value);        clearFieldError('telefono'); },
   };
 
   // ── Handler: Login ───────────────────────────────────────────
@@ -101,7 +115,11 @@ export const useAuth = () => {
     e.preventDefault();
     clearMessages();
 
+    const nombre = `${primerNombre} ${segundoNombre}`.trim();
+    const apellido = `${primerApellido} ${segundoApellido}`.trim();
     const errors = validateFields({ email, password, nombre, apellido, confirmPassword }, mode);
+    if (errors.nombre) errors.primerNombre = errors.nombre;
+    if (errors.apellido) errors.primerApellido = errors.apellido;
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors);
       return;
@@ -150,7 +168,9 @@ export const useAuth = () => {
   // ── Valor expuesto por el hook ────────────────────────────────
 
   return {
-    mode, email, password, confirmPassword, nombre, apellido,
+    mode, email, password, confirmPassword,
+    primerNombre, segundoNombre, primerApellido, segundoApellido,
+    nivelEducativo, grado, edad, ciudad, telefono,
     loading, error, successMessage, validationErrors,
     ...fieldHandlers,
     handleLogin, handleSignup, handlePasswordRecovery,
