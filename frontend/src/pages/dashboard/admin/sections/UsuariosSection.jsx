@@ -60,9 +60,10 @@ export default function UsuariosSection() {
   const [loading, setLoading]     = useState(true);
 
   // ─── Filtros y paginación (server-side) ───────────────────────────────────
-  const [pagina, setPagina]       = useState(1);
-  const [busqueda, setBusqueda]   = useState('');
-  const [rolFiltro, setRolFiltro] = useState('');
+  const [pagina, setPagina]           = useState(1);
+  const [busqueda, setBusqueda]       = useState('');
+  const [busquedaDebounce, setBusquedaDebounce] = useState('');
+  const [rolFiltro, setRolFiltro]     = useState('');
 
   // ─── Control de modales ───────────────────────────────────────────────────
   const [modalVer,      setModalVer]      = useState(null);
@@ -76,13 +77,18 @@ export default function UsuariosSection() {
   const [guardando,  setGuardando]  = useState(false);
   const [formError,  setFormError]  = useState(null);
 
+  // Debounce: espera 350ms después del último keystroke antes de buscar
+  useEffect(() => {
+    const t = setTimeout(() => { setBusquedaDebounce(busqueda); setPagina(1); }, 350);
+    return () => clearTimeout(t);
+  }, [busqueda]);
+
   // ─── READ ─────────────────────────────────────────────────────────────────
-  // useCallback para poder reusar la función tras mutaciones sin recrearla
   const fetchUsuarios = useCallback(async () => {
     setLoading(true);
     const { success, data, meta: metaResp } = await adminService.getUsuarios({
       pagina,
-      busqueda,
+      busqueda: busquedaDebounce,
       rol: rolFiltro,
     });
 
@@ -91,7 +97,7 @@ export default function UsuariosSection() {
       setMeta(metaResp);
     }
     setLoading(false);
-  }, [pagina, busqueda, rolFiltro]);
+  }, [pagina, busquedaDebounce, rolFiltro]);
 
   useEffect(() => { fetchUsuarios(); }, [fetchUsuarios]);
 
@@ -177,7 +183,7 @@ export default function UsuariosSection() {
   // ─── Helpers de UI ────────────────────────────────────────────────────────
   const cambiarFiltro = (setter) => (valor) => {
     setter(valor);
-    setPagina(1); // volver a la primera página al filtrar
+    setPagina(1);
   };
 
   return (
@@ -207,7 +213,7 @@ export default function UsuariosSection() {
             type="text"
             placeholder="Buscar por nombre o ciudad..."
             value={busqueda}
-            onChange={e => cambiarFiltro(setBusqueda)(e.target.value)}
+            onChange={e => setBusqueda(e.target.value)}
             className="w-full pl-4 pr-10 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-transparent"
           />
           <span className="absolute right-3 top-2.5 text-gray-400 text-sm">🔍</span>
