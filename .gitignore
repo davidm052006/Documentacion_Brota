@@ -48,3 +48,139 @@ docs/aprendizajes.md
 docs/notas_personales.md
 .vscode
 .kiro
+
+
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Proyecto
+
+**Brota** — plataforma de orientación vocacional para estudiantes colombianos de 14–25 años. Hace un test vocacional, genera un perfil de habilidades y recomienda programas educativos (universidades, SENA, técnicos).
+
+## Stack tecnológico
+
+| Capa | Tecnología |
+|------|-----------|
+| Frontend | React 19, Vite 7, TailwindCSS 4, react-router-dom 7 |
+| Backend | Node.js + Express 5, CommonJS (`require`/`module.exports`) |
+| Base de datos | Supabase (PostgreSQL), @supabase/supabase-js 2 |
+| Auth | Supabase Auth (gestionada en el frontend, sin pasar por el backend) |
+
+## Comandos
+
+```bash
+# Frontend (ejecutar desde /frontend)
+npm run dev        # Vite dev server
+npm run build      # Build de producción
+npm run lint       # ESLint
+
+# Backend (ejecutar desde /backend)
+npm run dev        # nodemon src/server.js (puerto 3000)
+npm run start      # node src/server.js
+```
+
+## Variables de entorno
+
+**Frontend** (`frontend/.env`):
+```
+VITE_SUPABASE_URL=
+VITE_SUPABASE_ANON_KEY=
+```
+
+**Backend** (`backend/.env`):
+```
+SUPABASE_URL=
+SUPABASE_SERVICE_KEY=
+JWT_SECRET=
+PORT=3000
+```
+
+> Si faltan las vars del frontend, la app entra en **Modo Demo** automáticamente (ver `frontend/src/config/supabase.js`). El modo demo usa `localStorage` con keys `demoModeLoggedIn`, `demoUserEmail`, `demoUserName`.
+
+## Arquitectura
+
+### Frontend (`frontend/src/`)
+```
+pages/
+  landing/          # Login, Registro, SaberMas, Servicios, ResetPassword
+  dashboard/
+    Dashboard.jsx
+    test-vocacional/ # Flujo del cuestionario vocacional
+    admin/           # Panel de administración (AdminPanel + secciones)
+components/
+  Layout/           # DashboardLayout (sidebar fijo + header) + Sidebar
+  Shared/           # Avatar, Button, Input, ProgressBar, UserMenu
+  ProtectedRoute.jsx
+services/
+  authService.js        # Auth real con Supabase
+  authServiceDemo.js    # Auth mock para modo demo
+  perfilService.js
+hooks/
+  useAuth.js            # Hook que alterna entre auth real y demo
+utils/
+  auth.js               # handleLogout
+  authErrors.js         # Traducción de errores de Supabase
+  validation.js
+config/
+  supabase.js           # Cliente Supabase (con fallback dummy para demo)
+```
+
+### Backend (`backend/src/`)
+```
+server.js                     # Express entry point
+routes/
+  auth.js                     # Vacío (auth va directo por Supabase JS)
+  perfil.js                   # /api/perfil/*
+  admin.js                    # /api/admin/* (usa SERVICE_ROLE_KEY)
+controllers/
+  perfilController.js         # Cuestionario, resultados, perfil
+middlewares/
+  automiddlewares.js          # verifyToken (JWT) + requireAdmin (rol en perfiles)
+config/
+  supabase.js                 # Cliente con SERVICE_KEY
+utils/
+  perfilvocacional.js         # calcularPorcentajes()
+```
+
+### API del backend
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| GET | `/api/health` | Health check |
+| GET | `/api/perfil/cuestionario` | Cuestionario activo + preguntas |
+| POST | `/api/perfil/resultado` | Guardar resultado del test |
+| GET | `/api/perfil/resultado/:perfilUsuarioId` | Último resultado del usuario |
+| GET | `/api/perfil/:userId` | Perfil completo del usuario |
+
+## Tablas principales en Supabase
+
+| Tabla | Descripción |
+|-------|-------------|
+| `perfiles_usuario` | Datos del estudiante (nombre, nivel_educativo, grado, edad, ciudad, telefono, user_id) |
+| `perfiles` | Roles de usuario (`rol`: 'admin' \| 'estudiante' \| 'orientador') |
+| `cuestionarios` | Versiones del test (campo `activo: bool`) |
+| `preguntas` | Preguntas de cada cuestionario (`cuestionario_id`, `orden`, `tipo`) |
+| `resultados` | Respuestas y perfil_vocacional (JSON) del test completado |
+| `recomendaciones` | Recomendaciones generadas (`compatibilidad`, `razones`) |
+| `programas` | Programas académicos (`tipo`, `area_academica`, `duracion`) |
+| `instituciones` | Instituciones educativas (`nombre`, `ciudad`) |
+
+## Convenciones de código
+
+- **Frontend**: ES Modules (`import`/`export`). Componentes en PascalCase. Services y utils en camelCase con named exports. Default export para componentes React.
+- **Backend**: CommonJS (`require`/`module.exports`). Controllers exportan objeto con funciones nombradas.
+- **Estilos**: Tailwind utility classes puras, sin CSS custom salvo `index.css`. No hay archivos `.module.css`.
+- **Sin TypeScript**: Todo en `.jsx` y `.js`.
+- **Admin sections**: cada archivo en `admin/sections/` es autocontenido con sus propios datos mock y sin props — patrón a mantener.
+- Las respuestas de los services siguen el patrón `{ success: bool, error?: string }`.
+
+## Panel de administración (`/dashboard/admin`)
+
+Estado actual: UI completa con datos **mock**. Secciones: Usuarios, Oportunidades, Instituciones, Cuestionarios, Preguntas, Configuración. La ruta no tiene protección por rol todavía — cualquier usuario autenticado puede acceder. El middleware `requireAdmin` existe en el backend pero no está conectado al frontend.
+
+## No modificar
+
+- `docs/` — documentación del proyecto
+- `backend/setup_database.sql` — esquema de la base de datos
+- `frontend/public/` — assets estáticos
+- `resources/` — recursos del proyecto
