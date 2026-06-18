@@ -15,8 +15,8 @@ function Footer() {
         </div>
 
         {/* Centro — Links en horizontal */}
-        <nav className="flex gap-6 text-sm">
-          {['Inicio', 'Servicios', 'Sobre nosotros', 'Contacto'].map((item) => (
+        <nav className="flex gap-6 text-sm" >
+          {['Inicio', 'Contacto'].map((item) => (
             <a
               key={item}
               href="#"
