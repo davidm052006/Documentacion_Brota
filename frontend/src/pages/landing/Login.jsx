@@ -6,9 +6,12 @@ import SignupCard from './components/SignupCard';
 import ForgotPasswordCard from './components/ForgotPasswordCard';
 import Footer from './components/Footer';
 import { useAuth } from '../../hooks/useAuth';
+import { useDarkMode } from '../../hooks/useDarkMode';
 
 function Login() {
   const navigate = useNavigate();   // ← NUEVO
+  const [dark, toggleDark] = useDarkMode();
+
   const {
     mode, email, password, confirmPassword,
     primerNombre, segundoNombre, primerApellido, segundoApellido,
@@ -76,6 +79,14 @@ function Login() {
 
   return (
     <div className="flex flex-col w-full min-h-screen">
+
+      <button
+        onClick={toggleDark}
+        title={dark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+        className="fixed top-4 right-4 z-50 w-9 h-9 flex items-center justify-center rounded-full bg-white/80 dark:bg-[#1a1d24] border border-gray-200 dark:border-[#2c3140] shadow-sm hover:shadow-md text-base transition-all backdrop-blur-sm"
+      >
+        {dark ? '☀️' : '🌙'}
+      </button>
 
       {/* ── Sección principal con fondo ── */}
       <div className="flex flex-col flex-1 bg-[url('/fondo-planta-crema.jpg')] bg-cover bg-center relative dark:bg-none dark:bg-[#111318]">

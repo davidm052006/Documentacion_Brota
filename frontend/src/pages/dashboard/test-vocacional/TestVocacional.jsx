@@ -8,6 +8,7 @@ import TestQuestion from './components/TestQuestion';
 import TestProgress from './components/TestProgress';
 import TestResult   from './components/TestResult';
 import { getCategoriaInfo, storageKey } from '../../../utils/vocacionalCategorias';
+import { eliminarResultado } from '../../../services/perfilService';
 
 // ── Calcula los scores sumando los pesos de cada opción elegida ──────────────
 function calcularResultado(preguntas, seleccionadas) {
@@ -217,13 +218,16 @@ export default function TestVocacional({ user, isDemoMode = false }) {
     setFase('resultado');
   };
 
-  const reiniciarTest = () => {
+  const reiniciarTest = async () => {
+    if (perfilUsuarioId) await eliminarResultado(perfilUsuarioId);
     if (user?.id) localStorage.removeItem(storageKey(user.id));
     setFase('intro');
     setPreguntaIdx(0);
     setSeleccionadas({});
     setResultado(null);
     setTieneBorrador(false);
+    setTieneResultadoPrevio(false);
+    setResultadoGuardadoDB(null);
   };
 
   // ── Render ───────────────────────────────────────────────────────────────────

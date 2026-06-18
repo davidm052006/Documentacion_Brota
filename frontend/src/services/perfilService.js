@@ -7,7 +7,7 @@
 
 import { supabase } from '../config/supabase';
 
-const API_URL = '';
+const API_URL = import.meta.env.VITE_API_URL ?? '';
 
 // --------------------------------------------
 // OBTENER PREGUNTAS DEL CUESTIONARIO ACTIVO
