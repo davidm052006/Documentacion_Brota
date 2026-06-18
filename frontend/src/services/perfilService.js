@@ -7,7 +7,7 @@
 
 import { supabase } from '../config/supabase';
 
-const API_URL = '';
+const API_URL = import.meta.env.VITE_API_URL ?? '';
 
 // --------------------------------------------
 // OBTENER PREGUNTAS DEL CUESTIONARIO ACTIVO
@@ -117,6 +117,23 @@ export const obtenerResultado = async (perfilUsuarioId) => {
     return { success: true, data: data.data }; // null si no ha hecho el test
   } catch (err) {
     console.error('perfilService.obtenerResultado:', err);
+    return { success: false, error: 'Error de conexión con el servidor' };
+  }
+};
+
+// --------------------------------------------
+// ELIMINAR TODOS LOS RESULTADOS DEL USUARIO
+// --------------------------------------------
+export const eliminarResultado = async (perfilUsuarioId) => {
+  try {
+    const response = await fetch(`${API_URL}/api/perfil/resultado/${perfilUsuarioId}`, {
+      method: 'DELETE',
+    });
+    const data = await response.json();
+    if (!response.ok) return { success: false, error: data.message };
+    return { success: true };
+  } catch (err) {
+    console.error('perfilService.eliminarResultado:', err);
     return { success: false, error: 'Error de conexión con el servidor' };
   }
 };

@@ -88,7 +88,7 @@ export default function Dashboard({ user }) {
         </div>
 
         {/* ── Continuar + Frase motivacional ── */}
-        <ContinueSection />
+        <ContinueSection perfilUsuarioId={profile?.id} userId={user?.id} />
       </div>
     </DashboardLayout>
   );

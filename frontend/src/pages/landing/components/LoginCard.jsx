@@ -42,7 +42,7 @@ function LoginCard({
         </Button>
       </form>
 
-      <div className="flex flex-col gap-3 text-sm text-center text-black">
+      <div className="flex flex-col gap-3 text-sm text-center text-black dark:text-[#c8cdd8]">
         <p>
           ¿Aún no eres parte?{' '}
           <button

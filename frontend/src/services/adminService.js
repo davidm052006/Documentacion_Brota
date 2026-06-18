@@ -1,6 +1,6 @@
 import { supabase } from '../config/supabase';
 
-const API_URL = '';
+const API_URL = import.meta.env.VITE_API_URL ?? '';
 
 // Obtiene el token de sesión activo para enviarlo al backend
 const getAuthHeaders = async () => {
