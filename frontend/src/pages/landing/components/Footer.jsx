@@ -17,16 +17,9 @@ function Footer() {
         </div>
 
         {/* Centro — Links en horizontal */}
-        <nav className="flex gap-6 text-sm" >
-          {['Inicio', 'Contacto'].map((item) => (
-            <a
-              key={item}
-              href="#"
-              className="hover:text-green-400 transition-colors duration-200"
-            >
-              {item}
-            </a>
-          ))}
+        <nav className="flex gap-6 text-sm">
+          <a href="/" className="hover:text-green-400 transition-colors duration-200">Inicio</a>
+          <a href="/contacto" className="hover:text-green-400 transition-colors duration-200">Contacto</a>
         </nav>
 
         {/* Derecha — Redes sociales */}

@@ -6,13 +6,15 @@ import Login          from './pages/landing/Login';
 import Servicios      from './pages/landing/Servicios';
 import SaberMas      from './pages/landing/SaberMas';
 import ResetPassword  from './pages/landing/ResetPassword';
-import Terminos       from './pages/landing/components/Terminos';
-import Privacidad     from './pages/landing/components/Privacidad';
+import Privacidad     from './pages/landing/Privacidad';
+import Terminos       from './pages/landing/Terminos';
+import Contacto       from './pages/landing/Contacto';
 import Dashboard      from './pages/dashboard/Dashboard';
 import TestVocacional from './pages/dashboard/test-vocacional/TestVocacional';
 import DashboardLayout from './components/Layout/DashboardLayout';
 import AdminPanel     from './pages/dashboard/admin/AdminPanel';
 import Recursos       from './pages/dashboard/Recursos';
+import Profesiones    from './pages/dashboard/Profesiones';
 
 function PaginaEnConstruccion({ titulo }) {
   return (
@@ -83,72 +85,67 @@ function App() {
     }
   }, []);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500 mx-auto" />
-          <p className="mt-4 text-gray-600">Cargando...</p>
-        </div>
-      </div>
-    );
-  }
-
   const puedeAcceder = user || isDemoMode;
+
+  const spinner = (
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500 mx-auto" />
+        <p className="mt-4 text-gray-600">Cargando...</p>
+      </div>
+    </div>
+  );
 
   return (
     <BrowserRouter>
       <Routes>
-        {/* Punto de entrada */}
-        <Route path="/" element={<Login isDemoMode={isDemoMode} />} />
-
-        {/* Páginas públicas de información */}
-        <Route path="/servicios" element={<Servicios />} />
-        <Route path="/saber-mas" element={<SaberMas />} />
-        <Route path="/terminos" element={<Terminos />} />
-        <Route path="/privacidad" element={<Privacidad />} />
-
-        {/* Recuperación de contraseña */}
+        {/* Rutas públicas: renderizan inmediatamente, sin esperar auth */}
+        <Route path="/servicios"      element={<Servicios />} />
+        <Route path="/saber-mas"      element={<SaberMas />} />
+        <Route path="/privacidad"     element={<Privacidad />} />
+        <Route path="/terminos"       element={<Terminos />} />
+        <Route path="/contacto"       element={<Contacto />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* Test vocacional */}
+        {/* Punto de entrada: espera auth para decidir */}
+        <Route
+          path="/"
+          element={loading ? spinner : <Login isDemoMode={isDemoMode} />}
+        />
+
+        {/* Rutas protegidas */}
         <Route
           path="/dashboard/test"
-          element={puedeAcceder ? <TestVocacional user={user} isDemoMode={isDemoMode} /> : <Navigate to="/" replace />}
+          element={loading ? spinner : puedeAcceder ? <TestVocacional user={user} isDemoMode={isDemoMode} /> : <Navigate to="/" replace />}
         />
-
-        {/* Dashboard principal */}
         <Route
           path="/dashboard"
-          element={puedeAcceder ? <Dashboard user={user} isDemoMode={isDemoMode} /> : <Navigate to="/" replace />}
+          element={loading ? spinner : puedeAcceder ? <Dashboard user={user} isDemoMode={isDemoMode} /> : <Navigate to="/" replace />}
         />
-
-        {/* Recursos educativos */}
         <Route
           path="/dashboard/recursos"
-          element={puedeAcceder ? <Recursos /> : <Navigate to="/" replace />}
+          element={loading ? spinner : puedeAcceder ? <Recursos /> : <Navigate to="/" replace />}
         />
-
-        {/* Rutas en construcción */}
+        <Route
+          path="/dashboard/profesiones"
+          element={loading ? spinner : puedeAcceder ? <Profesiones /> : <Navigate to="/" replace />}
+        />
         {[
-          { path: '/dashboard/profesiones', titulo: 'Explorar profesiones' },
-          { path: '/dashboard/rutas',       titulo: 'Rutas formativas' },
-          { path: '/dashboard/favoritos',   titulo: 'Favoritos' },
-          { path: '/dashboard/comunidad',   titulo: 'Comunidad' },
-          { path: '/dashboard/mensajes',    titulo: 'Mensajes' },
-          { path: '/dashboard/ajustes',     titulo: 'Ajustes' },
+          { path: '/dashboard/rutas',     titulo: 'Rutas formativas' },
+          { path: '/dashboard/favoritos', titulo: 'Favoritos' },
+          { path: '/dashboard/comunidad', titulo: 'Comunidad' },
+          { path: '/dashboard/mensajes',  titulo: 'Mensajes' },
+          { path: '/dashboard/ajustes',   titulo: 'Ajustes' },
         ].map(({ path, titulo }) => (
           <Route
             key={path}
             path={path}
-            element={puedeAcceder ? <PaginaEnConstruccion titulo={titulo} /> : <Navigate to="/" replace />}
+            element={loading ? spinner : puedeAcceder ? <PaginaEnConstruccion titulo={titulo} /> : <Navigate to="/" replace />}
           />
         ))}
-
-        {/* Panel de administración — solo admins */}
         <Route
           path="/dashboard/admin"
-          element={puedeAcceder ? <AdminPanel user={user} /> : <Navigate to="/" replace />}
+          element={loading ? spinner : puedeAcceder ? <AdminPanel user={user} /> : <Navigate to="/" replace />}
         />
 
         <Route path="*" element={<Navigate to="/" replace />} />

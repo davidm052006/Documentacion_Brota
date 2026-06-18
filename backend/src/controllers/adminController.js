@@ -606,10 +606,68 @@ const deletePregunta = async (req, res) => {
   }
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// GET /api/admin/contactos  — lista paginada con filtro por estado
+// ─────────────────────────────────────────────────────────────────────────────
+const getContactos = async (req, res) => {
+  try {
+    const pagina = Math.max(1, parseInt(req.query.pagina) || 1);
+    const limite = Math.min(50, parseInt(req.query.limite) || 20);
+    const estado = (req.query.estado || '').trim();
+    const desde  = (pagina - 1) * limite;
+    const hasta  = pagina * limite - 1;
+
+    let query = supabase
+      .from('contactos')
+      .select('*', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .range(desde, hasta);
+
+    if (estado) query = query.eq('estado', estado);
+
+    const { data, count, error } = await query;
+    if (error) throw error;
+
+    return res.json({
+      success: true,
+      data,
+      meta: { total: count, pagina, limite, totalPaginas: Math.ceil(count / limite) },
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PATCH /api/admin/contactos/:id  — actualiza estado y/o notas del admin
+// ─────────────────────────────────────────────────────────────────────────────
+const updateContacto = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { estado, notas_admin } = req.body;
+
+    const updates = {};
+    if (estado)                    updates.estado      = estado;
+    if (notas_admin !== undefined) updates.notas_admin = notas_admin;
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ success: false, message: 'Nada que actualizar.' });
+    }
+
+    const { error } = await supabase.from('contactos').update(updates).eq('id', id);
+    if (error) throw error;
+
+    return res.json({ success: true });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
 module.exports = {
   getUsuarios, getUsuario, createUsuario, updateUsuario, deleteUsuario, getStats,
   getInstituciones, createInstitucion, updateInstitucion, deleteInstitucion,
   getProgramas, createPrograma, updatePrograma, deletePrograma,
   getCuestionarios, createCuestionario, updateCuestionario, deleteCuestionario,
   getPreguntas, createPregunta, updatePregunta, deletePregunta,
+  getContactos, updateContacto,
 };

@@ -7,6 +7,7 @@ const {
   getProgramas, createPrograma, updatePrograma, deletePrograma,
   getCuestionarios, createCuestionario, updateCuestionario, deleteCuestionario,
   getPreguntas, createPregunta, updatePregunta, deletePregunta,
+  getContactos, updateContacto,
 } = require('../controllers/adminController');
 
 router.use(verificarAdmin);
@@ -38,5 +39,8 @@ router.get   ('/preguntas',     getPreguntas);
 router.post  ('/preguntas',     createPregunta);
 router.patch ('/preguntas/:id', updatePregunta);
 router.delete('/preguntas/:id', deletePregunta);
+
+router.get   ('/contactos',     getContactos);
+router.patch ('/contactos/:id', updateContacto);
 
 module.exports = router;

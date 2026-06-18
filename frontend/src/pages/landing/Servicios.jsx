@@ -1,6 +1,6 @@
-// src/pages/landing/Servicios.jsx
 import { useNavigate } from 'react-router-dom';
 import LoginNavbar from './components/LoginNavbar';
+import { useDarkMode } from '../../hooks/useDarkMode';
 
 const serviciosDestacados = [
   {
@@ -34,26 +34,10 @@ const serviciosDestacados = [
 ];
 
 const serviciosSecundarios = [
-  {
-    icon: '🔍',
-    titulo: 'Orientación Vocacional',
-    descripcion: 'Descubre tus intereses, fortalezas y áreas de desarrollo mediante nuestro cuestionario especializado.',
-  },
-  {
-    icon: '🎓',
-    titulo: 'Exploración Académica',
-    descripcion: 'Encuentra programas educativos que se ajusten a tus objetivos y posibilidades.',
-  },
-  {
-    icon: '🏛️',
-    titulo: 'Búsqueda de Instituciones',
-    descripcion: 'Consulta instituciones verificadas y compara sus programas académicos.',
-  },
-  {
-    icon: '📋',
-    titulo: 'Convocatorias Activas',
-    descripcion: 'Accede a oportunidades educativas disponibles y evita programas con inscripciones cerradas.',
-  },
+  { icon: '🔍', titulo: 'Orientación Vocacional',  descripcion: 'Descubre tus intereses, fortalezas y áreas de desarrollo mediante nuestro cuestionario especializado.' },
+  { icon: '🎓', titulo: 'Exploración Académica',   descripcion: 'Encuentra programas educativos que se ajusten a tus objetivos y posibilidades.' },
+  { icon: '🏛️', titulo: 'Búsqueda de Instituciones', descripcion: 'Consulta instituciones verificadas y compara sus programas académicos.' },
+  { icon: '📋', titulo: 'Convocatorias Activas',   descripcion: 'Accede a oportunidades educativas disponibles y evita programas con inscripciones cerradas.' },
 ];
 
 const razones = [
@@ -67,9 +51,9 @@ const razones = [
 
 const pasos = [
   { num: '1', titulo: 'Responde el cuestionario', desc: 'Completa una evaluación rápida sobre tus intereses y habilidades.' },
-  { num: '2', titulo: 'Obtén tu perfil', desc: 'Generamos un perfil vocacional personalizado.' },
-  { num: '3', titulo: 'Recibe recomendaciones', desc: 'Te mostramos programas e instituciones alineadas contigo.' },
-  { num: '4', titulo: 'Da el siguiente paso', desc: 'Explora convocatorias y comienza tu camino educativo.' },
+  { num: '2', titulo: 'Obtén tu perfil',          desc: 'Generamos un perfil vocacional personalizado.' },
+  { num: '3', titulo: 'Recibe recomendaciones',   desc: 'Te mostramos programas e instituciones alineadas contigo.' },
+  { num: '4', titulo: 'Da el siguiente paso',     desc: 'Explora convocatorias y comienza tu camino educativo.' },
 ];
 
 const proximamente = [
@@ -81,17 +65,28 @@ const proximamente = [
 
 export default function Servicios() {
   const navigate = useNavigate();
+  const [dark, toggleDark] = useDarkMode();
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-[#111318]">
+
+      {/* Toggle modo oscuro */}
+      <button
+        onClick={toggleDark}
+        title={dark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+        className="fixed top-4 right-4 z-50 w-9 h-9 flex items-center justify-center rounded-full bg-white/80 dark:bg-[#1a1d24] border border-gray-200 dark:border-[#2c3140] shadow-sm hover:shadow-md text-base transition-all backdrop-blur-sm"
+      >
+        {dark ? '☀️' : '🌙'}
+      </button>
+
       <LoginNavbar />
 
       {/* ── Hero ── */}
-      <section className="pt-28 pb-16 px-6 text-center bg-gradient-to-b from-green-50 to-white">
-        <h1 className="text-4xl font-bold text-gray-800 mb-3">
+      <section className="pt-28 pb-16 px-6 text-center bg-gradient-to-b from-green-50 to-white dark:from-[#0d1a12] dark:to-[#111318]">
+        <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-3">
           Nuestros servicios 🌿
         </h1>
-        <p className="text-gray-500 max-w-xl mx-auto mb-8 text-base">
+        <p className="text-gray-500 dark:text-gray-400 max-w-xl mx-auto mb-8 text-base">
           En BROTA te acompañamos desde la exploración de tus intereses
           hasta la identificación de oportunidades educativas reales en Colombia.
         </p>
@@ -104,7 +99,7 @@ export default function Servicios() {
           </button>
           <button
             onClick={() => navigate('/')}
-            className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-semibold rounded-xl border-2 border-[var(--color-primary)] text-green-700 hover:bg-green-50 transition-all duration-200"
+            className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-semibold rounded-xl border-2 border-[var(--color-primary)] text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-[#0d1a12] transition-all duration-200"
           >
             Explorar profesiones ✓
           </button>
@@ -113,40 +108,40 @@ export default function Servicios() {
 
       {/* ── ¿Cómo te ayudamos? ── */}
       <section className="py-16 px-6 max-w-6xl mx-auto">
-        <h2 className="text-2xl font-bold text-gray-800 text-center mb-10">¿Cómo te ayudamos?</h2>
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-white text-center mb-10">¿Cómo te ayudamos?</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {serviciosDestacados.map((s) => (
-            <div key={s.titulo} className="border border-gray-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center text-2xl mb-3">{s.icon}</div>
-              <h3 className="font-bold text-gray-800 text-sm mb-0.5">{s.titulo}</h3>
-              <p className="text-xs text-gray-400 mb-3">{s.subtitulo}</p>
+            <div key={s.titulo} className="border border-gray-100 dark:border-[#2c3140] bg-white dark:bg-[#1a1d24] rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-[#0d1a12] flex items-center justify-center text-2xl mb-3">{s.icon}</div>
+              <h3 className="font-bold text-gray-800 dark:text-gray-100 text-sm mb-0.5">{s.titulo}</h3>
+              <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">{s.subtitulo}</p>
               <ul className="space-y-1 mb-3">
                 {s.items.map((item) => (
-                  <li key={item} className="text-xs text-gray-600 flex items-start gap-1.5">
+                  <li key={item} className="text-xs text-gray-600 dark:text-gray-400 flex items-start gap-1.5">
                     <span className="text-green-500 mt-0.5">●</span> {item}
                   </li>
                 ))}
               </ul>
-              <p className="text-xs text-gray-500 mb-3">{s.descripcion}</p>
-              <span className="text-green-600 text-sm">→</span>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">{s.descripcion}</p>
+              <span className="text-green-600 dark:text-green-400 text-sm">→</span>
             </div>
           ))}
         </div>
       </section>
 
       {/* ── Nuestros servicios (cards secundarias) ── */}
-      <section className="py-12 px-6 bg-gray-50">
+      <section className="py-12 px-6 bg-gray-50 dark:bg-[#14171e]">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-800 text-center mb-10">Nuestros servicios</h2>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white text-center mb-10">Nuestros servicios</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {serviciosSecundarios.map((s) => (
-              <div key={s.titulo} className="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
-                <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center text-2xl mb-3">{s.icon}</div>
-                <h3 className="font-bold text-gray-800 text-sm mb-2">{s.titulo}</h3>
-                <p className="text-xs text-gray-500 mb-4">{s.descripcion}</p>
+              <div key={s.titulo} className="bg-white dark:bg-[#1a1d24] border border-gray-100 dark:border-[#2c3140] rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-[#0d1a12] flex items-center justify-center text-2xl mb-3">{s.icon}</div>
+                <h3 className="font-bold text-gray-800 dark:text-gray-100 text-sm mb-2">{s.titulo}</h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">{s.descripcion}</p>
                 <button
                   onClick={() => navigate('/saber-mas')}
-                  className="flex items-center gap-2 text-xs text-green-600 font-medium hover:underline"
+                  className="flex items-center gap-2 text-xs text-green-600 dark:text-green-400 font-medium hover:underline"
                 >
                   <span>→</span> <span>Saber más</span>
                 </button>
@@ -160,33 +155,26 @@ export default function Servicios() {
       <section className="py-16 px-6 max-w-6xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
 
-          {/* Por qué elegir BROTA */}
           <div>
-            <h2 className="text-xl font-bold text-gray-800 mb-6">¿Por qué elegir BROTA?</h2>
+            <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-6">¿Por qué elegir BROTA?</h2>
             <ul className="space-y-3">
               {razones.map((r) => (
-                <li key={r} className="flex items-center justify-between text-sm text-gray-700">
+                <li key={r} className="flex items-center justify-between text-sm text-gray-700 dark:text-gray-300">
                   <span>{r}</span>
-                  <span className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-xs">✓</span>
+                  <span className="w-6 h-6 rounded-full bg-green-100 dark:bg-[#0d1a12] flex items-center justify-center text-green-600 dark:text-green-400 text-xs">✓</span>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Nuestro proceso */}
           <div>
-            <h2 className="text-xl font-bold text-gray-800 mb-6">Nuestro proceso</h2>
+            <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-6">Nuestro proceso</h2>
             <div className="grid grid-cols-2 gap-4">
-              {pasos.map((p, i) => (
-                <div key={p.num} className="relative">
-                  {i < 3 && (
-                    <div className="absolute top-4 left-full w-full border-t-2 border-dashed border-green-200 z-0 hidden lg:block" style={{ width: '40px' }} />
-                  )}
-                  <div className="bg-green-50 rounded-2xl p-4">
-                    <div className="w-7 h-7 rounded-full bg-green-600 text-white text-xs font-bold flex items-center justify-center mb-2">{p.num}</div>
-                    <h4 className="text-sm font-semibold text-gray-800 mb-1">{p.titulo}</h4>
-                    <p className="text-xs text-gray-500">{p.desc}</p>
-                  </div>
+              {pasos.map((p) => (
+                <div key={p.num} className="bg-green-50 dark:bg-[#0d1a12] rounded-2xl p-4">
+                  <div className="w-7 h-7 rounded-full bg-green-600 text-white text-xs font-bold flex items-center justify-center mb-2">{p.num}</div>
+                  <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-100 mb-1">{p.titulo}</h4>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{p.desc}</p>
                 </div>
               ))}
             </div>
@@ -195,12 +183,12 @@ export default function Servicios() {
       </section>
 
       {/* ── Próximamente ── */}
-      <section className="py-10 px-6 bg-gray-50">
+      <section className="py-10 px-6 bg-gray-50 dark:bg-[#14171e]">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-lg font-bold text-gray-700 text-center mb-6">Próximamente</h2>
+          <h2 className="text-lg font-bold text-gray-700 dark:text-gray-200 text-center mb-6">Próximamente</h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {proximamente.map((p) => (
-              <div key={p.label} className="flex items-center gap-3 text-sm text-gray-600">
+              <div key={p.label} className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
                 <span className="text-xl">{p.icon}</span>
                 <span>{p.label}</span>
               </div>
@@ -210,9 +198,9 @@ export default function Servicios() {
       </section>
 
       {/* ── CTA final ── */}
-      <section className="py-14 px-6 bg-green-50 text-center">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">¿Listo para descubrir tu futuro? 🌿</h2>
-        <p className="text-gray-500 text-sm mb-6">
+      <section className="py-14 px-6 bg-green-50 dark:bg-[#0d1a12] text-center">
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">¿Listo para descubrir tu futuro? 🌿</h2>
+        <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
           Miles de posibilidades te esperan.<br />
           Comienza hoy tu proceso de orientación vocacional.
         </p>
@@ -225,7 +213,7 @@ export default function Servicios() {
           </button>
           <button
             onClick={() => navigate('/')}
-            className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-semibold rounded-xl border-2 border-[var(--color-primary)] text-green-700 hover:bg-green-50 transition-all duration-200"
+            className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-semibold rounded-xl border-2 border-[var(--color-primary)] text-green-700 dark:text-green-400 hover:bg-green-100 dark:hover:bg-[#112010] transition-all duration-200"
           >
             Explorar profesiones ✓
           </button>

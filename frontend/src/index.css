@@ -52,6 +52,32 @@ html.dark .brota-layout {
    Texto 2:    #e8e8e8  (blanco cálido)
    ───────────────────────────────────────────────────────────────────────── */
 
+/* ─── Animación de entrada para tarjetas ─────────────────────────────────────
+   .programa-card usa animation-delay inline (stagger por índice).
+   ───────────────────────────────────────────────────────────────────────── */
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.programa-card {
+  animation: fadeSlideIn 280ms ease-out both;
+}
+
+/* ─── Revelación progresiva del formulario de registro ───────────────────── */
+@keyframes revealField {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.reveal-field {
+  animation: revealField 220ms ease-out both;
+}
+
+.reveal-field {
+  animation: revealField 220ms ease-out both;
+}
+
 /* Sidebar */
 html.dark aside { background-color: #1a1d24 !important; border-color: #2c3140 !important; }
 

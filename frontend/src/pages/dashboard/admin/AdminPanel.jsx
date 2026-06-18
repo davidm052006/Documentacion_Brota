@@ -10,6 +10,7 @@ import InstitucionesSection from './sections/InstitucionesSection';
 import CuestionariosSection from './sections/CuestionariosSection';
 import PreguntasSection from './sections/PreguntasSection';
 import ConfiguracionSection from './sections/ConfiguracionSection';
+import ContactosSection    from './sections/ContactosSection';
 
 // Mapa de secciones: clave → componente a renderizar
 const SECTIONS = {
@@ -18,6 +19,7 @@ const SECTIONS = {
   instituciones: InstitucionesSection,
   cuestionarios: CuestionariosSection,
   preguntas:     PreguntasSection,
+  contactos:     ContactosSection,
   configuracion: ConfiguracionSection,
 };
 
