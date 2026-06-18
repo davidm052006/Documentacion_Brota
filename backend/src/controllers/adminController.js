@@ -224,12 +224,11 @@ const updateUsuario = async (req, res) => {
       return res.status(500).json({ success: false, message: updateError.message });
     }
 
-    // Actualizar rol en perfiles si se proporcionó
+    // Actualizar rol en perfiles si se proporcionó (upsert por si no existe la fila aún)
     if (rol) {
       const { error: rolError } = await supabase
         .from('perfiles')
-        .update({ rol })
-        .eq('id', perfil.user_id);
+        .upsert({ id: perfil.user_id, rol }, { onConflict: 'id' });
 
       if (rolError) {
         // El perfil se actualizó pero el rol no — informar al cliente
@@ -322,11 +321,295 @@ const getStats = async (req, res) => {
   }
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// INSTITUCIONES
+// ─────────────────────────────────────────────────────────────────────────────
+const getInstituciones = async (req, res) => {
+  try {
+    const pagina   = Math.max(1, parseInt(req.query.pagina)  || 1);
+    const limite   = Math.min(50,  parseInt(req.query.limite) || 10);
+    const busqueda = (req.query.busqueda || '').trim();
+    const desde    = (pagina - 1) * limite;
+
+    let query = supabase
+      .from('instituciones')
+      .select('*', { count: 'exact' })
+      .order('nombre')
+      .range(desde, desde + limite - 1);
+
+    if (busqueda) query = query.or(`nombre.ilike.%${busqueda}%,ciudad.ilike.%${busqueda}%`);
+
+    const { data, count, error } = await query;
+    if (error) throw error;
+
+    return res.json({ success: true, data, meta: { total: count ?? 0, pagina, limite, totalPaginas: Math.ceil((count ?? 0) / limite) } });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+const createInstitucion = async (req, res) => {
+  try {
+    const { nombre, tipo, ciudad, departamento, direccion, telefono, email, sitio_web, costo_promedio, activa = true } = req.body;
+    if (!nombre) return res.status(400).json({ success: false, message: 'El nombre es obligatorio' });
+
+    const { data, error } = await supabase
+      .from('instituciones')
+      .insert([{ nombre, tipo, ciudad, departamento, direccion, telefono, email, sitio_web, costo_promedio: costo_promedio || null, activa }])
+      .select()
+      .single();
+
+    if (error) throw error;
+    return res.status(201).json({ success: true, data });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+const updateInstitucion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nombre, tipo, ciudad, departamento, direccion, telefono, email, sitio_web, costo_promedio, activa } = req.body;
+
+    const { error } = await supabase
+      .from('instituciones')
+      .update({ nombre, tipo, ciudad, departamento, direccion, telefono, email, sitio_web, costo_promedio: costo_promedio || null, activa })
+      .eq('id', id);
+
+    if (error) throw error;
+    return res.json({ success: true, message: 'Institución actualizada' });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+const deleteInstitucion = async (req, res) => {
+  try {
+    const { error } = await supabase.from('instituciones').delete().eq('id', req.params.id);
+    if (error) throw error;
+    return res.json({ success: true, message: 'Institución eliminada' });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PROGRAMAS
+// ─────────────────────────────────────────────────────────────────────────────
+const getProgramas = async (req, res) => {
+  try {
+    const pagina   = Math.max(1, parseInt(req.query.pagina)  || 1);
+    const limite   = Math.min(50,  parseInt(req.query.limite) || 10);
+    const busqueda = (req.query.busqueda || '').trim();
+    const desde    = (pagina - 1) * limite;
+
+    let query = supabase
+      .from('programas')
+      .select('*, instituciones(nombre)', { count: 'exact' })
+      .order('nombre')
+      .range(desde, desde + limite - 1);
+
+    if (busqueda) query = query.ilike('nombre', `%${busqueda}%`);
+
+    const { data, count, error } = await query;
+    if (error) throw error;
+
+    const programas = (data || []).map(p => ({ ...p, institucion_nombre: p.instituciones?.nombre || '—' }));
+    return res.json({ success: true, data: programas, meta: { total: count ?? 0, pagina, limite, totalPaginas: Math.ceil((count ?? 0) / limite) } });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+const createPrograma = async (req, res) => {
+  try {
+    const { nombre, tipo, area_academica, duracion, modalidad, descripcion, requisitos, costo_matricula, institucion_id, activo = true } = req.body;
+    if (!nombre) return res.status(400).json({ success: false, message: 'El nombre es obligatorio' });
+
+    const { data, error } = await supabase
+      .from('programas')
+      .insert([{ nombre, tipo, area_academica, duracion, modalidad, descripcion, requisitos, costo_matricula: costo_matricula || null, institucion_id: institucion_id || null, activo }])
+      .select()
+      .single();
+
+    if (error) throw error;
+    return res.status(201).json({ success: true, data });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+const updatePrograma = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nombre, tipo, area_academica, duracion, modalidad, descripcion, requisitos, costo_matricula, institucion_id, activo } = req.body;
+
+    const { error } = await supabase
+      .from('programas')
+      .update({ nombre, tipo, area_academica, duracion, modalidad, descripcion, requisitos, costo_matricula: costo_matricula || null, institucion_id: institucion_id || null, activo })
+      .eq('id', id);
+
+    if (error) throw error;
+    return res.json({ success: true, message: 'Programa actualizado' });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+const deletePrograma = async (req, res) => {
+  try {
+    const { error } = await supabase.from('programas').delete().eq('id', req.params.id);
+    if (error) throw error;
+    return res.json({ success: true, message: 'Programa eliminado' });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CUESTIONARIOS
+// ─────────────────────────────────────────────────────────────────────────────
+const getCuestionarios = async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('cuestionarios')
+      .select('*, preguntas(count)')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    const result = (data || []).map(c => ({ ...c, num_preguntas: c.preguntas?.[0]?.count ?? 0 }));
+    return res.json({ success: true, data: result });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+const createCuestionario = async (req, res) => {
+  try {
+    const { nombre, version, descripcion, activo = false } = req.body;
+    if (!nombre || !version) return res.status(400).json({ success: false, message: 'Nombre y versión son obligatorios' });
+
+    const { data, error } = await supabase
+      .from('cuestionarios')
+      .insert([{ nombre, version, descripcion, activo }])
+      .select()
+      .single();
+
+    if (error) throw error;
+    return res.status(201).json({ success: true, data });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+const updateCuestionario = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nombre, version, descripcion, activo } = req.body;
+
+    // Si se activa este cuestionario, desactivar los demás
+    if (activo === true) {
+      await supabase.from('cuestionarios').update({ activo: false }).neq('id', id);
+    }
+
+    const { error } = await supabase
+      .from('cuestionarios')
+      .update({ nombre, version, descripcion, activo })
+      .eq('id', id);
+
+    if (error) throw error;
+    return res.json({ success: true, message: 'Cuestionario actualizado' });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+const deleteCuestionario = async (req, res) => {
+  try {
+    const { error } = await supabase.from('cuestionarios').delete().eq('id', req.params.id);
+    if (error) throw error;
+    return res.json({ success: true, message: 'Cuestionario eliminado' });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PREGUNTAS
+// ─────────────────────────────────────────────────────────────────────────────
+const getPreguntas = async (req, res) => {
+  try {
+    const cuestionarioId = req.query.cuestionario_id || '';
+    const busqueda       = (req.query.busqueda || '').trim();
+
+    let query = supabase
+      .from('preguntas')
+      .select('*')
+      .order('orden');
+
+    if (cuestionarioId) query = query.eq('cuestionario_id', cuestionarioId);
+    if (busqueda)       query = query.ilike('texto', `%${busqueda}%`);
+
+    const { data, error } = await query;
+    if (error) throw error;
+    return res.json({ success: true, data: data || [] });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+const createPregunta = async (req, res) => {
+  try {
+    const { cuestionario_id, texto, tipo, orden, categoria, peso, opciones } = req.body;
+    if (!cuestionario_id || !texto || !tipo) {
+      return res.status(400).json({ success: false, message: 'cuestionario_id, texto y tipo son obligatorios' });
+    }
+
+    const { data, error } = await supabase
+      .from('preguntas')
+      .insert([{ cuestionario_id, texto, tipo, orden: orden || 1, categoria, peso: peso || 1.0, opciones: opciones || [] }])
+      .select()
+      .single();
+
+    if (error) throw error;
+    return res.status(201).json({ success: true, data });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+const updatePregunta = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { texto, tipo, orden, categoria, peso, opciones } = req.body;
+
+    const { error } = await supabase
+      .from('preguntas')
+      .update({ texto, tipo, orden, categoria, peso, opciones })
+      .eq('id', id);
+
+    if (error) throw error;
+    return res.json({ success: true, message: 'Pregunta actualizada' });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+const deletePregunta = async (req, res) => {
+  try {
+    const { error } = await supabase.from('preguntas').delete().eq('id', req.params.id);
+    if (error) throw error;
+    return res.json({ success: true, message: 'Pregunta eliminada' });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
 module.exports = {
-  getUsuarios,
-  getUsuario,
-  createUsuario,
-  updateUsuario,
-  deleteUsuario,
-  getStats,
+  getUsuarios, getUsuario, createUsuario, updateUsuario, deleteUsuario, getStats,
+  getInstituciones, createInstitucion, updateInstitucion, deleteInstitucion,
+  getProgramas, createPrograma, updatePrograma, deletePrograma,
+  getCuestionarios, createCuestionario, updateCuestionario, deleteCuestionario,
+  getPreguntas, createPregunta, updatePregunta, deletePregunta,
 };
