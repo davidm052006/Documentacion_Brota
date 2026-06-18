@@ -19,9 +19,7 @@ const obtenerProgramas = async (req, res) => {
   }
 
   if (search.trim()) {
-    query = query.or(
-      `nombre.ilike.%${search.trim()}%,instituciones.nombre.ilike.%${search.trim()}%`
-    );
+    query = query.ilike('nombre', `%${search.trim()}%`);
   }
 
   query = query

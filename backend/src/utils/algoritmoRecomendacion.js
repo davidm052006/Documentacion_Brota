@@ -1,212 +1,173 @@
 // ============================================================
-// ALGORITMO DE RECOMENDACIÓN VOCACIONAL
+// ALGORITMO DE RECOMENDACIÓN VOCACIONAL — Brota v1
 // ============================================================
-// Propósito: dado el perfil_vocacional de un usuario (categorías
-// con puntajes), busca los programas académicos más compatibles
-// y guarda las recomendaciones en la tabla `recomendaciones`.
 //
-// CUÁNDO SE LLAMA:
-//   → En perfilController.js → guardarResultado(), justo después
-//     de insertar el resultado en la tabla `resultados`.
+// FUNDAMENTO TEÓRICO:
+//   Se basa en la Teoría de Ajuste Persona-Entorno (P-E Fit,
+//   Kristof-Brown et al., 2005) y en el modelo Holland RIASEC
+//   (Holland, 1997), que demuestran que la compatibilidad entre
+//   el perfil de intereses del estudiante y las características
+//   del entorno académico/laboral predice satisfacción y
+//   permanencia. El algoritmo es content-based filtering:
+//   asigna compatibilidad en función de la proporción de puntos
+//   que el estudiante acumuló en la categoría de cada programa.
 //
-// TABLAS QUE UTILIZA:
-//   → programas         (id, nombre, tipo, area_academica, duracion, institucion_id)
-//   → instituciones     (id, nombre, ciudad)
-//   → recomendaciones   (resultado_id, programa_id, compatibilidad, razones)
+// FLUJO:
+//   1. Toma los scores absolutos del test (puntos por categoría)
+//   2. Filtra las top-3 categorías del usuario
+//   3. Consulta solo los programas de esas categorías (máx 50 c/u)
+//   4. Calcula compatibilidad = % absoluto de puntos + bonificaciones
+//   5. Aplica cap de variedad (4-3-2 por categoría)
+//   6. Inserta top 8 en la tabla `recomendaciones`
 //
-// FIRMA ESPERADA:
-//   generarRecomendaciones(resultadoId, perfilVocacional, supabase)
-//     → Promise<void>
-//
-// PARÁMETROS:
-//   resultadoId      — UUID del registro recién insertado en `resultados`
-//   perfilVocacional — objeto con:
-//       categoriaPrincipal:  string   ("tecnologia", "arte", ...)
-//       categoriaSecundaria: string   ("ciencias", ...)
-//       scores: [{ categoria, puntos, porcentaje }]
-//   supabase         — cliente de Supabase con SERVICE_KEY (ya disponible)
-//
+// COMPATIBILIDAD (almacenada como 0.0–1.0):
+//   base    = puntos_categoría / puntos_totales
+//   +0.08   si es la categoría principal del usuario
+//   +0.04   si es la categoría secundaria
+//   +0.015  pequeño bonus por datos completos del programa
+//   La UI lo multiplica ×100 para mostrarlo como porcentaje.
 // ============================================================
-// TODO (para el equipo de backend — Brayan / Julian):
-//
-// 1. Cargar programas con su institución desde Supabase:
-//       supabase.from('programas').select('*, instituciones(nombre, ciudad)')
-//
-// 2. Para cada programa, calcular compatibilidad:
-//    - Mapear area_academica → categoría vocacional
-//      (ej: "Ingeniería de Sistemas" → "tecnologia")
-//    - Fórmula base: compatibilidad = porcentaje de la categoría mapeada
-//    - Bonificación si el tipo (universidad/SENA/técnico) coincide con
-//      preferencias del estudiante (nivel_educativo en perfiles_usuario)
-//
-// 3. Filtrar los top N (ej. 5–8) programas con mayor compatibilidad
-//
-// 4. Construir razones legibles:
-//    - "Tu perfil en tecnología (92%) es ideal para este programa"
-//    - "Duración corta compatible con tu nivel educativo actual"
-//
-// 5. Insertar en tabla `recomendaciones`:
-//       supabase.from('recomendaciones').insert(recomendaciones)
-//
-// 6. Manejar errores sin bloquear: si falla, solo logear (el resultado
-//    ya fue guardado, las recomendaciones son un plus)
-// ============================================================
-// src/services/algoritmoRecomendacion.js
 
-const AREA_CATEGORIA = {
-  'Ingeniería de Sistemas': 'tecnologia',
-  'Ingeniería de Software': 'tecnologia',
-  'Desarrollo de Software': 'tecnologia',
-  'Análisis y Desarrollo de Software': 'tecnologia',
+const LIMITE_POR_CATEGORIA = 50;
+const MAX_RECOMENDACIONES  = 8;
+// Cuántos programas tomar de cada categoría (principal, secundaria, tercera)
+const CAP_POR_RANGO = [4, 3, 1];
 
-  'Diseño Gráfico': 'arte',
-  'Artes Visuales': 'arte',
-  'Música': 'arte',
-
-  'Medicina': 'salud',
-  'Enfermería': 'salud',
-  'Fisioterapia': 'salud',
-
-  'Administración': 'negocios',
-  'Contaduría': 'negocios',
-  'Marketing': 'negocios',
-
-  'Biología': 'ciencias',
-  'Química': 'ciencias',
-  'Física': 'ciencias',
-
-  'Psicología': 'social',
-  'Trabajo Social': 'social',
-  'Derecho': 'social'
-};
-
-function obtenerPorcentajeCategoria(scores, categoria) {
-  const encontrado = scores.find(
-    (s) => s.categoria.toLowerCase() === categoria.toLowerCase()
-  );
-
-  return encontrado?.porcentaje || 0;
+// ── Porcentaje absoluto (proporción real de puntos) ───────────────────────────
+function pctAbsoluto(scores, categoria) {
+  const totalPuntos = scores.reduce((sum, s) => sum + (s.puntos ?? 0), 0);
+  if (totalPuntos === 0) return 0;
+  const entrada = scores.find(s => s.categoria === categoria);
+  return ((entrada?.puntos ?? 0) / totalPuntos) * 100;
 }
 
+// ── Calcula compatibilidad para un programa (0.0–1.0) ────────────────────────
 function calcularCompatibilidad(programa, perfilVocacional) {
-  const categoria =
-    AREA_CATEGORIA[programa.area_academica] ||
-    perfilVocacional.categoriaPrincipal;
+  const { categoriaPrincipal, categoriaSecundaria, scores } = perfilVocacional;
+  const area = programa.area_academica;
 
-  const porcentaje = obtenerPorcentajeCategoria(
-    perfilVocacional.scores,
-    categoria
-  );
+  const base = pctAbsoluto(scores, area) / 100;
 
-  let compatibilidad = porcentaje;
+  let bonus = 0;
+  if (area === categoriaPrincipal)  bonus += 0.08;
+  if (area === categoriaSecundaria) bonus += 0.04;
+
+  // Bonus mínimo por completitud de datos (desempate)
+  const camposCompletos = [programa.duracion, programa.modalidad, programa.descripcion]
+    .filter(Boolean).length;
+  bonus += camposCompletos * 0.005;
+
+  return parseFloat(Math.min(1.0, base + bonus).toFixed(3));
+}
+
+// ── Genera las razones legibles ───────────────────────────────────────────────
+function generarRazones(programa, perfilVocacional) {
+  const { categoriaPrincipal, categoriaSecundaria, scores } = perfilVocacional;
+  const area = programa.area_academica;
+  const pct  = Math.round(pctAbsoluto(scores, area));
   const razones = [];
 
-  if (porcentaje > 0) {
-    razones.push(
-      `Tu perfil en ${categoria} (${porcentaje}%) tiene alta afinidad con este programa`
-    );
+  razones.push(`Tu perfil en ${area} (${pct}% de tus intereses) tiene afinidad con este programa`);
+
+  if (area === categoriaPrincipal) {
+    razones.push('Coincide con tu área de mayor fortaleza');
+  } else if (area === categoriaSecundaria) {
+    razones.push('Complementa tu perfil secundario');
   }
 
-  if (
-    categoria.toLowerCase() ===
-    perfilVocacional.categoriaPrincipal.toLowerCase()
-  ) {
-    compatibilidad += 10;
-    razones.push(
-      `Coincide con tu categoría principal: ${perfilVocacional.categoriaPrincipal}`
-    );
+  if (programa.tipo === 'Técnica' || programa.tipo === 'Tecnológica') {
+    razones.push('Formación práctica con rápida inserción laboral');
   }
 
-  if (
-    categoria.toLowerCase() ===
-    perfilVocacional.categoriaSecundaria?.toLowerCase()
-  ) {
-    compatibilidad += 5;
-    razones.push(
-      `También coincide con tu categoría secundaria`
-    );
-  }
-
-  return {
-    compatibilidad: Math.min(100, compatibilidad),
-    razones
-  };
+  return razones;
 }
 
-const generarRecomendaciones = async (
-  resultadoId,
-  perfilVocacional,
-  supabase
-) => {
+// ── Función principal ─────────────────────────────────────────────────────────
+const generarRecomendaciones = async (resultadoId, perfilVocacional, supabase) => {
   try {
-    console.log(
-      '[algoritmoRecomendacion] Generando recomendaciones...'
-    );
+    const { scores = [] } = perfilVocacional;
 
-    const { data: programas, error } = await supabase
-      .from('programas')
-      .select(`
-        *,
-        instituciones (
-          nombre,
-          ciudad
-        )
-      `);
+    // Top 3 categorías con al menos algún puntaje
+    const topCategorias = scores
+      .filter(s => (s.puntos ?? 0) > 0)
+      .slice(0, 3)
+      .map(s => s.categoria)
+      .filter(Boolean);
 
-    if (error) {
-      console.error(
-        '[algoritmoRecomendacion] Error cargando programas:',
-        error
-      );
+    if (topCategorias.length === 0) {
+      console.warn('[algoritmoRecomendacion] Sin categorías con puntaje, se omite.');
       return;
     }
 
-    const recomendacionesCalculadas = programas.map((programa) => {
-      const resultado = calcularCompatibilidad(
-        programa,
-        perfilVocacional
-      );
+    // Consultar programas de cada categoría en paralelo
+    const resultadosPorCategoria = await Promise.all(
+      topCategorias.map(async (cat) => {
+        const { data, error } = await supabase
+          .from('programas')
+          .select(`
+            id, nombre, tipo, area_academica,
+            duracion, modalidad, descripcion,
+            instituciones ( nombre, ciudad )
+          `)
+          .eq('area_academica', cat)
+          .eq('activo', true)
+          .neq('tipo', 'Posgrado')
+          .limit(LIMITE_POR_CATEGORIA);
 
-      return {
-        programa,
-        compatibilidad: resultado.compatibilidad,
-        razones: resultado.razones
-      };
+        if (error) {
+          console.error(`[algoritmoRecomendacion] Error cargando categoría ${cat}:`, error.message);
+          return [];
+        }
+        return data ?? [];
+      })
+    );
+
+    // Calcular compatibilidad y aplicar cap de variedad
+    const candidatos = [];
+
+    resultadosPorCategoria.forEach((programas, idx) => {
+      const cap = CAP_POR_RANGO[idx] ?? 1;
+
+      const conScore = programas
+        .map(p => ({
+          programa:       p,
+          compatibilidad: calcularCompatibilidad(p, perfilVocacional),
+          razones:        generarRazones(p, perfilVocacional),
+        }))
+        .sort((a, b) => b.compatibilidad - a.compatibilidad)
+        .slice(0, cap);
+
+      candidatos.push(...conScore);
     });
 
-    const topProgramas = recomendacionesCalculadas
+    // Ranking global y top N
+    const top = candidatos
       .sort((a, b) => b.compatibilidad - a.compatibilidad)
-      .slice(0, 5);
+      .slice(0, MAX_RECOMENDACIONES);
 
-    const recomendacionesInsert = topProgramas.map((item) => ({
-      resultado_id: resultadoId,
-      programa_id: item.programa.id,
-      compatibilidad: item.compatibilidad,
-      razones: item.razones
-    }));
-
-    const { error: insertError } = await supabase
-      .from('recomendaciones')
-      .insert(recomendacionesInsert);
-
-    if (insertError) {
-      console.error(
-        '[algoritmoRecomendacion] Error guardando recomendaciones:',
-        insertError
-      );
+    if (top.length === 0) {
+      console.warn('[algoritmoRecomendacion] Sin candidatos para insertar.');
       return;
     }
 
-    console.log(
-      `[algoritmoRecomendacion] ${recomendacionesInsert.length} recomendaciones guardadas`
-    );
+    const rows = top.map(item => ({
+      resultado_id:   resultadoId,
+      programa_id:    item.programa.id,
+      compatibilidad: item.compatibilidad,
+      razones:        item.razones,
+    }));
+
+    const { error: insertError } = await supabase.from('recomendaciones').insert(rows);
+
+    if (insertError) {
+      console.error('[algoritmoRecomendacion] Error al insertar recomendaciones:', insertError.message);
+      return;
+    }
+
+    console.log(`[algoritmoRecomendacion] ${rows.length} recomendaciones guardadas para resultado ${resultadoId}`);
   } catch (err) {
-    console.error(
-      '[algoritmoRecomendacion] Error inesperado:',
-      err
-    );
+    console.error('[algoritmoRecomendacion] Error inesperado:', err);
   }
 };
 
-module.exports = {generarRecomendaciones };
-
+module.exports = { generarRecomendaciones };

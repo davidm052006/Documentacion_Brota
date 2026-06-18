@@ -7,7 +7,8 @@
 // - Obtener recomendaciones
 
 const supabase = require('../config/supabase');
-const { calcularPorcentajes } = require('../utils/perfilvocacional');
+const { calcularPorcentajes }      = require('../utils/perfilvocacional');
+const { generarRecomendaciones }   = require('../utils/algoritmoRecomendacion');
 
 // --------------------------------------------
 // OBTENER PREGUNTAS DEL CUESTIONARIO ACTIVO
@@ -109,6 +110,17 @@ const guardarResultado = async (req, res) => {
         message: error.message
       });
     }
+
+    // Lanzar recomendaciones en paralelo — no bloquea la respuesta HTTP
+    generarRecomendaciones(
+      data.id,
+      {
+        categoriaPrincipal:  perfil_vocacional?.categoriaPrincipal,
+        categoriaSecundaria: perfil_vocacional?.categoriaSecundaria,
+        scores:              perfil_vocacional?.scores ?? [],
+      },
+      supabase
+    ).catch(err => console.error('[perfilController] generarRecomendaciones:', err));
 
     return res.status(201).json({
       success: true,

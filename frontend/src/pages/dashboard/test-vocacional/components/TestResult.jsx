@@ -93,7 +93,7 @@ export default function TestResult({
   const [cargando, setCargando]               = useState(!!resultadoId);
   const [error, setError]                     = useState(null);
 
-  // Cargar recomendaciones desde Supabase cuando llegue el resultadoId
+  // Cargar recomendaciones con reintentos (el algoritmo corre en paralelo en el backend)
   useEffect(() => {
     if (!resultadoId) return;
     let cancelado = false;
@@ -101,14 +101,24 @@ export default function TestResult({
     (async () => {
       setCargando(true);
       setError(null);
-      const res = await obtenerRecomendaciones(resultadoId);
-      if (cancelado) return;
-      if (res.success) {
-        setRecomendaciones(res.data);
-      } else {
-        setError(res.error);
+
+      const MAX_INTENTOS = 4;
+      const ESPERA_MS    = 1500;
+
+      for (let intento = 0; intento < MAX_INTENTOS; intento++) {
+        if (cancelado) return;
+        if (intento > 0) await new Promise(r => setTimeout(r, ESPERA_MS));
+        if (cancelado) return;
+
+        const res = await obtenerRecomendaciones(resultadoId);
+        if (cancelado) return;
+
+        if (!res.success) { setError(res.error); break; }
+        if (res.data.length > 0) { setRecomendaciones(res.data); break; }
+        // Si vacío y quedan intentos, seguir esperando
       }
-      setCargando(false);
+
+      if (!cancelado) setCargando(false);
     })();
 
     return () => { cancelado = true; };
@@ -193,12 +203,18 @@ export default function TestResult({
           🎓 Programas recomendados para ti
         </h2>
 
-        {/* Estado: cargando */}
+        {/* Estado: cargando / reintentando */}
         {cargando && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {[1, 2, 3, 4].map(i => (
-              <SkeletonCard key={i} className="h-28" />
-            ))}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-sm text-gray-400 mb-2">
+              <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-emerald-500" />
+              <span>Buscando programas para tu perfil...</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {[1, 2, 3, 4].map(i => (
+                <SkeletonCard key={i} className="h-28" />
+              ))}
+            </div>
           </div>
         )}
 
@@ -225,14 +241,14 @@ export default function TestResult({
           </div>
         )}
 
-        {/* Estado: sin resultados (algoritmo aún procesando) */}
+        {/* Estado: sin resultados tras todos los reintentos */}
         {!cargando && !error && recomendaciones.length === 0 && (
           <div className="text-center py-8 space-y-2">
-            <p className="text-2xl">⏳</p>
+            <p className="text-2xl">📭</p>
             <p className="text-sm text-gray-500">
-              Estamos generando tus recomendaciones personalizadas.
+              No encontramos programas para tu perfil en este momento.
             </p>
-            <p className="text-xs text-gray-400">Vuelve en unos momentos.</p>
+            <p className="text-xs text-gray-400">Intenta explorar la sección de Profesiones.</p>
           </div>
         )}
 

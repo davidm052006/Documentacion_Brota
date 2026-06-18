@@ -146,7 +146,7 @@ function getModalidad(raw) {
 // ── Main ──────────────────────────────────────────────────────────────────────
 async function main() {
   console.log('📂 Leyendo archivo Excel...');
-  const wb   = XLSX.readFile(path.resolve('../docs/Programas_bogota.xlsx'));
+  const wb   = XLSX.readFile(path.resolve('../docs/Programas-bogota.xlsx'));
   const sheet = wb.Sheets[wb.SheetNames[0]];
   const rows  = XLSX.utils.sheet_to_json(sheet, { header: 1 });
   const [header, ...data] = rows;
@@ -176,9 +176,9 @@ async function main() {
     costo:      c('COSTO_MATRÍCULA_ESTUD_NUEVOS'),
   };
 
-  // Solo programas activos
-  const activos = data.filter(r => r[COL.estadoProg] === 'Activo');
-  console.log(`✅ ${activos.length} programas activos de ${data.length} total\n`);
+  // Todos los programas (sin filtrar por estado)
+  const activos = data.filter(r => (r[COL.nomProg] ?? '').trim() !== '');
+  console.log(`✅ ${activos.length} programas de ${data.length} filas totales\n`);
 
   // ── 1. Deduplicar instituciones del Excel ──────────────────────────────────
   const instPorCodigo = new Map();
