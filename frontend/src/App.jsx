@@ -10,6 +10,7 @@ import Dashboard      from './pages/dashboard/Dashboard';
 import TestVocacional from './pages/dashboard/test-vocacional/TestVocacional';
 import DashboardLayout from './components/Layout/DashboardLayout';
 import AdminPanel     from './pages/dashboard/admin/AdminPanel';
+import Recursos       from './pages/dashboard/Recursos';
 
 function PaginaEnConstruccion({ titulo }) {
   return (
@@ -118,11 +119,16 @@ function App() {
           element={puedeAcceder ? <Dashboard user={user} isDemoMode={isDemoMode} /> : <Navigate to="/" replace />}
         />
 
+        {/* Recursos educativos */}
+        <Route
+          path="/dashboard/recursos"
+          element={puedeAcceder ? <Recursos /> : <Navigate to="/" replace />}
+        />
+
         {/* Rutas en construcción */}
         {[
           { path: '/dashboard/profesiones', titulo: 'Explorar profesiones' },
           { path: '/dashboard/rutas',       titulo: 'Rutas formativas' },
-          { path: '/dashboard/recursos',    titulo: 'Recursos' },
           { path: '/dashboard/favoritos',   titulo: 'Favoritos' },
           { path: '/dashboard/comunidad',   titulo: 'Comunidad' },
           { path: '/dashboard/mensajes',    titulo: 'Mensajes' },
