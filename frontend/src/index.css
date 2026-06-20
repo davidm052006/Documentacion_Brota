@@ -4,13 +4,13 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-primary: #22C55E;
-  --color-primary-hover: #16A34A;
-  --color-bg: #FAF3E6;
-  --color-text: #000000;
-  --color-border: #ac57bd;
-  --color-surface: #ffffff;
-  --radius-md: 8px;
+  --color-primary:       #16A34A;
+  --color-primary-hover: #15803D;
+  --color-bg:            #ffffff;
+  --color-text:          #052e16;
+  --color-border:        #bbf7d0;
+  --color-surface:       #ffffff;
+  --radius-md:           8px;
 }
 
 html,
@@ -21,7 +21,7 @@ body,
 
 body,
 #root {
-  background-color: #faf3e6;
+  background-color: #ffffff;
 }
 
 /* ─── Layout principal del dashboard ────────────────────────────────────────
@@ -29,17 +29,16 @@ body,
    fiabilidad con TailwindCSS v4.
    ───────────────────────────────────────────────────────────────────────── */
 .brota-layout {
-  background: linear-gradient(to bottom, #ecfdf5, #a7f3d0);
+  background: linear-gradient(to bottom, #f0fdf4, #dcfce7);
 }
 
 html.dark body,
 html.dark #root {
-  background-color: #111318;
+  background-color: #060d07;
 }
 
 html.dark .brota-layout {
-  /* Charcoal empresarial — carbón con tinte verde muy sutil */
-  background: linear-gradient(to bottom, #111318, #0d1012);
+  background: linear-gradient(to bottom, #0a1a0a, #060d07);
 }
 
 /* ─── Dark mode: overrides globales ─────────────────────────────────────────

@@ -1,10 +1,10 @@
-// src/App.jsx
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { supabase } from './config/supabase';
+import LandingPage    from './pages/landing/LandingPage';
 import Login          from './pages/landing/Login';
 import Servicios      from './pages/landing/Servicios';
-import SaberMas      from './pages/landing/SaberMas';
+import SaberMas       from './pages/landing/SaberMas';
 import ResetPassword  from './pages/landing/ResetPassword';
 import Privacidad     from './pages/landing/Privacidad';
 import Terminos       from './pages/landing/Terminos';
@@ -49,9 +49,7 @@ function App() {
             setUser({
               id: 'demo-user-123',
               email: localStorage.getItem('demoUserEmail') || 'demo@brota.com',
-              user_metadata: {
-                nombre: localStorage.getItem('demoUserName') || 'Demo User',
-              },
+              user_metadata: { nombre: localStorage.getItem('demoUserName') || 'Demo User' },
             });
           } else {
             setUser(null);
@@ -64,7 +62,6 @@ function App() {
         setUser(session?.user || null);
       } catch (error) {
         console.error('Error al verificar usuario:', error);
-        setIsDemoMode(false);
       } finally {
         setLoading(false);
       }
@@ -74,13 +71,10 @@ function App() {
 
     try {
       const { data: { subscription } } = supabase.auth.onAuthStateChange(
-        (_event, session) => {
-          setUser(session?.user || null);
-        }
+        (_event, session) => { setUser(session?.user || null); }
       );
       return () => subscription?.unsubscribe();
-    } catch (err) {
-      console.warn('Supabase no disponible, usando modo demo');
+    } catch {
       setIsDemoMode(true);
     }
   }, []);
@@ -88,10 +82,10 @@ function App() {
   const puedeAcceder = user || isDemoMode;
 
   const spinner = (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-white dark:bg-[#060d07]">
       <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500 mx-auto" />
-        <p className="mt-4 text-gray-600">Cargando...</p>
+        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-green-500 mx-auto" />
+        <p className="mt-4 text-gray-500 dark:text-green-400 text-sm">Cargando...</p>
       </div>
     </div>
   );
@@ -99,7 +93,19 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Rutas públicas: renderizan inmediatamente, sin esperar auth */}
+        {/* Landing page pública */}
+        <Route
+          path="/"
+          element={loading ? spinner : puedeAcceder ? <Navigate to="/dashboard" replace /> : <LandingPage />}
+        />
+
+        {/* Login / Auth */}
+        <Route
+          path="/login"
+          element={loading ? spinner : puedeAcceder ? <Navigate to="/dashboard" replace /> : <Login isDemoMode={isDemoMode} />}
+        />
+
+        {/* Rutas públicas informativas */}
         <Route path="/servicios"      element={<Servicios />} />
         <Route path="/saber-mas"      element={<SaberMas />} />
         <Route path="/privacidad"     element={<Privacidad />} />
@@ -107,28 +113,22 @@ function App() {
         <Route path="/contacto"       element={<Contacto />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* Punto de entrada: espera auth para decidir */}
-        <Route
-          path="/"
-          element={loading ? spinner : <Login isDemoMode={isDemoMode} />}
-        />
-
         {/* Rutas protegidas */}
         <Route
-          path="/dashboard/test"
-          element={loading ? spinner : puedeAcceder ? <TestVocacional user={user} isDemoMode={isDemoMode} /> : <Navigate to="/" replace />}
+          path="/dashboard"
+          element={loading ? spinner : puedeAcceder ? <Dashboard user={user} isDemoMode={isDemoMode} /> : <Navigate to="/login" replace />}
         />
         <Route
-          path="/dashboard"
-          element={loading ? spinner : puedeAcceder ? <Dashboard user={user} isDemoMode={isDemoMode} /> : <Navigate to="/" replace />}
+          path="/dashboard/test"
+          element={loading ? spinner : puedeAcceder ? <TestVocacional user={user} isDemoMode={isDemoMode} /> : <Navigate to="/login" replace />}
         />
         <Route
           path="/dashboard/recursos"
-          element={loading ? spinner : puedeAcceder ? <Recursos /> : <Navigate to="/" replace />}
+          element={loading ? spinner : puedeAcceder ? <Recursos /> : <Navigate to="/login" replace />}
         />
         <Route
           path="/dashboard/profesiones"
-          element={loading ? spinner : puedeAcceder ? <Profesiones /> : <Navigate to="/" replace />}
+          element={loading ? spinner : puedeAcceder ? <Profesiones /> : <Navigate to="/login" replace />}
         />
         {[
           { path: '/dashboard/rutas',     titulo: 'Rutas formativas' },
@@ -140,12 +140,12 @@ function App() {
           <Route
             key={path}
             path={path}
-            element={loading ? spinner : puedeAcceder ? <PaginaEnConstruccion titulo={titulo} /> : <Navigate to="/" replace />}
+            element={loading ? spinner : puedeAcceder ? <PaginaEnConstruccion titulo={titulo} /> : <Navigate to="/login" replace />}
           />
         ))}
         <Route
           path="/dashboard/admin"
-          element={loading ? spinner : puedeAcceder ? <AdminPanel user={user} /> : <Navigate to="/" replace />}
+          element={loading ? spinner : puedeAcceder ? <AdminPanel user={user} /> : <Navigate to="/login" replace />}
         />
 
         <Route path="*" element={<Navigate to="/" replace />} />

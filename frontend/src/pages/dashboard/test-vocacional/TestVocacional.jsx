@@ -9,42 +9,14 @@ import TestProgress from './components/TestProgress';
 import TestResult   from './components/TestResult';
 import { getCategoriaInfo, storageKey } from '../../../utils/vocacionalCategorias';
 
-// ── Calcula los scores sumando los pesos de cada opción elegida ──────────────
-function calcularResultado(preguntas, seleccionadas) {
-  const scores = {};
-  preguntas.forEach((pregunta) => {
-    const respuestasUsuario = seleccionadas[pregunta.id] ?? [];
-    respuestasUsuario.forEach((opcionId) => {
-      const opcion = pregunta.opciones?.find((o) => o.id === opcionId);
-      if (!opcion?.pesos) return;
-      Object.entries(opcion.pesos).forEach(([categoria, puntos]) => {
-        scores[categoria] = (scores[categoria] ?? 0) + puntos;
-      });
-    });
-  });
-
-  const ordenados = Object.entries(scores).sort(([, a], [, b]) => b - a);
-  const maxPuntos = ordenados[0]?.[1] ?? 1;
-
-  return {
-    categoriaPrincipal:  ordenados[0]?.[0] ?? null,
-    categoriaSecundaria: ordenados[1]?.[0] ?? null,
-    scores: ordenados.map(([categoria, puntos]) => ({
-      categoria,
-      puntos,
-      porcentaje: Math.round((puntos / maxPuntos) * 100),
-    })),
-  };
-}
-
-// ── Convierte el cálculo interno al formato que espera TestResult ─────────────
-function calcToUI(calculo) {
-  if (!calculo) return null;
-  const principal  = getCategoriaInfo(calculo.categoriaPrincipal, 0);
-  const secundaria = calculo.categoriaSecundaria
-    ? getCategoriaInfo(calculo.categoriaSecundaria, 1)
+// Convierte el perfil_vocacional del backend al formato que espera TestResult
+function calcToUI(perfilVocacional) {
+  if (!perfilVocacional) return null;
+  const principal  = getCategoriaInfo(perfilVocacional.categoriaPrincipal, 0);
+  const secundaria = perfilVocacional.categoriaSecundaria
+    ? getCategoriaInfo(perfilVocacional.categoriaSecundaria, 1)
     : null;
-  const scores = (calculo.scores ?? []).slice(0, 5).map(({ categoria, porcentaje }, i) => ({
+  const scores = (perfilVocacional.scores ?? []).slice(0, 5).map(({ categoria, porcentaje }, i) => ({
     categoria: getCategoriaInfo(categoria, i).titulo,
     porcentaje,
     emoji:     getCategoriaInfo(categoria, i).emoji,
@@ -63,7 +35,6 @@ export default function TestVocacional({ user, isDemoMode = false }) {
   const [cargando, setCargando]                 = useState(true);
   const [errorCarga, setErrorCarga]             = useState(null);
   const [resultado, setResultado]               = useState(null);
-  // ✅ NUEVO: guardamos el UUID del row en resultados para pasárselo a TestResult
   const [resultadoId, setResultadoId]           = useState(null);
   const [perfilUsuarioId, setPerfilUsuarioId]   = useState(null);
   const [guardando, setGuardando]               = useState(false);
@@ -78,7 +49,7 @@ export default function TestVocacional({ user, isDemoMode = false }) {
   const idsActuales    = seleccionadas[preguntaActual?.id] ?? [];
   const puedeAvanzar   = idsActuales.length > 0;
 
-  // ── Cargar al montar ────────────────────────────────────────────────────────
+  // ── Inicialización ───────────────────────────────────────────────────────────
   useEffect(() => {
     const inicializar = async () => {
       try {
@@ -94,6 +65,7 @@ export default function TestVocacional({ user, isDemoMode = false }) {
 
         const { success, data, error } = await obtenerCuestionario();
         if (!success) { setErrorCarga(error ?? 'No se pudo cargar el cuestionario.'); return; }
+
         const pregs = data.preguntas ?? [];
         const cId   = data.cuestionario?.id ?? data.id ?? null;
         setPreguntas(pregs);
@@ -133,7 +105,7 @@ export default function TestVocacional({ user, isDemoMode = false }) {
     inicializar();
   }, [user?.id, isDemoMode]);
 
-  // ── Guardar progreso en localStorage ────────────────────────────────────────
+  // ── Autosave del borrador en localStorage ────────────────────────────────────
   useEffect(() => {
     if (fase !== 'test' || !user?.id || !cuestionarioId) return;
     localStorage.setItem(storageKey(user.id), JSON.stringify({
@@ -167,13 +139,11 @@ export default function TestVocacional({ user, isDemoMode = false }) {
   const verResultadoPrevio = () => {
     if (!resultadoGuardadoDB) return;
     const pfVoc = resultadoGuardadoDB.perfil_vocacional;
-    const calculo = {
+    setResultado(calcToUI({
       categoriaPrincipal:  pfVoc?.categoriaPrincipal  ?? pfVoc?.perfil?.categoriaPrincipal,
       categoriaSecundaria: pfVoc?.categoriaSecundaria ?? pfVoc?.perfil?.categoriaSecundaria,
       scores:              pfVoc?.scores              ?? pfVoc?.perfil?.scores ?? [],
-    };
-    setResultado(calcToUI(calculo));
-    // ✅ Restaurar el resultadoId del resultado previo
+    }));
     setResultadoId(resultadoGuardadoDB.id ?? null);
     setFase('resultado');
   };
@@ -202,28 +172,25 @@ export default function TestVocacional({ user, isDemoMode = false }) {
       return;
     }
 
-    // Última pregunta → calcular resultado en el frontend
-    const calculo = calcularResultado(preguntas, seleccionadas);
-    setResultado(calcToUI(calculo));
-    setFase('resultado'); // ✅ ir a resultado ANTES de esperar al backend
+    // Última pregunta → el backend calcula el perfil a partir de las respuestas crudas
+    setFase('calculando');
+    setGuardando(true);
 
-    // Guardar en BD en paralelo y capturar el id devuelto
-    if (perfilUsuarioId && cuestionarioId) {
-      setGuardando(true);
-      try {
-        const res = await guardarResultado(perfilUsuarioId, cuestionarioId, seleccionadas, calculo);
-        // ✅ El backend devuelve el row insertado en data — capturamos su id
-        if (res.success && res.data?.id) {
+    try {
+      if (perfilUsuarioId && cuestionarioId) {
+        const res = await guardarResultado(perfilUsuarioId, cuestionarioId, seleccionadas);
+        if (res.success && res.data) {
+          setResultado(calcToUI(res.data.perfil_vocacional));
           setResultadoId(res.data.id);
         }
-      } catch (err) {
-        console.error('Error al guardar resultado:', err);
-      } finally {
-        setGuardando(false);
       }
+    } catch (err) {
+      console.error('Error al guardar resultado:', err);
+    } finally {
+      setGuardando(false);
+      setFase('resultado');
+      if (user?.id) localStorage.removeItem(storageKey(user.id));
     }
-
-    if (user?.id) localStorage.removeItem(storageKey(user.id));
   };
 
   const reiniciarTest = async () => {
@@ -251,7 +218,7 @@ export default function TestVocacional({ user, isDemoMode = false }) {
               No hay respuestas correctas o incorrectas. Elige todo lo que te represente.
             </p>
           </div>
-          {fase !== 'intro' && (
+          {fase !== 'intro' && fase !== 'calculando' && (
             <button
               onClick={() => navigate('/dashboard')}
               className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 border border-gray-200 rounded-xl px-4 py-2 hover:bg-gray-50 transition"
@@ -291,7 +258,7 @@ export default function TestVocacional({ user, isDemoMode = false }) {
                 onAnterior={irAnterior}
                 onSiguiente={irSiguiente}
                 puedeAvanzar={puedeAvanzar}
-                guardando={guardando && preguntaIdx === totalPreguntas - 1}
+                guardando={guardando}
                 esUltima={preguntaIdx === totalPreguntas - 1}
               />
             </div>
@@ -305,7 +272,16 @@ export default function TestVocacional({ user, isDemoMode = false }) {
           </div>
         )}
 
-        {/* ✅ resultadoId se pasa — TestResult carga recomendaciones reales */}
+        {fase === 'calculando' && (
+          <div className="flex items-center justify-center min-h-[50vh]">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-emerald-500 mx-auto mb-4" />
+              <p className="text-gray-600 text-sm font-medium">Analizando tus respuestas...</p>
+              <p className="text-gray-400 text-xs mt-1">Esto solo toma un momento</p>
+            </div>
+          </div>
+        )}
+
         {fase === 'resultado' && resultado && (
           <TestResult
             resultadoId={resultadoId}
@@ -321,4 +297,3 @@ export default function TestVocacional({ user, isDemoMode = false }) {
     </DashboardLayout>
   );
 }
-

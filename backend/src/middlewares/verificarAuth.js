@@ -1,0 +1,27 @@
+const supabase = require('../config/supabase');
+
+/**
+ * Middleware que verifica el JWT de Supabase para rutas de usuario autenticado.
+ * Usa supabase.auth.getUser() con la service_role_key para validar el token
+ * sin depender de RLS ni de un JWT_SECRET propio.
+ *
+ * En caso de éxito, adjunta req.user con { id, email, ... } de Supabase.
+ */
+async function verificarAuth(req, res, next) {
+  const token = req.headers.authorization?.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ success: false, message: 'Token de autenticación requerido' });
+  }
+
+  const { data: { user }, error } = await supabase.auth.getUser(token);
+
+  if (error || !user) {
+    return res.status(401).json({ success: false, message: 'Token inválido o expirado' });
+  }
+
+  req.user = user;
+  next();
+}
+
+module.exports = verificarAuth;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "../../config/supabase";
+import { obtenerPerfil } from "../../services/perfilService";
 
 import DashboardLayout from "../../components/Layout/DashboardLayout";
 import HeroBanner from "./components/HeroBanner";
@@ -18,12 +18,8 @@ export default function Dashboard({ user, isDemoMode = false }) {
   useEffect(() => {
     const getProfile = async () => {
       try {
-        const { data, error: err } = await supabase
-          .from("perfiles_usuario")
-          .select("*")
-          .eq("user_id", user.id)
-          .single();
-        if (err) throw err;
+        const { success, data, error: err } = await obtenerPerfil(user.id);
+        if (!success) throw new Error(err);
         setProfile(data);
       } catch (err) {
         console.error("Error al cargar perfil:", err);

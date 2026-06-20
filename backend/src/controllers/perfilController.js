@@ -1,91 +1,100 @@
-// ============================================
-// PERFIL CONTROLLER
-// ============================================
-// Maneja el cuestionario vocacional:
-// - Traer preguntas desde la DB
-// - Guardar resultados
-// - Obtener recomendaciones
+const supabase                                              = require('../config/supabase');
+const { calcularDesdeRespuestas, calcularPorcentajes }      = require('../utils/perfilvocacional');
+const { generarRecomendaciones }                            = require('../utils/algoritmoRecomendacion');
 
-const supabase = require('../config/supabase');
-const { calcularPorcentajes }      = require('../utils/perfilvocacional');
-const { generarRecomendaciones }   = require('../utils/algoritmoRecomendacion');
-
-// --------------------------------------------
-// OBTENER PREGUNTAS DEL CUESTIONARIO ACTIVO
+// ─────────────────────────────────────────────────────────────
 // GET /api/perfil/cuestionario
-// --------------------------------------------
+// Devuelve el cuestionario activo con sus preguntas, opciones y pesos.
+// ─────────────────────────────────────────────────────────────
 const obtenerCuestionario = async (req, res) => {
   try {
-    // Traer el cuestionario activo
-    const { data: cuestionario, error: errorCuestionario } = await supabase
+    const { data: cuestionario, error: errC } = await supabase
       .from('cuestionarios')
-      .select('*')
+      .select('id, nombre, version, activo')
       .eq('activo', true)
       .order('created_at', { ascending: false })
       .limit(1)
       .single();
 
-    if (errorCuestionario) {
-      return res.status(404).json({
-        success: false,
-        message: 'No hay cuestionario activo'
-      });
+    if (errC) {
+      return res.status(404).json({ success: false, message: 'No hay cuestionario activo' });
     }
 
-    // Traer las preguntas de ese cuestionario ordenadas
-    const { data: preguntas, error: errorPreguntas } = await supabase
+    const { data: preguntas, error: errP } = await supabase
       .from('preguntas')
-      .select('*')
+      .select(`
+        id, texto, tipo, orden, categoria, peso,
+        opciones (
+          id, label, icon, orden,
+          pesos_opciones ( categoria, puntos )
+        )
+      `)
       .eq('cuestionario_id', cuestionario.id)
       .order('orden', { ascending: true });
 
-    if (errorPreguntas) {
-      return res.status(500).json({
-        success: false,
-        message: errorPreguntas.message
-      });
+    if (errP) {
+      return res.status(500).json({ success: false, message: errP.message });
     }
+
+    // Normalizar: convertir pesos_opciones (array) a pesos (objeto) para el frontend
+    const preguntasFormateadas = preguntas.map((p) => ({
+      ...p,
+      opciones: (p.opciones ?? [])
+        .sort((a, b) => a.orden - b.orden)
+        .map((o) => ({
+          id:    o.id,
+          label: o.label,
+          icon:  o.icon,
+          orden: o.orden,
+          pesos: Object.fromEntries(
+            (o.pesos_opciones ?? []).map(({ categoria, puntos }) => [categoria, puntos])
+          ),
+        })),
+    }));
 
     return res.json({
       success: true,
-      data: {
-        cuestionario,
-        preguntas
-      }
+      data: { id: cuestionario.id, cuestionario, preguntas: preguntasFormateadas },
     });
-
-  } catch (error) {
-    console.error('perfilController.obtenerCuestionario:', error);
-    return res.status(500).json({
-      success: false,
-      message: error.message
-    });
+  } catch (err) {
+    console.error('perfilController.obtenerCuestionario:', err);
+    return res.status(500).json({ success: false, message: err.message });
   }
 };
 
-// --------------------------------------------
-// GUARDAR RESULTADO DEL TEST
+// ─────────────────────────────────────────────────────────────
 // POST /api/perfil/resultado
-// Body: { perfil_usuario_id, cuestionario_id, respuestas, perfil_vocacional }
-// --------------------------------------------
+// Body: { perfil_usuario_id, cuestionario_id, respuestas }
+//
+// El cálculo del perfil vocacional se realiza aquí, en el servidor.
+// El frontend solo envía las respuestas crudas (IDs de opciones elegidas).
+// ─────────────────────────────────────────────────────────────
 const guardarResultado = async (req, res) => {
   try {
-    const {
-      perfil_usuario_id,
-      cuestionario_id,
-      respuestas,
-      perfil_vocacional
-    } = req.body;
+    const { perfil_usuario_id, cuestionario_id, respuestas } = req.body;
 
     if (!perfil_usuario_id || !cuestionario_id || !respuestas) {
       return res.status(400).json({
         success: false,
-        message: 'Faltan datos: perfil_usuario_id, cuestionario_id, respuestas'
+        message: 'Faltan campos: perfil_usuario_id, cuestionario_id, respuestas',
       });
     }
 
-    const perfilCalculado = calcularPorcentajes(perfil_vocacional);
-    const perfilNormalizado = perfil_vocacional?.perfil || perfil_vocacional;
+    // Verificar que el perfil pertenece al usuario autenticado
+    const { data: perfil, error: errPerfil } = await supabase
+      .from('perfiles_usuario')
+      .select('id')
+      .eq('id', perfil_usuario_id)
+      .eq('user_id', req.user.id)
+      .single();
+
+    if (errPerfil || !perfil) {
+      return res.status(403).json({ success: false, message: 'No autorizado para este perfil' });
+    }
+
+    // Calcular el perfil vocacional en el servidor a partir de las respuestas
+    const perfilVocacional = await calcularDesdeRespuestas(cuestionario_id, respuestas, supabase);
+    const porcentajes      = calcularPorcentajes(perfilVocacional);
 
     const { data, error } = await supabase
       .from('resultados')
@@ -93,54 +102,32 @@ const guardarResultado = async (req, res) => {
         perfil_usuario_id,
         cuestionario_id,
         respuestas,
-        perfil_vocacional: {
-          ...perfil_vocacional,
-          perfil: perfilNormalizado,
-          porcentajes: perfilCalculado
-        },
-        fecha_realizacion: new Date().toISOString()
+        perfil_vocacional: { ...perfilVocacional, porcentajes },
+        fecha_realizacion: new Date().toISOString(),
       }])
       .select()
       .single();
 
     if (error) {
-      console.error('perfilController.guardarResultado:', error);
-      return res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      console.error('perfilController.guardarResultado — insert:', error);
+      return res.status(500).json({ success: false, message: error.message });
     }
 
-    // Lanzar recomendaciones en paralelo — no bloquea la respuesta HTTP
-    generarRecomendaciones(
-      data.id,
-      {
-        categoriaPrincipal:  perfil_vocacional?.categoriaPrincipal,
-        categoriaSecundaria: perfil_vocacional?.categoriaSecundaria,
-        scores:              perfil_vocacional?.scores ?? [],
-      },
-      supabase
-    ).catch(err => console.error('[perfilController] generarRecomendaciones:', err));
+    // Generar recomendaciones en paralelo — no bloquea la respuesta HTTP
+    generarRecomendaciones(data.id, perfilVocacional, supabase)
+      .catch((err) => console.error('[perfilController] generarRecomendaciones:', err));
 
-    return res.status(201).json({
-      success: true,
-      message: 'Resultado guardado',
-      data
-    });
-
-  } catch (error) {
-    console.error('perfilController.guardarResultado:', error);
-    return res.status(500).json({
-      success: false,
-      message: error.message
-    });
+    return res.status(201).json({ success: true, message: 'Resultado guardado', data });
+  } catch (err) {
+    console.error('perfilController.guardarResultado:', err);
+    return res.status(500).json({ success: false, message: err.message });
   }
 };
 
-// --------------------------------------------
-// OBTENER ÚLTIMO RESULTADO DE UN USUARIO
+// ─────────────────────────────────────────────────────────────
 // GET /api/perfil/resultado/:perfilUsuarioId
-// --------------------------------------------
+// Devuelve el último resultado del usuario.
+// ─────────────────────────────────────────────────────────────
 const obtenerResultado = async (req, res) => {
   try {
     const { perfilUsuarioId } = req.params;
@@ -149,16 +136,12 @@ const obtenerResultado = async (req, res) => {
       .from('resultados')
       .select(`
         *,
-        cuestionarios (nombre, version),
+        cuestionarios ( nombre, version ),
         recomendaciones (
-          compatibilidad,
-          razones,
+          compatibilidad, razones,
           programas (
-            nombre,
-            tipo,
-            area_academica,
-            duracion,
-            instituciones (nombre, ciudad)
+            nombre, tipo, area_academica, duracion,
+            instituciones ( nombre, ciudad )
           )
         )
       `)
@@ -167,77 +150,119 @@ const obtenerResultado = async (req, res) => {
       .limit(1)
       .single();
 
-    // PGRST116 = no rows found, el usuario aún no ha hecho el test
-    if (error && error.code === 'PGRST116') {
+    if (error?.code === 'PGRST116') {
       return res.json({ success: true, data: null });
     }
-
     if (error) {
-      return res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      return res.status(500).json({ success: false, message: error.message });
     }
 
     return res.json({ success: true, data });
-
-  } catch (error) {
-    console.error('perfilController.obtenerResultado:', error);
-    return res.status(500).json({
-      success: false,
-      message: error.message
-    });
+  } catch (err) {
+    console.error('perfilController.obtenerResultado:', err);
+    return res.status(500).json({ success: false, message: err.message });
   }
 };
 
-// --------------------------------------------
-// OBTENER PERFIL COMPLETO DEL USUARIO
-// GET /api/perfil/:userId
-// --------------------------------------------
-const obtenerPerfil = async (req, res) => {
+// ─────────────────────────────────────────────────────────────
+// GET /api/perfil/recomendaciones/:resultadoId
+// Devuelve las recomendaciones de un resultado dado.
+// ─────────────────────────────────────────────────────────────
+const obtenerRecomendaciones = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { resultadoId } = req.params;
 
     const { data, error } = await supabase
-      .from('perfiles_usuario')
-      .select('*')
-      .eq('user_id', userId)
-      .single();
+      .from('recomendaciones')
+      .select(`
+        id, compatibilidad, razones, vista,
+        programas (
+          id, nombre, tipo, area_academica, duracion, modalidad, descripcion,
+          instituciones ( nombre, ciudad, departamento )
+        )
+      `)
+      .eq('resultado_id', resultadoId)
+      .order('compatibilidad', { ascending: false })
+      .limit(6);
 
     if (error) {
-      return res.status(404).json({
-        success: false,
-        message: 'Perfil no encontrado'
-      });
+      return res.status(500).json({ success: false, message: error.message });
     }
 
-    return res.json({ success: true, data });
+    const recomendaciones = (data ?? []).map((r) => ({
+      id:            r.id,
+      nombre:        r.programas?.nombre                   ?? '—',
+      institucion:   r.programas?.instituciones?.nombre    ?? '—',
+      ciudad:        r.programas?.instituciones?.ciudad    ?? '',
+      departamento:  r.programas?.instituciones?.departamento ?? '',
+      area:          r.programas?.area_academica           ?? '',
+      tipo:          r.programas?.tipo                     ?? '',
+      nivel:         r.programas?.tipo                     ?? '',
+      duracion:      r.programas?.duracion                 ?? '',
+      modalidad:     r.programas?.modalidad                ?? '',
+      compatibilidad: Math.round((r.compatibilidad ?? 0) * 100),
+      razones:       r.razones                             ?? '',
+      vista:         r.vista                               ?? false,
+    }));
 
-  } catch (error) {
-    console.error('perfilController.obtenerPerfil:', error);
-    return res.status(500).json({
-      success: false,
-      message: error.message
-    });
+    return res.json({ success: true, data: recomendaciones });
+  } catch (err) {
+    console.error('perfilController.obtenerRecomendaciones:', err);
+    return res.status(500).json({ success: false, message: err.message });
   }
 };
 
-// --------------------------------------------
-// ELIMINAR TODOS LOS RESULTADOS DE UN USUARIO
+// ─────────────────────────────────────────────────────────────
+// PATCH /api/perfil/recomendaciones/:id/vista
+// Marca una recomendación como vista. Solo puede hacerlo el dueño.
+// ─────────────────────────────────────────────────────────────
+const marcarRecomendacionVista = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { error } = await supabase
+      .from('recomendaciones')
+      .update({ vista: true })
+      .eq('id', id);
+
+    if (error) {
+      return res.status(500).json({ success: false, message: error.message });
+    }
+
+    return res.json({ success: true });
+  } catch (err) {
+    console.error('perfilController.marcarRecomendacionVista:', err);
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// ─────────────────────────────────────────────────────────────
 // DELETE /api/perfil/resultado/:perfilUsuarioId
-// --------------------------------------------
+// Elimina todos los resultados y sus recomendaciones.
+// ─────────────────────────────────────────────────────────────
 const eliminarResultado = async (req, res) => {
   try {
     const { perfilUsuarioId } = req.params;
 
-    // Primero obtener los IDs de resultados para borrar sus recomendaciones
+    // Verificar que el perfil pertenece al usuario autenticado
+    const { data: perfil, error: errPerfil } = await supabase
+      .from('perfiles_usuario')
+      .select('id')
+      .eq('id', perfilUsuarioId)
+      .eq('user_id', req.user.id)
+      .single();
+
+    if (errPerfil || !perfil) {
+      return res.status(403).json({ success: false, message: 'No autorizado para este perfil' });
+    }
+
     const { data: resultados } = await supabase
       .from('resultados')
       .select('id')
       .eq('perfil_usuario_id', perfilUsuarioId);
 
     if (resultados?.length) {
-      const ids = resultados.map(r => r.id);
+      const ids = resultados.map((r) => r.id);
       await supabase.from('recomendaciones').delete().in('resultado_id', ids);
     }
 
@@ -251,9 +276,34 @@ const eliminarResultado = async (req, res) => {
     }
 
     return res.json({ success: true, message: 'Resultados eliminados' });
-  } catch (error) {
-    console.error('perfilController.eliminarResultado:', error);
-    return res.status(500).json({ success: false, message: error.message });
+  } catch (err) {
+    console.error('perfilController.eliminarResultado:', err);
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// ─────────────────────────────────────────────────────────────
+// GET /api/perfil/:userId
+// Devuelve el perfil completo del usuario autenticado.
+// ─────────────────────────────────────────────────────────────
+const obtenerPerfil = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const { data, error } = await supabase
+      .from('perfiles_usuario')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+
+    if (error) {
+      return res.status(404).json({ success: false, message: 'Perfil no encontrado' });
+    }
+
+    return res.json({ success: true, data });
+  } catch (err) {
+    console.error('perfilController.obtenerPerfil:', err);
+    return res.status(500).json({ success: false, message: err.message });
   }
 };
 
@@ -261,6 +311,8 @@ module.exports = {
   obtenerCuestionario,
   guardarResultado,
   obtenerResultado,
+  obtenerRecomendaciones,
+  marcarRecomendacionVista,
   eliminarResultado,
-  obtenerPerfil
+  obtenerPerfil,
 };

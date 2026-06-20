@@ -1,16 +1,26 @@
 // src/pages/landing/Login.jsx
-import { useNavigate } from 'react-router-dom';   // ← NUEVO
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import LoginNavbar from './components/LoginNavbar';
 import LoginCard from './components/LoginCard';
 import SignupCard from './components/SignupCard';
 import ForgotPasswordCard from './components/ForgotPasswordCard';
 import Footer from './components/Footer';
+import IntroAnimation from '../../components/IntroAnimation';
 import { useAuth } from '../../hooks/useAuth';
 import { useDarkMode } from '../../hooks/useDarkMode';
 
 function Login() {
-  const navigate = useNavigate();   // ← NUEVO
+  const navigate = useNavigate();
   const [dark, toggleDark] = useDarkMode();
+  const [introCompleta, setIntroCompleta] = useState(
+    () => sessionStorage.getItem('brota_intro') === '1'
+  );
+
+  const handleIntroCompleta = () => {
+    sessionStorage.setItem('brota_intro', '1');
+    setIntroCompleta(true);
+  };
 
   const {
     mode, email, password, confirmPassword,
@@ -90,7 +100,7 @@ function Login() {
 
       {/* ── Sección principal con fondo ── */}
       <div className="flex flex-col flex-1 bg-[url('/fondo-planta-crema.jpg')] bg-cover bg-center relative dark:bg-none dark:bg-[#111318]">
-        <LoginNavbar />
+        <LoginNavbar logoVisible={introCompleta} />
         <div className="flex w-full pt-24 pb-12 px-20 flex-1">
 
           {/* Columna izquierda: hero text */}
@@ -125,6 +135,8 @@ function Login() {
 
       {/* ── Footer ── */}
       <Footer />
+
+      {!introCompleta && <IntroAnimation onComplete={handleIntroCompleta} />}
 
     </div>
   );

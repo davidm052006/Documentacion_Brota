@@ -22,12 +22,12 @@ export default function Sidebar() {
 
   return (
     <aside className="w-56 h-screen bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 flex flex-col fixed left-0 top-0 z-30 overflow-hidden">
-      <div className="px-5 pt-7 pb-5 border-b border-gray-100 dark:border-gray-800">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-2xl">🌿</span>
-          <span className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">BROTA</span>
+      <div className="px-5 pt-6 pb-5 border-b border-gray-100 dark:border-green-950">
+        <div className="flex items-center gap-2.5 mb-1">
+          <img src="/logo-brota.png" alt="Brota" className="h-8 w-auto" />
+          <span className="text-lg font-bold text-green-900 dark:text-green-100 tracking-tight">BROTA</span>
         </div>
-        <p className="text-[11px] text-gray-400 leading-tight pl-9">
+        <p className="text-[11px] text-gray-400 dark:text-green-400/50 leading-tight pl-[42px]">
           Descubre tu camino,<br />construye tu futuro
         </p>
       </div>

@@ -1,27 +1,32 @@
-const express = require('express');
-const router = express.Router();
-
+const express       = require('express');
+const router        = express.Router();
+const verificarAuth = require('../middlewares/verificarAuth');
 const {
   obtenerCuestionario,
   guardarResultado,
   obtenerResultado,
+  obtenerRecomendaciones,
+  marcarRecomendacionVista,
   eliminarResultado,
-  obtenerPerfil
+  obtenerPerfil,
 } = require('../controllers/perfilController');
 
-// GET    /api/perfil/cuestionario              — preguntas del test activo
+// Todas las rutas de perfil requieren sesión válida
+router.use(verificarAuth);
+
+// Cuestionario
 router.get('/cuestionario', obtenerCuestionario);
 
-// POST   /api/perfil/resultado                 — guardar resultado del test
-router.post('/resultado', guardarResultado);
+// Resultados
+router.post  ('/resultado',                    guardarResultado);
+router.get   ('/resultado/:perfilUsuarioId',   obtenerResultado);
+router.delete('/resultado/:perfilUsuarioId',   eliminarResultado);
 
-// GET    /api/perfil/resultado/:perfilUsuarioId — último resultado de un usuario
-router.get('/resultado/:perfilUsuarioId', obtenerResultado);
+// Recomendaciones
+router.get  ('/recomendaciones/:resultadoId',        obtenerRecomendaciones);
+router.patch('/recomendaciones/:id/vista',           marcarRecomendacionVista);
 
-// DELETE /api/perfil/resultado/:perfilUsuarioId — borrar todos los resultados
-router.delete('/resultado/:perfilUsuarioId', eliminarResultado);
-
-// GET    /api/perfil/:userId                   — perfil completo del usuario
+// Perfil de usuario
 router.get('/:userId', obtenerPerfil);
 
 module.exports = router;
