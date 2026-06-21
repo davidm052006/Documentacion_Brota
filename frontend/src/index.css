@@ -1,4 +1,10 @@
 @import "tailwindcss";
+@source "pages/**/*.{jsx,tsx,js,ts}";
+@source "components/**/*.{jsx,tsx,js,ts}";
+@source "hooks/**/*.{js,ts}";
+@source "services/**/*.{jsx,tsx,js,ts}";
+@source "utils/**/*.{js,ts}";
+@source "config/**/*.{js,ts}";
 
 /* Activar dark mode por clase (.dark en <html>) en TailwindCSS v4 */
 @custom-variant dark (&:where(.dark, .dark *));
