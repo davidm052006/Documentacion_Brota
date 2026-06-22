@@ -10,11 +10,16 @@ export default function Terminos() {
           >
             ← Volver
           </a>
+          <img
+            src="/logo-brota.png" alt="BROTA"        
+            className="h-16 w-auto"
+        />
+        <span className="text-lg font-bold text-emerald-800 dark:text-emerald-600">BROTA</span>
           <span className="text-gray-200 dark:text-gray-700">|</span>
           <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Términos y Condiciones</span>
         </div>
       </div>
-
+      
       <div className="max-w-3xl mx-auto px-6 py-12">
         <div className="mb-10">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
@@ -23,7 +28,7 @@ export default function Terminos() {
           <p className="text-sm text-gray-400 dark:text-gray-500">
             Última actualización: <span className="font-medium">Junio de 2026</span>
           </p>
-          <p className="mt-4 text-sm text-gray-600 dark:text-gray-400 leading-relaxed border-l-4 border-blue-400 pl-4">
+          <p className="mt-4 text-sm text-gray-600 dark:text-gray-400 leading-relaxed border-l-4 border-emerald-400 pl-4">
             Al acceder o utilizar BROTA aceptas estos términos.
           </p>
         </div>

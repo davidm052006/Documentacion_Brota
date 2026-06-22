@@ -11,6 +11,12 @@ export default function Privacidad() {
             ← Volver
           </a>
           <span className="text-gray-200 dark:text-gray-700">|</span>
+        <img
+        src="/logo-brota.png" alt="BROTA"        
+        className="h-16 w-auto"
+        />
+        <span className="text-lg font-bold text-emerald-800 dark:text-emerald-600">BROTA</span>
+        
           <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Política de Privacidad</span>
         </div>
       </div>
