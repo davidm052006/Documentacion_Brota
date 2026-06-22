@@ -15,13 +15,13 @@ function Login() {
   const {
     mode, email, password, confirmPassword,
     primerNombre, segundoNombre, primerApellido, segundoApellido,
-    nivelEducativo, grado, edad, ciudad, telefono,
+    nivelEducativo, grado, fechaNacimiento, ciudad, telefono,
     loading, error, successMessage, validationErrors,
     onPrimerNombreChange, onSegundoNombreChange,
     onPrimerApellidoChange, onSegundoApellidoChange,
     onEmailChange,
     onPasswordChange, onConfirmPasswordChange,
-    onNivelEducativoChange, onGradoChange, onEdadChange,
+    onNivelEducativoChange, onGradoChange, onFechaNacimientoChange,
     onCiudadChange, onTelefonoChange,
     handleLogin, handleSignup, handlePasswordRecovery,
     changeMode,
@@ -36,19 +36,29 @@ function Login() {
             segundoNombre={segundoNombre}
             primerApellido={primerApellido}
             segundoApellido={segundoApellido}
-            email={email} password={password} confirmPassword={confirmPassword}
-            nivelEducativo={nivelEducativo} grado={grado} edad={edad}
-            ciudad={ciudad} telefono={telefono}
-            validationErrors={validationErrors} error={error} loading={loading}
+            email={email}
+            password={password}
+            confirmPassword={confirmPassword}
+            nivelEducativo={nivelEducativo}
+            grado={grado}
+            fechaNacimiento={fechaNacimiento}   // ✅ corregido
+            ciudad={ciudad}
+            telefono={telefono}
+            validationErrors={validationErrors}
+            error={error}
+            loading={loading}
             onPrimerNombreChange={onPrimerNombreChange}
             onSegundoNombreChange={onSegundoNombreChange}
             onPrimerApellidoChange={onPrimerApellidoChange}
             onSegundoApellidoChange={onSegundoApellidoChange}
-            onEmailChange={onEmailChange} onPasswordChange={onPasswordChange}
+            onEmailChange={onEmailChange}
+            onPasswordChange={onPasswordChange}
             onConfirmPasswordChange={onConfirmPasswordChange}
             onNivelEducativoChange={onNivelEducativoChange}
-            onGradoChange={onGradoChange} onEdadChange={onEdadChange}
-            onCiudadChange={onCiudadChange} onTelefonoChange={onTelefonoChange}
+            onGradoChange={onGradoChange}
+            onFechaNacimientoChange={onFechaNacimientoChange}   // ✅ corregido
+            onCiudadChange={onCiudadChange}
+            onTelefonoChange={onTelefonoChange}
             onSubmit={handleSignup}
             onSwitchToLogin={() => changeMode('login')}
           />
@@ -56,8 +66,11 @@ function Login() {
       case 'forgotPassword':
         return (
           <ForgotPasswordCard
-            email={email} validationErrors={validationErrors}
-            error={error} successMessage={successMessage} loading={loading}
+            email={email}
+            validationErrors={validationErrors}
+            error={error}
+            successMessage={successMessage}
+            loading={loading}
             onEmailChange={onEmailChange}
             onSubmit={handlePasswordRecovery}
             onSwitchToLogin={() => changeMode('login')}
@@ -66,9 +79,13 @@ function Login() {
       default:
         return (
           <LoginCard
-            email={email} password={password}
-            validationErrors={validationErrors} error={error} loading={loading}
-            onEmailChange={onEmailChange} onPasswordChange={onPasswordChange}
+            email={email}
+            password={password}
+            validationErrors={validationErrors}
+            error={error}
+            loading={loading}
+            onEmailChange={onEmailChange}
+            onPasswordChange={onPasswordChange}
             onSubmit={handleLogin}
             onSwitchToSignup={() => changeMode('signup')}
             onSwitchToForgotPassword={() => changeMode('forgotPassword')}
@@ -125,7 +142,6 @@ function Login() {
 
       {/* ── Footer ── */}
       <Footer />
-
 
     </div>
   );
