@@ -2,11 +2,11 @@ import { useState } from 'react';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
 
 const CATEGORIAS = [
-  { key: 'todos',        label: 'Todos',        emoji: '✨' },
-  { key: 'guias',       label: 'Guías',        emoji: '📄' },
-  { key: 'becas',       label: 'Becas',        emoji: '💰' },
-  { key: 'herramientas',label: 'Herramientas', emoji: '🔧' },
-  { key: 'videos',      label: 'Videos',       emoji: '🎥' },
+  { key: 'todos',        label: 'Todos',    emoji: '✨' },
+  { key: 'guias',       label: 'Guías',    emoji: '📄' },
+  { key: 'videos',      label: 'YouTube',  emoji: '▶️' },
+  { key: 'becas',       label: 'Becas',    emoji: '🎓' },
+  { key: 'herramientas',label: 'Podcasts', emoji: '🎧' },
 ];
 
 const RECURSOS = [
@@ -276,37 +276,37 @@ export default function Recursos() {
       <div className="p-6 max-w-6xl mx-auto">
 
         {/* ── Encabezado ── */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Recursos</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Guías, becas, herramientas y videos para apoyar tu camino educativo.
-          </p>
-        </div>
-
-        {/* ── Filtros + búsqueda ── */}
-        <div className="flex flex-col sm:flex-row gap-3 mb-6">
-          <div className="flex gap-2 flex-wrap">
-            {CATEGORIAS.map(({ key, label, emoji }) => (
-              <button
-                key={key}
-                onClick={() => setCategoriaActiva(key)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
-                  categoriaActiva === key
-                    ? 'bg-emerald-600 text-white shadow-sm'
-                    : 'bg-white dark:bg-[#1a1d24] text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-[#2c3140] hover:border-emerald-300 hover:text-emerald-600 dark:hover:text-emerald-400'
-                }`}
-              >
-                <span>{emoji}</span> {label}
-              </button>
-            ))}
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="flex-1">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-0.5">Recursos</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Herramientas, guías y oportunidades para tu camino educativo.
+            </p>
           </div>
           <input
             type="text"
             placeholder="Buscar recurso..."
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
-            className="sm:ml-auto px-3 py-1.5 text-xs border border-gray-200 dark:border-[#2c3140] rounded-xl bg-white dark:bg-[#14171e] text-gray-700 dark:text-gray-200 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-300 dark:focus:ring-emerald-800 w-full sm:w-52"
+            className="px-3 py-2 text-sm border border-gray-200 dark:border-[#2c3140] rounded-xl bg-white dark:bg-[#14171e] text-gray-700 dark:text-gray-200 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-300 dark:focus:ring-emerald-800 w-full sm:w-52"
           />
+        </div>
+
+        {/* ── Tabs de categoría ── */}
+        <div className="flex gap-1.5 flex-wrap mb-6 border-b border-gray-100 dark:border-[#1e2a21] pb-4">
+          {CATEGORIAS.map(({ key, label, emoji }) => (
+            <button
+              key={key}
+              onClick={() => setCategoriaActiva(key)}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                categoriaActiva === key
+                  ? 'bg-emerald-600 text-white shadow-sm'
+                  : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-700 dark:hover:text-gray-200'
+              }`}
+            >
+              <span>{emoji}</span> {label}
+            </button>
+          ))}
         </div>
 
         {/* ── Grid de recursos ── */}

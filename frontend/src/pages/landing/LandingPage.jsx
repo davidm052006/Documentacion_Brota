@@ -5,9 +5,10 @@ import { useDarkMode } from '../../hooks/useDarkMode';
 // ─── Datos de contenido ──────────────────────────────────────────────────────
 
 const NAV_LINKS = [
-  { label: 'Cómo funciona', href: '#como-funciona' },
-  { label: 'Servicios',     href: '/servicios' },
-  { label: 'Contacto',      href: '/contacto' },
+  { label: 'Conoce Brota', href: '#como-funciona' },
+  { label: 'Beneficios',   href: '#por-que-brota' },
+  { label: 'Testimonios',  href: '#testimonios'    },
+  { label: 'FAQ',          href: '#faq'            },
 ];
 
 const PASOS = [
@@ -89,9 +90,9 @@ function Navbar({ dark, toggleDark }) {
 
           <button
             onClick={() => navigate('/login')}
-            className="hidden md:inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-green-700 dark:bg-green-600 hover:bg-green-800 dark:hover:bg-green-500 rounded-full shadow-sm transition-colors"
+            className="hidden md:inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-green-600 dark:bg-green-500 hover:bg-green-700 dark:hover:bg-green-400 rounded-full shadow-sm transition-colors"
           >
-            Iniciar sesión
+            Empezar gratis
           </button>
 
           {/* Hamburger mobile */}
@@ -170,16 +171,20 @@ function Hero() {
           </a>
         </div>
 
-        {/* Mini stats */}
-        <div className="flex gap-8 mt-10 justify-center md:justify-start">
+        {/* Stats row — 4 bloques verdes */}
+        <div className="flex gap-3 mt-10 flex-wrap justify-center md:justify-start">
           {[
-            { n: '100%', label: 'Gratuito' },
-            { n: '+15',  label: 'Áreas vocacionales' },
-            { n: '3',    label: 'Pasos para tu perfil' },
-          ].map(({ n, label }) => (
-            <div key={label}>
-              <p className="text-2xl font-bold text-green-700 dark:text-green-400">{n}</p>
-              <p className="text-xs text-gray-500 dark:text-green-200/50">{label}</p>
+            { icon: '🌱', label: 'Orientación gratuita' },
+            { icon: '🧭', label: 'Explorar áreas'        },
+            { icon: '📊', label: 'Resultados personalizados' },
+            { icon: '🎯', label: '¡Toma decisiones!'     },
+          ].map(({ icon, label }) => (
+            <div
+              key={label}
+              className="flex items-center gap-2 bg-green-50 dark:bg-green-950 border border-green-100 dark:border-green-900 px-3 py-2 rounded-xl"
+            >
+              <span className="text-base">{icon}</span>
+              <span className="text-xs font-medium text-green-800 dark:text-green-300">{label}</span>
             </div>
           ))}
         </div>
@@ -278,7 +283,7 @@ function Filosofia() {
 
 function Features() {
   return (
-    <section className="bg-green-50 dark:bg-[#0a1a0a] py-20">
+    <section id="por-que-brota" className="bg-green-50 dark:bg-[#0a1a0a] py-20">
       <div className="max-w-6xl mx-auto px-6">
 
         <div className="text-center mb-14">

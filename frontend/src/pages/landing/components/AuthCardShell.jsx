@@ -1,12 +1,12 @@
-import React from 'react';
-
 function AuthCardShell({ title, description, children, className = '' }) {
   return (
-    <div className={`bg-amber-50 dark:bg-[#1a1d24] p-10 rounded-2xl shadow-xl dark:shadow-[0_8px_32px_rgba(0,0,0,0.5)] w-full max-w-sm flex flex-col gap-6 border border-gray-200 dark:border-[#2c3140] ${className}`}>
-      <h3 className="text-2xl font-bold text-center text-black dark:text-white">{title}</h3>
-      {description && (
-        <p className="text-center text-sm text-gray-700 dark:text-[#c8cdd8] leading-relaxed">{description}</p>
-      )}
+    <div className={`bg-white dark:bg-[#141a16] rounded-2xl shadow-lg border border-gray-100 dark:border-[#1e2a21] p-8 w-full flex flex-col gap-6 ${className}`}>
+      <div className="text-center">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white">{title}</h3>
+        {description && (
+          <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">{description}</p>
+        )}
+      </div>
       {children}
     </div>
   );

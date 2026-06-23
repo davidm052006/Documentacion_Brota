@@ -211,30 +211,28 @@ export default function Profesiones() {
       <div className="p-6 max-w-7xl mx-auto">
 
         {/* ── Encabezado ────────────────────────────────────────────────────── */}
-        <div className="mb-6 flex flex-col sm:flex-row sm:items-end gap-3">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
+        <div className="mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-2">
+            <div className="flex-1">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Explorar Profesiones
+                Explora tu futuro profesional
               </h1>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                Programas académicos del SNIES —{' '}
+                <span className="text-emerald-600 dark:text-emerald-400 font-medium">
+                  🏙️ Bogotá, D.C.
+                </span>
+              </p>
             </div>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Programas académicos registrados en el SNIES —{' '}
-              <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
-                🏙️ Solo Bogotá, D.C.
-              </span>
-            </p>
+            {stats.total > 0 && (
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
+                  {stats.total.toLocaleString('es-CO')}
+                </span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">programas</span>
+              </div>
+            )}
           </div>
-          {stats.total > 0 && (
-            <div className="flex items-center gap-2 bg-emerald-50 dark:bg-[#0a2018] border border-emerald-200 dark:border-[#1a4030] rounded-xl px-4 py-2">
-              <span className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">
-                {stats.total.toLocaleString('es-CO')}
-              </span>
-              <span className="text-xs text-emerald-600 dark:text-emerald-500 leading-tight">
-                programas<br />disponibles
-              </span>
-            </div>
-          )}
         </div>
 
         {/* ── Búsqueda ──────────────────────────────────────────────────────── */}
