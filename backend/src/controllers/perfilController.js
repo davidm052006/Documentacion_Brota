@@ -178,7 +178,7 @@ const obtenerRecomendaciones = async (req, res) => {
         id, compatibilidad, razones, vista,
         programas (
           id, nombre, tipo, area_academica, duracion, modalidad, descripcion,
-          instituciones ( nombre, ciudad, departamento )
+          instituciones ( id, nombre, ciudad, departamento )
         )
       `)
       .eq('resultado_id', resultadoId)
@@ -191,18 +191,18 @@ const obtenerRecomendaciones = async (req, res) => {
 
     const recomendaciones = (data ?? []).map((r) => ({
       id:            r.id,
-      nombre:        r.programas?.nombre                   ?? '—',
-      institucion:   r.programas?.instituciones?.nombre    ?? '—',
-      ciudad:        r.programas?.instituciones?.ciudad    ?? '',
-      departamento:  r.programas?.instituciones?.departamento ?? '',
-      area:          r.programas?.area_academica           ?? '',
-      tipo:          r.programas?.tipo                     ?? '',
-      nivel:         r.programas?.tipo                     ?? '',
-      duracion:      r.programas?.duracion                 ?? '',
-      modalidad:     r.programas?.modalidad                ?? '',
+      nombre:        r.programas?.nombre                        ?? '—',
+      descripcion:   r.programas?.descripcion                   ?? '',
+      institucion:   r.programas?.instituciones?.nombre         ?? '—',
+      ciudad:        r.programas?.instituciones?.ciudad         ?? '',
+      departamento:  r.programas?.instituciones?.departamento   ?? '',
+      area:          r.programas?.area_academica                ?? '',
+      tipo:          r.programas?.tipo                          ?? '',
+      duracion:      r.programas?.duracion                      ?? '',
+      modalidad:     r.programas?.modalidad                     ?? '',
       compatibilidad: Math.round((r.compatibilidad ?? 0) * 100),
-      razones:       r.razones                             ?? '',
-      vista:         r.vista                               ?? false,
+      razones:       r.razones                                  ?? '',
+      vista:         r.vista                                    ?? false,
     }));
 
     return res.json({ success: true, data: recomendaciones });

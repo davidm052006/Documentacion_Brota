@@ -4,6 +4,24 @@
 import { useEffect, useState } from 'react';
 import { obtenerRecomendaciones, marcarRecomendacionVista } from '../../../../services/perfilService';
 
+// ── Mapa de áreas académicas → etiqueta + emoji ───────────────────────────────
+const AREA_INFO = {
+  tecnologia:     { label: 'Tecnología',         emoji: '💻' },
+  salud:          { label: 'Salud',              emoji: '🏥' },
+  ciencias:       { label: 'Ciencias',           emoji: '🔬' },
+  diseño:         { label: 'Diseño',             emoji: '🎨' },
+  arte:           { label: 'Arte',               emoji: '🎭' },
+  educacion:      { label: 'Educación',          emoji: '📚' },
+  social:         { label: 'Ciencias Sociales',  emoji: '🤝' },
+  comunicacion:   { label: 'Comunicación',       emoji: '📡' },
+  juridico:       { label: 'Derecho',            emoji: '⚖️' },
+  negocios:       { label: 'Negocios',           emoji: '📈' },
+  administrativo: { label: 'Administración',     emoji: '🏢' },
+  humanidades:    { label: 'Humanidades',        emoji: '📖' },
+  ambiental:      { label: 'Ambiental',          emoji: '🌿' },
+  deporte:        { label: 'Deportes',           emoji: '⚽' },
+};
+
 // ── Color map por perfil ─────────────────────────────────────────────────────
 const COLOR_STYLES = {
   amber:   { bg: 'bg-amber-50',   border: 'border-amber-200',   text: 'text-amber-700',   bar: 'bg-amber-400',   badge: 'bg-amber-100 text-amber-700'   },
@@ -33,36 +51,50 @@ function ProgramaCard({ rec, c, onVer }) {
     pct >= 70 ? 'bg-blue-100 text-blue-700' :
                 'bg-gray-100 text-gray-500';
 
+  const areaInfo = AREA_INFO[rec.area] ?? null;
+
   return (
     <div
       className={`border ${ringColor} rounded-2xl p-4 transition cursor-pointer group`}
       onClick={() => onVer(rec)}
     >
-      <div className="flex items-start justify-between gap-2 mb-2">
-        <p className="text-sm font-semibold text-gray-800 leading-snug group-hover:text-emerald-700 transition">
+      {/* Nombre del programa + badge % */}
+      <div className="flex items-start justify-between gap-2 mb-1.5">
+        <p className="text-sm font-bold text-gray-800 dark:text-gray-100 leading-snug group-hover:text-emerald-700 transition">
           {rec.nombre}
         </p>
         <span className={`text-xs px-2 py-0.5 rounded-full flex-shrink-0 font-semibold ${badgeBg}`}>
           {pct}%
         </span>
       </div>
-      <p className="text-xs text-gray-600 font-medium mb-0.5">{rec.institucion}</p>
-      {rec.ciudad && (
-        <p className="text-xs text-gray-400 mb-1">{rec.ciudad}</p>
+
+      {/* Descripción del programa (nbc · nivel) */}
+      {rec.descripcion && (
+        <p className="text-[11px] text-gray-400 mb-2 leading-relaxed">{rec.descripcion}</p>
       )}
-      <div className="flex flex-wrap gap-1 mt-2">
-        {rec.area && (
-          <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
-            {rec.area}
+
+      {/* Institución y ciudad */}
+      <p className="text-xs text-gray-600 dark:text-gray-400 font-medium leading-snug">{rec.institucion}</p>
+      {rec.ciudad && (
+        <p className="text-[11px] text-gray-400 mt-0.5">
+          {rec.ciudad}{rec.departamento && rec.departamento !== rec.ciudad ? `, ${rec.departamento}` : ''}
+        </p>
+      )}
+
+      {/* Chips */}
+      <div className="flex flex-wrap gap-1 mt-2.5">
+        {areaInfo && (
+          <span className="text-xs bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 px-2 py-0.5 rounded-full font-medium">
+            {areaInfo.emoji} {areaInfo.label}
           </span>
         )}
-        {rec.nivel && (
-          <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
-            {rec.nivel}
+        {rec.modalidad && (
+          <span className="text-xs bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded-full">
+            {rec.modalidad}
           </span>
         )}
         {rec.duracion && (
-          <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+          <span className="text-xs bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded-full">
             {rec.duracion}
           </span>
         )}

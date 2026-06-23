@@ -220,7 +220,7 @@ export default function Profesiones() {
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
                 Programas académicos del SNIES —{' '}
                 <span className="text-emerald-600 dark:text-emerald-400 font-medium">
-                  🏙️ Bogotá, D.C.
+                  🇨🇴 Todo el país
                 </span>
               </p>
             </div>
@@ -351,15 +351,14 @@ export default function Profesiones() {
 
         {/* ── Footer informativo ────────────────────────────────────────────── */}
         <div className="mt-10 bg-blue-50 dark:bg-[#0d1a30] border border-blue-100 dark:border-[#1e3a5f] rounded-2xl p-5 flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-          <span className="text-2xl flex-shrink-0">🏙️</span>
+          <span className="text-2xl flex-shrink-0">🇨🇴</span>
           <div>
             <p className="text-sm font-semibold text-blue-700 dark:text-blue-400">
-              Datos exclusivos de Bogotá, D.C.
+              Datos oficiales del Ministerio de Educación Nacional
             </p>
             <p className="text-xs text-blue-500 dark:text-blue-500 mt-0.5">
-              Esta información proviene del SNIES (Sistema Nacional de Información de la Educación Superior)
-              del Ministerio de Educación Nacional. Solo incluye programas ofrecidos en Bogotá.
-              Próximamente agregaremos más ciudades.
+              Programas activos del SNIES (Sistema Nacional de Información de la Educación Superior)
+              de todo el país. Fuente: datos.gov.co — licencia CC-BY-SA 4.0.
             </p>
           </div>
         </div>

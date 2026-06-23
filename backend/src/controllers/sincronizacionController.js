@@ -87,6 +87,15 @@ function getAreaAcademica(nombrenbc, nombreareaconocimiento) {
   return null;
 }
 
+// Convierte "PSICOLOGO" → "Psicólogo", "ADMINISTRADOR(A) DE EMPRESAS" → "Administrador(a) de Empresas"
+function toTitleCase(str) {
+  const minors = new Set(['en', 'de', 'del', 'la', 'el', 'los', 'las', 'un', 'una', 'y', 'o', 'a', 'con', 'por']);
+  return str.toLowerCase().split(/\s+/).map((word, idx) => {
+    if (idx > 0 && minors.has(word)) return word;
+    return word.charAt(0).toUpperCase() + word.slice(1);
+  }).join(' ');
+}
+
 function getTipoInstitucion(caracter) {
   const c = (caracter ?? '').toLowerCase();
   if (c.includes('técnica profesional')) return 'Técnica';
@@ -95,10 +104,11 @@ function getTipoInstitucion(caracter) {
   return 'Universidad';
 }
 
-function getTipoPrograma(nivel) {
-  const n = (nivel ?? '').toLowerCase();
+// Usa nombrenivelformacion (ej: "Universitaria", "Maestría", "Tecnológica")
+function getTipoPrograma(nivelFormacion) {
+  const n = (nivelFormacion ?? '').toLowerCase();
   if (n.includes('técnica profesional') || n.includes('técnico profesional')) return 'Técnica';
-  if (n.includes('tecnológico') || n.includes('tecnológica')) return 'Tecnológica';
+  if (n === 'tecnológica' || n.includes('tecnológ')) return 'Tecnológica';
   if (n.includes('maestría') || n.includes('doctorado') || n.includes('especialización')) return 'Posgrado';
   return 'Universidad';
 }
@@ -242,13 +252,17 @@ const ejecutarSincronizacion = async (req, res) => {
       if (!instId) continue;
       const nombre = (r.nombreprograma ?? '').trim();
       if (!nombre) continue;
+      const titulo = (r.nombretituloobtenido ?? '').trim();
+      const nbc    = (r.nombrenbc ?? '').trim();
+      const nivel  = (r.nombrenivelformacion ?? '').trim();
       programas.push({
-        nombre:          nombre.substring(0, 200),
-        tipo:            getTipoPrograma(r.nombrenivelacademico),
-        area_academica:  getAreaAcademica(r.nombrenbc, r.nombreareaconocimiento),
+        nombre:          titulo ? toTitleCase(titulo).substring(0, 200)
+                                : (nbc ? toTitleCase(nbc).substring(0, 200) : '—'),
+        tipo:            getTipoPrograma(nivel),
+        area_academica:  getAreaAcademica(nbc, r.nombreareaconocimiento),
         duracion:        getDuracion(r.cantidadperiodos, r.nombreperiodicidad),
         modalidad:       getModalidad(r.nombremetodologia),
-        descripcion:     r.nombretituloobtenido ? `Título: ${String(r.nombretituloobtenido).substring(0, 490)}` : null,
+        descripcion:     [nbc, nivel].filter(Boolean).join(' · ') || null,
         costo_matricula: null,
         institucion_id:  instId,
         activo:          true,
