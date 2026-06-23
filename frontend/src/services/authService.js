@@ -24,7 +24,7 @@ export const loginWithEmail = async (email, password) => {
 //   2. El backend crea perfiles_usuario usando ese token
 //   3. Si el paso 2 falla, el backend hace rollback con su service_role_key
 // ─────────────────────────────────────────────────────────────
-export const signUpWithEmail = async (email, password, nombre, apellido) => {
+export const signUpWithEmail = async (email, password, nombre, apellido, extraFields = {}) => {
   try {
     // Paso 1: crear usuario en Supabase Auth
     const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
@@ -36,21 +36,20 @@ export const signUpWithEmail = async (email, password, nombre, apellido) => {
     const token = authData.session?.access_token;
 
     if (!token) {
-      // Supabase puede requerir confirmación de email — no hay sesión inmediata
       return {
         success: false,
         error: 'Revisa tu correo para confirmar tu cuenta antes de continuar.',
       };
     }
 
-    // Paso 2: crear perfil en el backend (que puede hacer rollback si falla)
+    // Paso 2: crear perfil en el backend con todos los campos
     const res = await fetch(`${API_URL}/api/auth/register-perfil`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ nombre, apellido }),
+      body: JSON.stringify({ nombre, apellido, ...extraFields }),
     });
 
     const body = await res.json();

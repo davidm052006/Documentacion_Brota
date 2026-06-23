@@ -1,22 +1,8 @@
-// ============================================================
+
 // useAuth.js
 // Custom hook que centraliza toda la lógica del formulario
 // de autenticación (login, registro, recuperación de contraseña).
-//
-// RESPONSABILIDAD: maneja el estado del formulario (campos,
-// errores, loading) y los handlers de submit. No sabe nada
-// de cómo se ve la UI — eso es responsabilidad de PreLogin.jsx.
-//
-// FLUJO DE DATOS:
-//   Usuario escribe → fieldHandlers actualizan estado
-//   Usuario envía   → handleLogin / handleSignup / handlePasswordRecovery
-//                      → validateFields (utils/validation.js)
-//                      → authService (services/authService.js)
-//                      → navigate('/dashboard') o setError()
-//
-// USADO EN: PreLogin.jsx
-//   const { email, handleLogin, ... } = useAuth()
-// ============================================================
+
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -24,13 +10,10 @@ import { validateFields } from '../utils/validation';
 import { loginWithEmail, signUpWithEmail, sendPasswordReset } from '../services/authService';
 
 export const useAuth = () => {
-  // useNavigate reemplaza window.location.href:
-  // navega sin recargar la página (SPA) y es la forma
-  // correcta en aplicaciones con React Router.
   const navigate = useNavigate();
 
   // ── Estado del formulario ────────────────────────────────────
-  const [mode, setMode]                       = useState('login'); // 'login' | 'signup' | 'forgotPassword'
+  const [mode, setMode]                       = useState('login');
   const [email, setEmail]                     = useState('');
   const [password, setPassword]               = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -46,21 +29,17 @@ export const useAuth = () => {
 
   // ── Estado de UI ─────────────────────────────────────────────
   const [loading, setLoading]                   = useState(false);
-  const [error, setError]                       = useState(null);   // error del servidor
-  const [successMessage, setSuccessMessage]     = useState(null);   // ej: "correo enviado"
-  const [validationErrors, setValidationErrors] = useState({});     // errores por campo
+  const [error, setError]                       = useState(null);
+  const [successMessage, setSuccessMessage]     = useState(null);
+  const [validationErrors, setValidationErrors] = useState({});
 
   // ── Helpers internos ─────────────────────────────────────────
-
-  // Limpia todos los mensajes al cambiar de modo o reintentar
   const clearMessages = () => {
     setError(null);
     setSuccessMessage(null);
     setValidationErrors({});
   };
 
-  // Limpia el error de un campo específico mientras el usuario escribe,
-  // sin esperar al submit
   const clearFieldError = (field) =>
     setValidationErrors((prev) => ({ ...prev, [field]: '' }));
 
@@ -70,10 +49,8 @@ export const useAuth = () => {
   };
 
   // ── Handlers de campos ───────────────────────────────────────
-  // Se pasan como props a los componentes hijos de PreLogin.jsx
-
   const fieldHandlers = {
-    onPrimerNombreChange:    (e) => { setPrimerNombre(e.target.value);    clearFieldError('primerNombre'); clearFieldError('nombre'); },
+    onPrimerNombreChange:    (e) => { setPrimerNombre(e.target.value);    clearFieldError('primerNombre');   clearFieldError('nombre'); },
     onSegundoNombreChange:   (e) => { setSegundoNombre(e.target.value);   clearFieldError('segundoNombre'); },
     onPrimerApellidoChange:  (e) => { setPrimerApellido(e.target.value);  clearFieldError('primerApellido'); clearFieldError('apellido'); },
     onSegundoApellidoChange: (e) => { setSegundoApellido(e.target.value); clearFieldError('segundoApellido'); },
@@ -88,7 +65,6 @@ export const useAuth = () => {
   };
 
   // ── Handler: Login ───────────────────────────────────────────
-
   const handleLogin = async (e) => {
     e.preventDefault();
     clearMessages();
@@ -110,16 +86,23 @@ export const useAuth = () => {
   };
 
   // ── Handler: Registro ────────────────────────────────────────
-
   const handleSignup = async (e) => {
     e.preventDefault();
     clearMessages();
 
-    const nombre = `${primerNombre} ${segundoNombre}`.trim();
+    const nombre   = `${primerNombre} ${segundoNombre}`.trim();
     const apellido = `${primerApellido} ${segundoApellido}`.trim();
-    const errors = validateFields({ email, password, nombre, apellido, confirmPassword }, mode);
-    if (errors.nombre) errors.primerNombre = errors.nombre;
+
+    const errors = validateFields(
+      { email, password, nombre, apellido, confirmPassword,
+        nivelEducativo, grado, edad, ciudad, telefono },
+      mode
+    );
+
+    // Mapear errores genéricos a campos específicos del formulario
+    if (errors.nombre)   errors.primerNombre   = errors.nombre;
     if (errors.apellido) errors.primerApellido = errors.apellido;
+
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors);
       return;
@@ -127,13 +110,9 @@ export const useAuth = () => {
 
     setLoading(true);
     try {
-      // signUpWithEmail hace dos operaciones encadenadas:
-      //   1. supabase.auth.signUp       → crea usuario en auth.users
-      //   2. INSERT en perfiles_usuario → guarda nombre y apellido
-      // Si la segunda falla, hace rollback de la primera.
-      // Ver authService.js para el detalle.
       const { success, error: authError } = await signUpWithEmail(
-        email, password, nombre, apellido
+        email, password, nombre, apellido,
+        { nivelEducativo, grado, edad, ciudad, telefono }
       );
       if (!success) setError(authError);
       else navigate('/dashboard');
@@ -143,12 +122,10 @@ export const useAuth = () => {
   };
 
   // ── Handler: Recuperación de contraseña ──────────────────────
-
   const handlePasswordRecovery = async (e) => {
     e.preventDefault();
     clearMessages();
 
-    // Solo valida el email — forgotPassword no necesita contraseña
     const errors = validateFields({ email }, 'forgotPassword');
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors);
@@ -166,7 +143,6 @@ export const useAuth = () => {
   };
 
   // ── Valor expuesto por el hook ────────────────────────────────
-
   return {
     mode, email, password, confirmPassword,
     primerNombre, segundoNombre, primerApellido, segundoApellido,
