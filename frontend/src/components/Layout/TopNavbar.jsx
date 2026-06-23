@@ -1,6 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAdmin } from '../../hooks/useAdmin';
 import { useDarkMode } from '../../hooks/useDarkMode';
+import { handleLogout } from '../../utils/auth';
 
 const NAV_ITEMS = [
   { to: '/dashboard',              label: 'Inicio',         end: true },
@@ -101,6 +102,14 @@ export default function TopNavbar({ profile, isDemoMode = false }) {
                 {nombre}
               </span>
             )}
+          </button>
+
+          <button
+            onClick={() => handleLogout(isDemoMode)}
+            title="Cerrar sesión"
+            className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors text-sm"
+          >
+            ↩
           </button>
         </div>
 
