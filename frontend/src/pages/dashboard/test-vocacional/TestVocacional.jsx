@@ -211,20 +211,40 @@ export default function TestVocacional({ user, isDemoMode = false }) {
     <DashboardLayout isDemoMode={isDemoMode}>
       <div className="p-6 max-w-6xl mx-auto">
 
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-lg font-bold text-gray-800">Cuestionario vocacional</h1>
-            <p className="text-xs text-gray-400 mt-0.5">
-              No hay respuestas correctas o incorrectas. Elige todo lo que te represente.
-            </p>
+        {/* Encabezado + barra de progreso superior */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <div>
+              <h1 className="text-lg font-bold text-gray-800 dark:text-white">
+                Test vocacional
+              </h1>
+              <p className="text-xs text-gray-400 mt-0.5">
+                No hay respuestas correctas o incorrectas. Elige lo que te represente.
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              {fase === 'test' && (
+                <span className="text-xs text-gray-400">
+                  Pregunta {preguntaIdx + 1} / {totalPreguntas}
+                </span>
+              )}
+              {fase !== 'intro' && fase !== 'calculando' && (
+                <button
+                  onClick={() => navigate('/dashboard')}
+                  className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 border border-gray-200 dark:border-[#1e2a21] rounded-lg px-3 py-1.5 hover:bg-gray-50 dark:hover:bg-white/5 transition"
+                >
+                  Salir ✕
+                </button>
+              )}
+            </div>
           </div>
-          {fase !== 'intro' && fase !== 'calculando' && (
-            <button
-              onClick={() => navigate('/dashboard')}
-              className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 border border-gray-200 rounded-xl px-4 py-2 hover:bg-gray-50 transition"
-            >
-              Salir del test ✕
-            </button>
+          {fase === 'test' && totalPreguntas > 0 && (
+            <div className="w-full bg-gray-100 dark:bg-white/5 rounded-full h-1.5">
+              <div
+                className="bg-green-500 h-1.5 rounded-full transition-all duration-500"
+                style={{ width: `${progreso}%` }}
+              />
+            </div>
           )}
         </div>
 

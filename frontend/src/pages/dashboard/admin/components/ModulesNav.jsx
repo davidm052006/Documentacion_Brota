@@ -5,32 +5,26 @@ const MODULES = [
   { key: 'cuestionarios',  icon: '📋', label: 'Cuestionarios' },
   { key: 'preguntas',      icon: '❓', label: 'Preguntas' },
   { key: 'contactos',      icon: '📬', label: 'Solicitudes' },
-  { key: 'configuracion',  icon: '⚙️', label: 'Configuración general' },
+  { key: 'configuracion',  icon: '⚙️', label: 'Configuración' },
 ];
 
 export default function ModulesNav({ active, onChange }) {
   return (
-    <div className="bg-white rounded-xl p-4 shadow-sm self-start">
-      <h2 className="text-sm font-semibold text-gray-700 mb-3 px-1">Módulos de administración</h2>
-      <div className="flex flex-col gap-0.5">
-        {MODULES.map(({ key, icon, label }) => (
-          <button
-            key={key}
-            onClick={() => onChange(key)}
-            className={`flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-sm transition-all ${
-              active === key
-                ? 'bg-green-50 text-green-700 font-semibold border border-green-200'
-                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
-            }`}
-          >
-            <div className="flex items-center gap-2.5">
-              <span className="text-base">{icon}</span>
-              <span>{label}</span>
-            </div>
-            <span className="text-gray-300 text-lg leading-none">›</span>
-          </button>
-        ))}
-      </div>
+    <div className="flex gap-1 flex-wrap">
+      {MODULES.map(({ key, icon, label }) => (
+        <button
+          key={key}
+          onClick={() => onChange(key)}
+          className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all ${
+            active === key
+              ? 'bg-green-600 text-white shadow-sm'
+              : 'bg-white dark:bg-[#141a16] text-gray-500 dark:text-gray-400 border border-gray-100 dark:border-[#1e2a21] hover:bg-gray-50 dark:hover:bg-white/5 hover:text-gray-700 dark:hover:text-gray-200'
+          }`}
+        >
+          <span className="text-sm">{icon}</span>
+          <span>{label}</span>
+        </button>
+      ))}
     </div>
   );
 }

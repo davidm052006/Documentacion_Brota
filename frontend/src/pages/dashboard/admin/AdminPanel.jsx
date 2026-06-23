@@ -104,24 +104,20 @@ export default function AdminPanel({ user, profile }) {
 
   return (
     <DashboardLayout profile={profile}>
-      <div className="p-6 min-h-screen" style={{ backgroundColor: 'inherit' }}>
+      <div className="p-6 max-w-7xl mx-auto">
 
-        {/* Encabezado del panel */}
-        <div className="mb-6">
-          <div className="flex items-center gap-2 mb-1">
-            <h1 className="text-2xl font-bold text-gray-900">Panel de administración</h1>
-            <span className="text-2xl">🛡️</span>
-          </div>
-          <p className="text-sm text-gray-500">Gestiona y administra todas las partes del sistema.</p>
+        {/* Encabezado */}
+        <div className="mb-5 flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Panel de administración</h1>
+          <span className="text-xl">🛡️</span>
         </div>
 
-        {/* Tarjetas de estadísticas con conteos reales desde Supabase */}
-        <div className="grid grid-cols-5 gap-4 mb-6">
+        {/* Stats */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-5">
           {STAT_DEFS.map(({ key, label, icon, color }) => (
             <StatsCard
               key={key}
               label={label}
-              // Muestra '—' mientras carga, luego el número formateado
               value={stats[key] !== undefined ? stats[key].toLocaleString('es-CO') : '—'}
               icon={icon}
               color={color}
@@ -129,11 +125,13 @@ export default function AdminPanel({ user, profile }) {
           ))}
         </div>
 
-        {/* Layout de dos columnas: navegación izquierda + contenido derecho */}
-        <div className="grid gap-4" style={{ gridTemplateColumns: '260px 1fr' }}>
+        {/* Tabs de módulos */}
+        <div className="mb-4">
           <ModulesNav active={activeSection} onChange={setActiveSection} />
-          <SectionComponent />
         </div>
+
+        {/* Contenido de la sección activa */}
+        <SectionComponent />
 
       </div>
     </DashboardLayout>

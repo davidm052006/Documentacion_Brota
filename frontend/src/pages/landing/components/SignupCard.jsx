@@ -180,7 +180,7 @@ function SignupCard({
   const passwordStrength = getPasswordStrength(password);
 
   return (
-    <AuthCardShell title="Crea tu cuenta" className="max-w-md w-full">
+    <AuthCardShell title="Crea tu cuenta" description="Toma menos de 2 minutos." className="max-w-md w-full">
 
       {error && (
         <div className="bg-red-500/20 border border-red-500 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg text-sm">
