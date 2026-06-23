@@ -6,74 +6,84 @@ const METADATA_URL = 'https://datos.gov.co/api/views/upr9-nkiz.json';
 const API_URL      = 'https://datos.gov.co/resource/upr9-nkiz.json';
 const PAGE_SIZE    = 5000;
 
-// NBC → area_academica (mismo mapping que import_snies.js)
+// NBC_MAP con los valores EXACTOS que devuelve la API de datos.gov.co
+// (Title Case, sin comas entre grupos de palabras)
 const NBC_MAP = {
-  'administración': 'administrativo',
-  'contaduría pública': 'negocios',
-  'economía': 'negocios',
-  'comunicación social, periodismo y afines': 'comunicacion',
-  'publicidad y afines': 'comunicacion',
-  'derecho y afines': 'juridico',
-  'formación relacionada con el campo militar o policial': 'juridico',
-  'psicología': 'social',
-  'sociología, trabajo social y afines': 'social',
-  'ciencia política, relaciones internacionales': 'social',
-  'antropología y  artes liberales': 'humanidades',
-  'bibliotecología, otros de ciencias sociales y humanas': 'humanidades',
-  'geografía, historia': 'humanidades',
-  'lenguas modernas, literatura, linguística y afines': 'humanidades',
-  'filosofía, teología y afines': 'humanidades',
-  'deportes, educación física y recreación': 'deporte',
-  'ingeniería de sistemas, telemática y afines': 'tecnologia',
-  'ingeniería electrónica, telecomunicaciones y afines': 'tecnologia',
-  'ingeniería eléctrica y afines': 'tecnologia',
-  'ingeniería industrial y afines': 'tecnologia',
-  'ingeniería civil y afines': 'tecnologia',
-  'ingeniería mecánica y afines': 'tecnologia',
-  'otras ingenierías': 'tecnologia',
-  'arquitectura y afines': 'diseño',
-  'ingeniería ambiental, sanitaria y afines': 'ambiental',
-  'ingeniería agroindustrial, alimentos y afines': 'ambiental',
-  'ingeniería agronómica, pecuaria y afines': 'ambiental',
-  'ingeniería agrícola, forestal y afines': 'ambiental',
-  'ingeniería de minas, metalurgia y afines': 'ambiental',
-  'ingeniería química y afines': 'ciencias',
-  'ingeniería biomédica y afines': 'salud',
-  'ingeniería administrativa y afines': 'administrativo',
-  'artes plásticas, visuales y afines': 'arte',
-  'artes representativas': 'arte',
-  'música': 'arte',
-  'otros programas asociados a bellas artes': 'arte',
-  'diseño': 'diseño',
-  'biología, microbiología y afines': 'ciencias',
-  'física': 'ciencias',
-  'geología, otros programas de ciencias naturales': 'ciencias',
-  'matemáticas, estadística y afines': 'ciencias',
-  'química y afines': 'ciencias',
-  'agronomía': 'ambiental',
-  'medicina veterinaria': 'salud',
-  'zootecnia': 'ambiental',
-  'bacteriología': 'salud',
-  'enfermería': 'salud',
-  'instrumentación quirúrgica': 'salud',
-  'medicina': 'salud',
-  'nutrición y dietética': 'salud',
-  'odontología': 'salud',
-  'optometría, otros programas de ciencias de la salud': 'salud',
-  'salud pública': 'salud',
-  'terapias': 'salud',
-  'educación': 'educacion',
+  'administración':                                         'administrativo',
+  'contaduría pública':                                     'negocios',
+  'economía':                                               'negocios',
+  'comunicación social periodismo y afines':                'comunicacion',
+  'publicidad y afines':                                    'comunicacion',
+  'derecho y afines':                                       'juridico',
+  'formación relacionada con el campo militar o policial':  'juridico',
+  'psicología':                                             'social',
+  'sociología trabajo social y afines':                     'social',
+  'ciencia política relaciones internacionales':            'social',
+  'antropología y  artes liberales':                        'humanidades',
+  'bibliotecología otros de ciencias sociales y humanas':   'humanidades',
+  'geografía historia':                                     'humanidades',
+  'lenguas modernas literatura linguística y afines':       'humanidades',
+  'filosofía teología y afines':                            'humanidades',
+  'deportes educación física y recreación':                 'deporte',
+  'ingeniería de sistemas telemática y afines':             'tecnologia',
+  'ingeniería electrónica telecomunicaciones y afines':     'tecnologia',
+  'ingeniería eléctrica y afines':                          'tecnologia',
+  'ingeniería industrial y afines':                         'tecnologia',
+  'ingeniería civil y afines':                              'tecnologia',
+  'ingeniería mecánica y afines':                           'tecnologia',
+  'otras ingenierías':                                      'tecnologia',
+  'arquitectura':                                           'diseño',
+  'arquitectura y afines':                                  'diseño',
+  'ingeniería ambiental sanitaria y afines':                'ambiental',
+  'ingeniería agroindustrial alimentos y afines':           'ambiental',
+  'ingeniería agronómica pecuaria y afines':                'ambiental',
+  'ingeniería agrícola forestal y afines':                  'ambiental',
+  'ingeniería de minas metalurgia y afines':                'ambiental',
+  'ingeniería química y afines':                            'ciencias',
+  'ingeniería biomédica y afines':                          'salud',
+  'ingeniería administrativa y afines':                     'administrativo',
+  'artes plásticas visuales y afines':                      'arte',
+  'artes representativas':                                  'arte',
+  'música':                                                 'arte',
+  'otros programas asociados a bellas artes':               'arte',
+  'diseño':                                                 'diseño',
+  'biología microbiología y afines':                        'ciencias',
+  'física':                                                 'ciencias',
+  'geología otros programas de ciencias naturales':         'ciencias',
+  'matemáticas estadística y afines':                       'ciencias',
+  'química y afines':                                       'ciencias',
+  'agronomía':                                              'ambiental',
+  'medicina veterinaria':                                   'salud',
+  'zootecnia':                                              'ambiental',
+  'bacteriología':                                          'salud',
+  'enfermería':                                             'salud',
+  'instrumentación quirúrgica':                             'salud',
+  'medicina':                                               'salud',
+  'nutrición y dietética':                                  'salud',
+  'odontología':                                            'salud',
+  'optometría otros programas de ciencias de la salud':     'salud',
+  'salud pública':                                          'salud',
+  'terapias':                                               'salud',
+  'educación':                                              'educacion',
 };
 
-function getAreaAcademica(area, nbc) {
-  const nbcKey = (nbc ?? '').toLowerCase().trim();
+// Fallback por gran área de conocimiento (nombreareaconocimiento)
+const AREA_FALLBACK = {
+  'ciencias de la salud':                                   'salud',
+  'ciencias de la educación':                               'educacion',
+  'bellas artes':                                           'arte',
+  'matemáticas y ciencias naturales':                       'ciencias',
+  'agronomía veterinaria y afines':                         'ambiental',
+  'ingeniería arquitectura urbanismo y afines':             'tecnologia',
+  'economía administración contaduría y afines':            'administrativo',
+  'ciencias sociales y humanas':                            'social',
+};
+
+function getAreaAcademica(nombrenbc, nombreareaconocimiento) {
+  const nbcKey = (nombrenbc ?? '').toLowerCase().trim();
   if (NBC_MAP[nbcKey]) return NBC_MAP[nbcKey];
-  const areaKey = (area ?? '').toLowerCase();
-  if (areaKey.includes('salud'))       return 'salud';
-  if (areaKey.includes('educación'))   return 'educacion';
-  if (areaKey.includes('bellas'))      return 'arte';
-  if (areaKey.includes('matemáticas')) return 'ciencias';
-  if (areaKey.includes('agronomía'))   return 'ambiental';
+  const areaKey = (nombreareaconocimiento ?? '').toLowerCase().trim();
+  if (AREA_FALLBACK[areaKey]) return AREA_FALLBACK[areaKey];
   return null;
 }
 
@@ -210,9 +220,9 @@ const ejecutarSincronizacion = async (req, res) => {
     console.log(`[Sinc] ${instArr.length} instituciones únicas`);
 
     // Limpiar tablas (programas primero por FK → luego instituciones)
-    const { error: e1 } = await supabase.from('programas').delete().gte('id', 1);
+    const { error: e1 } = await supabase.from('programas').delete().not('id', 'is', null);
     if (e1) throw new Error(`Borrar programas: ${e1.message}`);
-    const { error: e2 } = await supabase.from('instituciones').delete().gte('id', 1);
+    const { error: e2 } = await supabase.from('instituciones').delete().not('id', 'is', null);
     if (e2) throw new Error(`Borrar instituciones: ${e2.message}`);
 
     // Insertar instituciones en lotes de 200
@@ -234,11 +244,11 @@ const ejecutarSincronizacion = async (req, res) => {
       if (!nombre) continue;
       programas.push({
         nombre:          nombre.substring(0, 200),
-        tipo:            getTipoPrograma(r.nombrenivelacademico ?? r.nivelacademico),
-        area_academica:  getAreaAcademica(r.areaconocimiento ?? r.areadeconocimiento, r.nombrenbc),
-        duracion:        getDuracion(r.cantidadperiodos ?? r.numerodeperiodos, r.periodicidad),
-        modalidad:       getModalidad(r.nombremetodologia ?? r.metodologia),
-        descripcion:     r.tituloobtenido ? `Título: ${String(r.tituloobtenido).substring(0, 490)}` : null,
+        tipo:            getTipoPrograma(r.nombrenivelacademico),
+        area_academica:  getAreaAcademica(r.nombrenbc, r.nombreareaconocimiento),
+        duracion:        getDuracion(r.cantidadperiodos, r.nombreperiodicidad),
+        modalidad:       getModalidad(r.nombremetodologia),
+        descripcion:     r.nombretituloobtenido ? `Título: ${String(r.nombretituloobtenido).substring(0, 490)}` : null,
         costo_matricula: null,
         institucion_id:  instId,
         activo:          true,
