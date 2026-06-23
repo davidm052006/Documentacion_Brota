@@ -15,13 +15,13 @@ function Login() {
   const {
     mode, email, password, confirmPassword,
     primerNombre, segundoNombre, primerApellido, segundoApellido,
-    nivelEducativo, grado, fechaNacimiento, ciudad, telefono,
+    nivelEducativo, grado, edad, ciudad, telefono,
     loading, error, successMessage, validationErrors,
     onPrimerNombreChange, onSegundoNombreChange,
     onPrimerApellidoChange, onSegundoApellidoChange,
     onEmailChange,
     onPasswordChange, onConfirmPasswordChange,
-    onNivelEducativoChange, onGradoChange, onFechaNacimientoChange,
+    onNivelEducativoChange, onGradoChange, onEdadChange,
     onCiudadChange, onTelefonoChange,
     handleLogin, handleSignup, handlePasswordRecovery,
     changeMode,
@@ -41,7 +41,7 @@ function Login() {
             confirmPassword={confirmPassword}
             nivelEducativo={nivelEducativo}
             grado={grado}
-            fechaNacimiento={fechaNacimiento}   // ✅ corregido
+            edad={edad}
             ciudad={ciudad}
             telefono={telefono}
             validationErrors={validationErrors}
@@ -56,7 +56,7 @@ function Login() {
             onConfirmPasswordChange={onConfirmPasswordChange}
             onNivelEducativoChange={onNivelEducativoChange}
             onGradoChange={onGradoChange}
-            onFechaNacimientoChange={onFechaNacimientoChange}   // ✅ corregido
+            onEdadChange={onEdadChange}
             onCiudadChange={onCiudadChange}
             onTelefonoChange={onTelefonoChange}
             onSubmit={handleSignup}

@@ -22,7 +22,81 @@ function Input({ placeholder, value, onChange, error, type = 'text' }) {
   );
 }
 
-// ── Componente PasswordInput local (con botón mostrar/ocultar y sin copiar) ──
+const CIUDADES_COLOMBIA = [
+  'Bogotá',
+  'Medellín',
+  'Cali',
+  'Barranquilla',
+  'Cartagena',
+  'Bucaramanga',
+  'Pereira',
+  'Manizales',
+  'Santa Marta',
+  'Cúcuta',
+  'Ibagué',
+  'Villavicencio',
+  'Pasto',
+  'Montería',
+  'Neiva',
+  'Armenia',
+  'Sincelejo',
+  'Valledupar',
+  'Popayán',
+  'Tunja',
+];
+
+function CityAutocomplete({ value, onChange, error }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const search = value.trim().toLowerCase();
+  const suggestions = search
+    ? CIUDADES_COLOMBIA.filter((city) => city.toLowerCase().startsWith(search)).slice(0, 5)
+    : [];
+
+  const selectCity = (city) => {
+    onChange({ target: { value: city } });
+    setIsOpen(false);
+  };
+
+  return (
+    <div className="relative flex flex-col">
+      <input
+        type="text"
+        placeholder="Ciudad "
+        value={value}
+        onChange={(e) => {
+          onChange(e);
+          setIsOpen(true);
+        }}
+        onFocus={() => setIsOpen(true)}
+        onBlur={() => setTimeout(() => setIsOpen(false), 120)}
+        autoComplete="off"
+        className={`bg-[var(--color-surface)] dark:bg-[#1a1d24] dark:text-gray-500 text-gray-700 border px-4 py-3 text-sm rounded-[var(--radius-md)]
+          outline-none transition-all duration-200 w-full focus:ring-2 focus:ring-[var(--color-primary)]/30 ${
+            error ? 'border-red-500' : 'border-black dark:border-[#3a4155]'
+          }`}
+      />
+
+      {isOpen && suggestions.length > 0 && (
+        <div className="absolute left-0 right-0 top-full z-20 mt-1 overflow-hidden rounded-[var(--radius-md)] border border-black/20 dark:border-[#3a4155] bg-white dark:bg-[#1a1d24] shadow-lg">
+          {suggestions.map((city) => (
+            <button
+              key={city}
+              type="button"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => selectCity(city)}
+              className="w-full px-4 py-2 text-left text-sm text-gray-700 transition-colors hover:bg-[var(--color-primary)]/10 dark:text-gray-300"
+            >
+              {city}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+    </div>
+  );
+}
+
 function PasswordInput({ placeholder, value, onChange, error }) {
   const [show, setShow] = useState(false);
   return (
@@ -118,7 +192,7 @@ function SignupCard({
 
         {/* ── Nombres completos ── */}
         <Input
-          placeholder="Nombres completos *"
+          placeholder="Nombres completos "
           value={primerNombre}
           onChange={onPrimerNombreChange}
           error={validationErrors.primerNombre}
@@ -134,7 +208,7 @@ function SignupCard({
 
         {/* ── Email ── */}
         <Input
-          placeholder="Correo electrónico *"
+          placeholder="Correo electrónico "
           value={email}
           onChange={onEmailChange}
           error={validationErrors.email}
@@ -143,13 +217,13 @@ function SignupCard({
         {/* ── Contraseñas ── */}
         <div className="grid grid-cols-2 gap-3">
           <PasswordInput
-            placeholder="Contraseña *"
+            placeholder="Contraseña "
             value={password}
             onChange={onPasswordChange}
             error={validationErrors.password}
           />
           <PasswordInput
-            placeholder="Confirmar contraseña *"
+            placeholder="Confirmar contraseña "
             value={confirmPassword}
             onChange={onConfirmPasswordChange}
             error={validationErrors.confirmPassword}
@@ -184,14 +258,14 @@ function SignupCard({
             <select
               value={nivelEducativo}
               onChange={(e) => onNivelEducativoChange(e.target.value)}
-              className={`bg-[var(--color-surface)] dark:bg-[#1a1d24] dark:text-gray-300 text-gray-500 border px-4 py-3 text-sm rounded-[var(--radius-md)]
+              className={`bg-[var(--color-surface)] dark:bg-[#1a1d24] dark:text-gray-700 text-gray-700 border px-4 py-3 text-sm rounded-[var(--radius-md)]
                 outline-none transition-all duration-200 w-full focus:ring-2 focus:ring-[var(--color-primary)]/30 appearance-none ${
                   validationErrors.nivelEducativo
                     ? 'border-red-500'
                     : 'border-black dark:border-[#3a4155]'
                 }`}
             >
-              <option value="">Nivel educativo *</option>
+              <option value="">Nivel educativo </option>
               <option value="Educacion media">Educación media</option>
               <option value="Tecnico">Técnico</option>
             </select>
@@ -200,7 +274,7 @@ function SignupCard({
             )}
           </div>
           <Input
-            placeholder="Grado *"
+            placeholder="Grado "
             value={grado}
             onChange={onGradoChange}
             error={validationErrors.grado}
@@ -210,23 +284,24 @@ function SignupCard({
         {/* ── Fecha de nacimiento + Ciudad ── */}
         <div className="grid grid-cols-2 gap-3">
           <Input
-            placeholder="Fecha de nacimiento *"
+            placeholder="Fecha de nacimiento "
             type="date"
             value={edad}
             onChange={onEdadChange}
             error={validationErrors.edad}
+            className="text-gray-600 dark:text-gray-300"
           />
-          <Input
-            placeholder="Ciudad *"
+          <CityAutocomplete
             value={ciudad}
             onChange={onCiudadChange}
             error={validationErrors.ciudad}
+            className="text-gray-700 dark:text-gray-700"
           />
         </div>
 
         {/* ── Teléfono ── */}
         <Input
-          placeholder="Número de teléfono *"
+          placeholder="Número de teléfono "
           value={telefono}
           onChange={onTelefonoChange}
           error={validationErrors.telefono}
@@ -260,7 +335,7 @@ function SignupCard({
 
       </form>
 
-      <p className="text-sm text-center text-black dark:text-gray-300">
+      <p className="text-sm text-center text-black dark:text-gray-700">
         ¿Ya tienes cuenta?{' '}
         <button
           onClick={onSwitchToLogin}
