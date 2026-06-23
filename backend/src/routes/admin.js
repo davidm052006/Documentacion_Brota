@@ -9,6 +9,7 @@ const {
   getPreguntas, createPregunta, updatePregunta, deletePregunta,
   getContactos, updateContacto,
 } = require('../controllers/adminController');
+const { getEstado, ejecutarSincronizacion } = require('../controllers/sincronizacionController');
 
 router.use(verificarAdmin);
 
@@ -42,5 +43,8 @@ router.delete('/preguntas/:id', deletePregunta);
 
 router.get   ('/contactos',     getContactos);
 router.patch ('/contactos/:id', updateContacto);
+
+router.get ('/sincronizacion/estado',   getEstado);
+router.post('/sincronizacion/ejecutar', ejecutarSincronizacion);
 
 module.exports = router;

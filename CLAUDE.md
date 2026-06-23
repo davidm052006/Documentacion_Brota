@@ -74,14 +74,39 @@ Se implementaron todos los cambios visuales basados en los 8 archivos PNG de dis
 - **Test vocacional (07)**: progress bar superior con dots (actualmente usa sidebar de progreso)
 - **Landing**: agregar secciones Testimonios y FAQ reales con IDs para los anchors
 - **Registro (02)**: verificar que el card de signup tenga el `description` correcto
-- **Integración dataset MEN** (`datos.gov.co/api/v3/views/upr9-nkiz`): 27.005 programas activos de educación superior, API Socrata, última actualización enero 2025
+## ✅ Integración MEN API (completado junio 2026)
 
-## Dataset MEN (para recomendador vocacional)
-- URL: `https://www.datos.gov.co/api/v3/views/upr9-nkiz/query.json`
-- 27.005 registros totales, 14.644 activos
-- Campos clave: `nombreinstitucion`, `nombreprograma`, `nombreareaconocimiento`, `nombrenbc`, `nombrenivelacademico`, `nombremetodologia`, `nombremunicipioinstitucion`, `nombreestadoprograma`
+### Archivos creados/modificados
+- `backend/src/controllers/sincronizacionController.js` — lógica completa de sync
+- `backend/src/routes/admin.js` — rutas `GET /api/admin/sincronizacion/estado` y `POST /api/admin/sincronizacion/ejecutar`
+- `frontend/src/services/adminService.js` — `getSincronizacionEstado()` y `ejecutarSincronizacion()`
+- `frontend/src/pages/dashboard/admin/sections/ConfiguracionSection.jsx` — panel de sync con estado, botones verificar/sincronizar
+- `backend/scripts/migration_men_sincronizacion.sql` — **EJECUTAR EN SUPABASE antes de usar**
+
+### Tabla requerida en Supabase
+Ejecutar `backend/scripts/migration_men_sincronizacion.sql` en el SQL Editor de Supabase:
+```sql
+CREATE TABLE men_sincronizacion (
+  id SERIAL PRIMARY KEY, ejecutada_en TIMESTAMPTZ DEFAULT NOW(),
+  remote_timestamp BIGINT, programas_importados INT, instituciones_importadas INT,
+  estado TEXT DEFAULT 'exitosa', error TEXT
+);
+```
+
+### Cómo funciona
+1. **Verificar**: llama a metadata de datos.gov.co, compara `rowsUpdatedAt` con el timestamp guardado en `men_sincronizacion`
+2. **Sincronizar**: descarga todos los programas activos (paginado 5000/lote), borra las tablas `programas` e `instituciones`, inserta los nuevos datos aplicando el `NBC_MAP` para asignar `area_academica`
+3. Admin Panel → Configuración → panel "Datos educativos"
+
+### Dataset MEN
+- Endpoint: `https://datos.gov.co/resource/upr9-nkiz.json`
+- Metadata: `https://datos.gov.co/api/views/upr9-nkiz.json` (campo `rowsUpdatedAt`)
+- ~14.644 programas activos de todo el país
 - Licencia CC-BY-SA 4.0 — oficial del Ministerio de Educación Nacional
-- Formato API: Socrata — soporta `$where`, `$select`, `$limit`, `$order`
+
+### Pendiente
+- Eliminar `backend/scripts/seed_instituciones.js` (datos hardcoded ya obsoletos)
+- Borrar datos viejos de Bogotá de las tablas antes de primera sync nacional
 
 ## Modo Demo
 Si no hay `VITE_SUPABASE_URL` en `.env`, la app entra en modo demo.

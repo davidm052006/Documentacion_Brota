@@ -258,3 +258,27 @@ export const deletePregunta = async (id) => {
     return { success: false, error: 'Error de conexión con el servidor' };
   }
 };
+
+// ─── Sincronización MEN ────────────────────────────────────────────────────
+export const getSincronizacionEstado = async () => {
+  try {
+    const headers = await getAuthHeaders();
+    const res = await fetch(`${API_URL}/api/admin/sincronizacion/estado`, { headers });
+    return parseResponse(res);
+  } catch (err) {
+    return { success: false, error: 'Error de conexión con el servidor' };
+  }
+};
+
+export const ejecutarSincronizacion = async () => {
+  try {
+    const headers = await getAuthHeaders();
+    const res = await fetch(`${API_URL}/api/admin/sincronizacion/ejecutar`, {
+      method: 'POST',
+      headers,
+    });
+    return parseResponse(res);
+  } catch (err) {
+    return { success: false, error: 'Error de conexión con el servidor' };
+  }
+};
