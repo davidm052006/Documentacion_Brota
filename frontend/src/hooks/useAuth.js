@@ -58,7 +58,7 @@ export const useAuth = () => {
     onPasswordChange:        (e) => { setPassword(e.target.value);        clearFieldError('password'); },
     onConfirmPasswordChange: (e) => { setConfirmPassword(e.target.value); clearFieldError('confirmPassword'); },
     onNivelEducativoChange:  (value) => { setNivelEducativo(value);       clearFieldError('nivelEducativo'); },
-    onGradoChange:           (e) => { setGrado(e.target.value);           clearFieldError('grado'); },
+    onGradoChange: (value) => { setGrado(value); clearFieldError('grado'); },
     onEdadChange:            (e) => { setEdad(e.target.value);            clearFieldError('edad'); },
     onCiudadChange:          (e) => { setCiudad(e.target.value);          clearFieldError('ciudad'); },
     onTelefonoChange:        (e) => { setTelefono(e.target.value);        clearFieldError('telefono'); },
