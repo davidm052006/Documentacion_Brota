@@ -48,7 +48,7 @@ export default function Contacto() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#111318]">
-
+      
       <div className="sticky top-0 z-40 bg-white/90 dark:bg-[#111318]/90 backdrop-blur-sm border-b border-gray-100 dark:border-[#2c3140]">
         <div className="max-w-2xl mx-auto px-6 py-3 flex items-center gap-3">
           <a
@@ -56,6 +56,11 @@ export default function Contacto() {
             className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
           >
             ← Volver
+            <img
+            src="/logo-brota.png" alt="BROTA"        
+            className="h-16 w-auto"
+        />
+        <span className="text-lg font-bold text-emerald-800 dark:text-emerald-600">BROTA</span>
           </a>
           <span className="text-gray-200 dark:text-gray-700">|</span>
           <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Contacto</span>
