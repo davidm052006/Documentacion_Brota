@@ -108,6 +108,119 @@ CREATE TABLE men_sincronizacion (
 - Eliminar `backend/scripts/seed_instituciones.js` (datos hardcoded ya obsoletos)
 - Borrar datos viejos de Bogotá de las tablas antes de primera sync nacional
 
+---
+
+## 🐛 Bugs del sistema de recomendaciones — resueltos (junio 2026)
+
+Estos bugs causaban que el test vocacional mostrara el perfil de áreas pero ningún programa recomendado.
+
+### Bug #1 — Mismatch de categorías cuestionario ↔ programas ✅ RESUELTO
+**Archivo**: `backend/src/utils/algoritmoRecomendacion.js`
+
+**Causa**: El cuestionario usaba claves como `emprendimiento` y `ambiente` en `pesos_opciones`, pero la API del MEN no tiene NBC codes que mapeen a esas claves. La tabla `programas` solo tiene `negocios` y `ambiental`. El algoritmo buscaba `.eq('area_academica', 'emprendimiento')` → 0 resultados.
+
+**Fix**: Se agregó `CATEGORIA_ALIAS` al inicio del archivo que normaliza scores antes de consultar:
+```js
+const CATEGORIA_ALIAS = { emprendimiento: 'negocios', ambiente: 'ambiental' };
+```
+El perfil completo (scores, categoriaPrincipal, categoriaSecundaria) se normaliza antes de las queries y del cálculo de compatibilidad.
+
+**Si se agregan categorías nuevas al cuestionario** que no existan en `area_academica` de programas, añadirlas aquí.
+
+---
+
+### Bug #2 — `razones` insertada como `string[]` en columna `TEXT` ✅ RESUELTO
+**Archivo**: `backend/src/utils/algoritmoRecomendacion.js`
+
+**Causa**: `generarRazones()` retorna `string[]`. Supabase/PostgREST no puede insertar un array JSON en una columna `TEXT`, causando que el campo se guarde como `NULL` o que el insert falle silenciosamente.
+
+**Fix**: `razones: JSON.stringify(item.razones)` en el row de insert.
+
+**Nota futura**: Si se quiere recuperar `razones` como array en el frontend, usar `JSON.parse(rec.razones)` en el mapper de `obtenerRecomendaciones`. Actualmente `razones` no se muestra en la UI.
+
+---
+
+### Bug #3 — Sync del MEN borraba recomendaciones por CASCADE DELETE ✅ RESUELTO
+**Archivo**: `backend/src/controllers/sincronizacionController.js`
+
+**Causa**: El sync hace `DELETE FROM programas` y la FK `recomendaciones.programa_id → programas(id) ON DELETE CASCADE` eliminaba todas las recomendaciones de todos los usuarios.
+
+**Fix**: Se añadió `DELETE FROM recomendaciones` explícito antes de borrar programas, controlando el orden manualmente.
+
+**Limitación conocida**: Los usuarios igual pierden sus recomendaciones tras cada sync (se regeneran solo cuando vuelvan a hacer el test). Para mantenerlas habría que cambiar el sync a upsert en lugar de delete+reinsert, o guardar los datos del programa desnormalizados en la tabla `recomendaciones`.
+
+---
+
+### Bug #4 — Programas con `area_academica = NULL` excluidos de recomendaciones ⚠️ LIMITACIÓN CONOCIDA
+**Archivo**: `backend/src/controllers/sincronizacionController.js` → `getAreaAcademica()`
+
+**Causa**: NBC codes del MEN que no están en `NBC_MAP` ni en `AREA_FALLBACK` retornan `null`. Esos programas se guardan en BD con `area_academica = NULL` y nunca aparecen en recomendaciones (el algoritmo filtra por `.eq('area_academica', cat)`).
+
+**Estado**: No bloqueante — los programas sí aparecen en la página Profesiones al navegar. Solo se pierden para recomendaciones automáticas.
+
+**Fix futuro**: Ampliar `NBC_MAP` en `sincronizacionController.js` con los NBC codes que faltan, o añadir un área genérica como fallback final en `getAreaAcademica()`.
+
+---
+
+### Bug #5 — `.limit(6)` vs `MAX_RECOMENDACIONES = 8` ✅ RESUELTO
+**Archivo**: `backend/src/controllers/perfilController.js` → `obtenerRecomendaciones`
+
+**Fix**: Cambiado a `.limit(8)`.
+
+---
+
+### Bug #6 — `calcularPorcentajes` usaba el objeto `perfilVocacional` como mapa plano ✅ RESUELTO
+**Archivo**: `backend/src/utils/perfilvocacional.js`
+
+**Causa**: La función trataba `perfilVocacional` como si fuera `{categoria: puntos}` cuando en realidad tiene forma `{categoriaPrincipal, categoriaSecundaria, scores: [...]}`. Generaba porcentajes basura en el campo `porcentajes` guardado en `resultados`.
+
+**Fix**: Ahora itera sobre `perfilVocacional.scores` correctamente.
+
+---
+
+### Bug #7 — Conflicto git sin resolver en `setup_database.sql` ✅ RESUELTO
+**Archivo**: `backend/setup_database.sql` líneas 155, 170, 184
+
+**Fix**: Resuelto manteniendo la numeración de HEAD (tablas 10, 11, 12).
+
+---
+
+### Bug #8 — `verificarAdmin` consultaba tabla inexistente ✅ RESUELTO
+**Archivo**: `backend/src/middlewares/verificarAdmin.js`
+
+**Causa**: Tres errores concatenados:
+1. `from('perfiles')` — la tabla no existe; la real es `perfiles_usuario`
+2. `.eq('id', user.id)` — debería ser `.eq('user_id', user.id)` (la PK de perfiles_usuario es diferente del auth user id)
+3. `.select('rol')` + check `=== 'admin'` — el campo es `rol_id` (UUID FK) y el valor en la tabla `roles` es `'Administrador'`, no `'admin'`
+
+**Impacto**: Todos los endpoints `/api/admin/*` devolvían 403 para todos los usuarios, incluyendo admins reales. El admin panel era completamente inaccesible.
+
+**Fix**:
+```js
+const { data: perfil, error: rolError } = await supabase
+  .from('perfiles_usuario')
+  .select('roles ( nombre )')
+  .eq('user_id', user.id)
+  .single();
+if (rolError || perfil?.roles?.nombre !== 'Administrador') { ... }
+```
+
+---
+
+## Variables de entorno — arranque rápido
+
+Los archivos example tienen credenciales reales de desarrollo. Para arrancar en cualquier máquina:
+```bash
+cp backend/.env.example backend/.env
+cp frontend/.env.local.example frontend/.env.local
+```
+
+**Backend** (`backend/.env`): `SUPABASE_URL` (sin `/rest/v1/`), `SUPABASE_SERVICE_KEY`, `JWT_SECRET`, `SMTP_*`, `PORT=3001`, `FRONTEND_URL`
+
+**Frontend** (`frontend/.env.local`): `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_API_URL=http://localhost:3001`
+
+> ⚠️ En producción reemplazar TODAS las credenciales de los example antes de deployar.
+
 ## Modo Demo
 Si no hay `VITE_SUPABASE_URL` en `.env`, la app entra en modo demo.
 - Login demo: cualquier email/password

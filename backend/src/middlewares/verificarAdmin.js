@@ -16,14 +16,14 @@ async function verificarAdmin(req, res, next) {
     return res.status(401).json({ success: false, message: 'Token inválido o expirado' });
   }
 
-  // Verifica que el usuario autenticado tenga rol admin en la tabla perfiles
+  // Verifica que el usuario autenticado tenga rol 'Administrador' en perfiles_usuario → roles
   const { data: perfil, error: rolError } = await supabase
-    .from('perfiles')
-    .select('rol')
-    .eq('id', user.id)
+    .from('perfiles_usuario')
+    .select('roles ( nombre )')
+    .eq('user_id', user.id)
     .single();
 
-  if (rolError || perfil?.rol !== 'admin') {
+  if (rolError || perfil?.roles?.nombre !== 'Administrador') {
     return res.status(403).json({ success: false, message: 'Acceso denegado: se requiere rol admin' });
   }
 

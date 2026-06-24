@@ -1,0 +1,6 @@
+#!/bin/sh
+# Se ejecuta automáticamente después de git pull
+ROOT="$(git rev-parse --show-toplevel)"
+if command -v node >/dev/null 2>&1; then
+  node "$ROOT/scripts/setup-env.js"
+fi

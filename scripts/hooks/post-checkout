@@ -1,0 +1,8 @@
+#!/bin/sh
+# Se ejecuta después de git clone y git checkout de rama ($3=1)
+if [ "$3" = "1" ]; then
+  ROOT="$(git rev-parse --show-toplevel)"
+  if command -v node >/dev/null 2>&1; then
+    node "$ROOT/scripts/setup-env.js"
+  fi
+fi

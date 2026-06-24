@@ -229,7 +229,10 @@ const ejecutarSincronizacion = async (req, res) => {
     const instArr = Array.from(instMap.values());
     console.log(`[Sinc] ${instArr.length} instituciones únicas`);
 
-    // Limpiar tablas (programas primero por FK → luego instituciones)
+    // Limpiar tablas en orden: recomendaciones → programas → instituciones
+    // (se borra recomendaciones primero para no perderlas por cascade al borrar programas)
+    const { error: e0 } = await supabase.from('recomendaciones').delete().not('id', 'is', null);
+    if (e0) throw new Error(`Borrar recomendaciones: ${e0.message}`);
     const { error: e1 } = await supabase.from('programas').delete().not('id', 'is', null);
     if (e1) throw new Error(`Borrar programas: ${e1.message}`);
     const { error: e2 } = await supabase.from('instituciones').delete().not('id', 'is', null);

@@ -183,7 +183,7 @@ const obtenerRecomendaciones = async (req, res) => {
       `)
       .eq('resultado_id', resultadoId)
       .order('compatibilidad', { ascending: false })
-      .limit(6);
+      .limit(8);
 
     if (error) {
       return res.status(500).json({ success: false, message: error.message });

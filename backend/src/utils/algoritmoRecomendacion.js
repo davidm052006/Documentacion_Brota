@@ -14,11 +14,12 @@
 //
 // FLUJO:
 //   1. Toma los scores absolutos del test (puntos por categoría)
-//   2. Filtra las top-3 categorías del usuario
-//   3. Consulta solo los programas de esas categorías (máx 50 c/u)
-//   4. Calcula compatibilidad = % absoluto de puntos + bonificaciones
-//   5. Aplica cap de variedad (4-3-2 por categoría)
-//   6. Inserta top 8 en la tabla `recomendaciones`
+//   2. Normaliza categorías del cuestionario → área académica MEN
+//   3. Filtra las top-3 categorías del usuario
+//   4. Consulta solo los programas de esas categorías (máx 50 c/u)
+//   5. Calcula compatibilidad = % absoluto de puntos + bonificaciones
+//   6. Aplica cap de variedad (4-3-2 por categoría)
+//   7. Inserta top 8 en la tabla `recomendaciones`
 //
 // COMPATIBILIDAD (almacenada como 0.0–1.0):
 //   base    = puntos_categoría / puntos_totales
@@ -32,6 +33,19 @@ const LIMITE_POR_CATEGORIA = 50;
 const MAX_RECOMENDACIONES  = 8;
 // Cuántos programas tomar de cada categoría (principal, secundaria, tercera)
 const CAP_POR_RANGO = [4, 3, 1];
+
+// Mapeo de categorías del cuestionario → area_academica de la API del MEN.
+// El cuestionario puede usar claves como 'emprendimiento' o 'ambiente' que no
+// existen en programas.area_academica; este mapa las normaliza antes de consultar.
+const CATEGORIA_ALIAS = {
+  emprendimiento: 'negocios',
+  ambiente:       'ambiental',
+};
+
+// Normaliza un score para que su categoría coincida con area_academica en BD.
+function normalizarScore(s) {
+  return { ...s, categoria: CATEGORIA_ALIAS[s.categoria] ?? s.categoria };
+}
 
 // ── Porcentaje absoluto (proporción real de puntos) ───────────────────────────
 function pctAbsoluto(scores, categoria) {
@@ -87,8 +101,23 @@ const generarRecomendaciones = async (resultadoId, perfilVocacional, supabase) =
   try {
     const { scores = [] } = perfilVocacional;
 
+    // Normalizar categorías del cuestionario → area_academica de programas
+    const scoresNormalizados = scores.map(normalizarScore);
+    const categoriaPrincipalNorm = CATEGORIA_ALIAS[perfilVocacional.categoriaPrincipal]
+      ?? perfilVocacional.categoriaPrincipal;
+    const categoriaSecundariaNorm = perfilVocacional.categoriaSecundaria
+      ? (CATEGORIA_ALIAS[perfilVocacional.categoriaSecundaria] ?? perfilVocacional.categoriaSecundaria)
+      : null;
+
+    const perfilNormalizado = {
+      ...perfilVocacional,
+      scores:              scoresNormalizados,
+      categoriaPrincipal:  categoriaPrincipalNorm,
+      categoriaSecundaria: categoriaSecundariaNorm,
+    };
+
     // Top 3 categorías con al menos algún puntaje
-    const topCategorias = scores
+    const topCategorias = scoresNormalizados
       .filter(s => (s.puntos ?? 0) > 0)
       .slice(0, 3)
       .map(s => s.categoria)
@@ -131,8 +160,8 @@ const generarRecomendaciones = async (resultadoId, perfilVocacional, supabase) =
       const conScore = programas
         .map(p => ({
           programa:       p,
-          compatibilidad: calcularCompatibilidad(p, perfilVocacional),
-          razones:        generarRazones(p, perfilVocacional),
+          compatibilidad: calcularCompatibilidad(p, perfilNormalizado),
+          razones:        generarRazones(p, perfilNormalizado),
         }))
         .sort((a, b) => b.compatibilidad - a.compatibilidad)
         .slice(0, cap);
@@ -154,7 +183,7 @@ const generarRecomendaciones = async (resultadoId, perfilVocacional, supabase) =
       resultado_id:   resultadoId,
       programa_id:    item.programa.id,
       compatibilidad: item.compatibilidad,
-      razones:        item.razones,
+      razones:        JSON.stringify(item.razones),
     }));
 
     const { error: insertError } = await supabase.from('recomendaciones').insert(rows);

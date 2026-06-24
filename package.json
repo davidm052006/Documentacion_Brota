@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "postinstall": "node scripts/setup-env.js"
+  },
   "dependencies": {
     "bcrypt": "^6.0.0",
     "dotenv": "^17.4.2",

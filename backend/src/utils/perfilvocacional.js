@@ -66,14 +66,14 @@ function normalizarPerfil(perfilVocacional = {}) {
  * Se usa para almacenar junto al resultado (dato complementario, no el cálculo principal).
  */
 function calcularPorcentajes(perfilVocacional = {}) {
-  const perfil = normalizarPerfil(perfilVocacional);
-  if (!perfil || Object.keys(perfil).length === 0) return {};
-
-  const total = Object.values(perfil).reduce((sum, v) => sum + Number(v || 0), 0);
-  if (total <= 0) return Object.fromEntries(Object.keys(perfil).map((k) => [k, 0]));
-
+  const { scores = [] } = perfilVocacional;
+  const total = scores.reduce((sum, s) => sum + (s.puntos ?? 0), 0);
+  if (total === 0) return {};
   return Object.fromEntries(
-    Object.entries(perfil).map(([area, valor]) => [area, (Number(valor || 0) / total) * 100])
+    scores.map(({ categoria, puntos }) => [
+      categoria,
+      parseFloat(((puntos / total) * 100).toFixed(1)),
+    ])
   );
 }
 
