@@ -55,11 +55,23 @@ export default function TestVocacional({ user, isDemoMode = false }) {
       try {
         let pUid = null;
         if (!isDemoMode && user?.id) {
-          const { data: perfil } = await supabase
+
+          // ✅ Busca el perfil, si no existe lo crea automáticamente
+          let { data: perfil, error: errorPerfil } = await supabase
             .from('perfiles_usuario')
             .select('id')
             .eq('user_id', user.id)
             .single();
+
+          if (errorPerfil || !perfil) {
+            const { data: perfilNuevo } = await supabase
+              .from('perfiles_usuario')
+              .insert({ user_id: user.id })
+              .select('id')
+              .single();
+            perfil = perfilNuevo;
+          }
+
           if (perfil) { setPerfilUsuarioId(perfil.id); pUid = perfil.id; }
         }
 
@@ -154,7 +166,9 @@ export default function TestVocacional({ user, isDemoMode = false }) {
     const tipo   = preguntaActual.tipo;
     setSeleccionadas((prev) => {
       const actuales = prev[pregId] ?? [];
-      if (tipo === 'single') return { ...prev, [pregId]: [opcionId] };
+      // 'likert' y 'single' → solo una opción a la vez
+      if (tipo === 'single' || tipo === 'likert') return { ...prev, [pregId]: [opcionId] };
+      // 'multiple' → toggle normal
       return {
         ...prev,
         [pregId]: actuales.includes(opcionId)
