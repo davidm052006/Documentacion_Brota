@@ -13,8 +13,9 @@ const getAuthHeaders = async () => {
 
 // Parsea la respuesta HTTP y normaliza al patrón { success, data, error }
 const parseResponse = async (res) => {
-  const body = await res.json();
-  if (!res.ok) return { success: false, error: body.message || 'Error del servidor' };
+  let body;
+  try { body = await res.json(); } catch { body = {}; }
+  if (!res.ok) return { success: false, error: body.message || `Error del servidor (${res.status})` };
   return { success: true, data: body.data };
 };
 

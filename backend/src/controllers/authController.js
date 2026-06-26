@@ -11,53 +11,60 @@ const supabase = require('../config/supabase');
  * desde el frontend).
  */
 const registerPerfil = async (req, res) => {
-  const { nombre, apellido, fechaNacimiento, ciudad, nivelEducativo } = req.body;
-
-  if (!nombre) {
-    return res.status(400).json({ success: false, message: 'El campo nombre es requerido' });
-  }
-
-  const userId = req.user.id;
-
-  // Calcular edad entera desde fecha de nacimiento
-  let edad = null;
-  if (fechaNacimiento) {
-    const hoy = new Date();
-    const nacimiento = new Date(fechaNacimiento);
-    edad = hoy.getFullYear() - nacimiento.getFullYear();
-    const m = hoy.getMonth() - nacimiento.getMonth();
-    if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) edad--;
-    if (edad < 14 || edad > 100) edad = null; // fuera del rango del CHECK
-  }
-
-  const { error } = await supabase
-    .from('perfiles_usuario')
-    .insert([{
-      user_id: userId,
-      nombre,
-      apellido: apellido ?? '',
-      edad,
-      ciudad: ciudad ?? null,
-      nivel_educativo: nivelEducativo ?? null,
-    }]);
-
-  if (!error) {
-    return res.status(201).json({ success: true });
-  }
-
-  console.error('authController.registerPerfil — insert fallido:', error);
-
-  // Rollback: eliminar el usuario de Supabase Auth para evitar cuentas huérfanas
   try {
-    await supabase.auth.admin.deleteUser(userId);
-  } catch (deleteErr) {
-    console.error('authController.registerPerfil — rollback fallido:', deleteErr);
-  }
+    const { nombre, apellido, fechaNacimiento, ciudad, nivelEducativo } = req.body;
 
-  return res.status(500).json({
-    success: false,
-    message: 'No pudimos crear tu perfil. Por favor intenta registrarte de nuevo.',
-  });
+    if (!nombre) {
+      return res.status(400).json({ success: false, message: 'El campo nombre es requerido' });
+    }
+
+    const userId = req.user.id;
+
+    // Calcular edad entera desde fecha de nacimiento
+    let edad = null;
+    if (fechaNacimiento) {
+      const hoy = new Date();
+      const nacimiento = new Date(fechaNacimiento);
+      const calculada = hoy.getFullYear() - nacimiento.getFullYear();
+      const m = hoy.getMonth() - nacimiento.getMonth();
+      const ajustado = (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate()))
+        ? calculada - 1
+        : calculada;
+      if (ajustado >= 14 && ajustado <= 100) edad = ajustado;
+    }
+
+    const { error } = await supabase
+      .from('perfiles_usuario')
+      .insert([{
+        user_id: userId,
+        nombre,
+        apellido: apellido ?? '',
+        edad,
+        ciudad: ciudad ?? null,
+        nivel_educativo: nivelEducativo ?? null,
+        rol: 'estudiante',
+      }]);
+
+    if (!error) {
+      return res.status(201).json({ success: true });
+    }
+
+    console.error('authController.registerPerfil — insert fallido:', error);
+
+    try {
+      await supabase.auth.admin.deleteUser(userId);
+    } catch (deleteErr) {
+      console.error('authController.registerPerfil — rollback fallido:', deleteErr);
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: 'No pudimos crear tu perfil. Por favor intenta registrarte de nuevo.',
+    });
+  } catch (err) {
+    console.error('authController.registerPerfil — error inesperado:', err);
+    return res.status(500).json({ success: false, message: 'Error interno del servidor' });
+  }
 };
 
 module.exports = { registerPerfil };

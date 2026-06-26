@@ -8,20 +8,25 @@ const supabase = require('../config/supabase');
  * En caso de éxito, adjunta req.user con { id, email, ... } de Supabase.
  */
 async function verificarAuth(req, res, next) {
-  const token = req.headers.authorization?.split(' ')[1];
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
 
-  if (!token) {
-    return res.status(401).json({ success: false, message: 'Token de autenticación requerido' });
+    if (!token) {
+      return res.status(401).json({ success: false, message: 'Token de autenticación requerido' });
+    }
+
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+
+    if (error || !user) {
+      return res.status(401).json({ success: false, message: 'Token inválido o expirado' });
+    }
+
+    req.user = user;
+    next();
+  } catch (err) {
+    console.error('verificarAuth:', err);
+    return res.status(500).json({ success: false, message: 'Error al verificar autenticación' });
   }
-
-  const { data: { user }, error } = await supabase.auth.getUser(token);
-
-  if (error || !user) {
-    return res.status(401).json({ success: false, message: 'Token inválido o expirado' });
-  }
-
-  req.user = user;
-  next();
 }
 
 module.exports = verificarAuth;

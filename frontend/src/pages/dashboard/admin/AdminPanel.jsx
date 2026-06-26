@@ -47,12 +47,11 @@ export default function AdminPanel({ user, profile }) {
       if (!user?.id) { setIsAdmin(false); return; }
 
       const { data, error } = await supabase
-        .from('perfiles')
+        .from('perfiles_usuario')
         .select('rol')
-        .eq('id', user.id)
+        .eq('user_id', user.id)
         .single();
 
-      // Solo permite acceso si el rol es exactamente 'admin'
       setIsAdmin(!error && data?.rol === 'admin');
     };
 

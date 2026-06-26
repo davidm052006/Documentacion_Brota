@@ -17,27 +17,7 @@ const getUsuarios = async (req, res) => {
     const desde = (pagina - 1) * limite;
     const hasta  = pagina * limite - 1;
 
-    // Si hay filtro de rol, resolvemos primero los user_ids que lo cumplen
-    let filtroUserIds = null;
-    if (rolFiltro) {
-      const { data: rolesData, error: rolError } = await supabase
-        .from('perfiles')
-        .select('id')
-        .eq('rol', rolFiltro);
-
-      if (rolError) throw rolError;
-
-      filtroUserIds = (rolesData || []).map(r => r.id);
-      if (filtroUserIds.length === 0) {
-        return res.json({
-          success: true,
-          data: [],
-          meta: { total: 0, pagina, limite, totalPaginas: 0 },
-        });
-      }
-    }
-
-    // Query principal sobre perfiles_usuario con paginación server-side
+    // Query principal — la columna rol está directamente en perfiles_usuario
     let query = supabase
       .from('perfiles_usuario')
       .select('*', { count: 'exact' })
@@ -50,24 +30,14 @@ const getUsuarios = async (req, res) => {
       );
     }
 
-    if (filtroUserIds) {
-      query = query.in('user_id', filtroUserIds);
+    if (rolFiltro) {
+      query = query.eq('rol', rolFiltro);
     }
 
     const { data: usuariosData, count, error: usuariosError } = await query;
     if (usuariosError) throw usuariosError;
 
-    // Segunda query para obtener roles de los usuarios de esta página
-    const userIds = (usuariosData || []).map(u => u.user_id);
-    const { data: rolesData } = userIds.length > 0
-      ? await supabase.from('perfiles').select('id, rol').in('id', userIds)
-      : { data: [] };
-
-    const rolesMap = Object.fromEntries((rolesData || []).map(r => [r.id, r.rol]));
-    const usuarios = (usuariosData || []).map(u => ({
-      ...u,
-      rol: rolesMap[u.user_id] || 'estudiante',
-    }));
+    const usuarios = usuariosData || [];
 
     return res.json({
       success: true,
@@ -103,16 +73,7 @@ const getUsuario = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
     }
 
-    const { data: perfil } = await supabase
-      .from('perfiles')
-      .select('rol')
-      .eq('id', data.user_id)
-      .single();
-
-    return res.json({
-      success: true,
-      data: { ...data, rol: perfil?.rol || 'estudiante' },
-    });
+    return res.json({ success: true, data });
   } catch (err) {
     console.error('adminController.getUsuario:', err);
     return res.status(500).json({ success: false, message: err.message });
@@ -173,13 +134,9 @@ const createUsuario = async (req, res) => {
       });
     }
 
-    // 3. Asignar rol en perfiles (upsert por si existe un trigger que ya lo creó)
-    const { error: rolError } = await supabase
-      .from('perfiles')
-      .upsert({ id: userId, rol }, { onConflict: 'id' });
-
-    if (rolError) {
-      console.warn('adminController.createUsuario — no se pudo asignar rol:', rolError.message);
+    // 3. Asignar rol en perfiles_usuario
+    if (rol) {
+      await supabase.from('perfiles_usuario').update({ rol }).eq('user_id', userId);
     }
 
     return res.status(201).json({
@@ -224,14 +181,14 @@ const updateUsuario = async (req, res) => {
       return res.status(500).json({ success: false, message: updateError.message });
     }
 
-    // Actualizar rol en perfiles si se proporcionó (upsert por si no existe la fila aún)
+    // Actualizar rol en perfiles_usuario si se proporcionó
     if (rol) {
       const { error: rolError } = await supabase
-        .from('perfiles')
-        .upsert({ id: perfil.user_id, rol }, { onConflict: 'id' });
+        .from('perfiles_usuario')
+        .update({ rol })
+        .eq('user_id', perfil.user_id);
 
       if (rolError) {
-        // El perfil se actualizó pero el rol no — informar al cliente
         return res.status(207).json({
           success: true,
           message: 'Perfil actualizado, pero no se pudo cambiar el rol: ' + rolError.message,
