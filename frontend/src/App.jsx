@@ -15,7 +15,11 @@ import DashboardLayout from './components/Layout/DashboardLayout';
 import AdminPanel     from './pages/dashboard/admin/AdminPanel';
 import Recursos       from './pages/dashboard/Recursos';
 import Profesiones    from './pages/dashboard/Profesiones';
-import Comunidad      from './pages/dashboard/Comunidad';
+import Comunidad            from './pages/dashboard/Comunidad';
+import ForoDetalle          from './pages/dashboard/comunidad/ForoDetalle';
+import HistoriaDetalle      from './pages/dashboard/comunidad/HistoriaDetalle';
+import ConvocatoriaDetalle  from './pages/dashboard/comunidad/ConvocatoriaDetalle';
+import PostDetalle          from './pages/dashboard/comunidad/PostDetalle';
 
 function PaginaEnConstruccion({ titulo }) {
   return (
@@ -134,6 +138,22 @@ function App() {
         <Route
           path="/dashboard/comunidad"
           element={loading ? spinner : puedeAcceder ? <Comunidad /> : <Navigate to="/login" replace />}
+        />
+        <Route
+          path="/dashboard/comunidad/foro/:id"
+          element={loading ? spinner : puedeAcceder ? <ForoDetalle /> : <Navigate to="/login" replace />}
+        />
+        <Route
+          path="/dashboard/comunidad/historia/:id"
+          element={loading ? spinner : puedeAcceder ? <HistoriaDetalle /> : <Navigate to="/login" replace />}
+        />
+        <Route
+          path="/dashboard/comunidad/convocatoria/:id"
+          element={loading ? spinner : puedeAcceder ? <ConvocatoriaDetalle /> : <Navigate to="/login" replace />}
+        />
+        <Route
+          path="/dashboard/comunidad/post/:id"
+          element={loading ? spinner : puedeAcceder ? <PostDetalle /> : <Navigate to="/login" replace />}
         />
         {[
           { path: '/dashboard/rutas',     titulo: 'Rutas formativas' },

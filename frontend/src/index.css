@@ -55,6 +55,37 @@ html.dark {
   --shadow-md:    0 14px 40px rgba(0,0,0,.55);
 }
 
+/* ─── color-scheme: permite que el navegador adapte los form elements nativos ─ */
+:root      { color-scheme: light; }
+html.dark  { color-scheme: dark; }
+
+/* ─── Admin panel: soporte modo oscuro para clases Tailwind hardcodeadas ───── */
+html.dark .bg-white        { background-color: var(--surface)  !important; }
+html.dark .bg-gray-50      { background-color: var(--surface-2) !important; }
+html.dark .bg-gray-100     { background-color: var(--surface-2) !important; }
+html.dark .text-gray-900,
+html.dark .text-gray-800   { color: var(--ink)      !important; }
+html.dark .text-gray-700,
+html.dark .text-gray-600,
+html.dark .text-gray-500,
+html.dark .text-gray-400   { color: var(--ink-soft) !important; }
+html.dark .border-gray-50,
+html.dark .border-gray-100,
+html.dark .border-gray-200 { border-color: var(--line) !important; }
+html.dark .hover\:bg-gray-50:hover,
+html.dark .hover\:bg-gray-100:hover { background-color: var(--surface-2) !important; }
+html.dark .placeholder-gray-400::placeholder { color: var(--ink-soft) !important; }
+html.dark .bg-purple-100   { background-color: #2d1f40 !important; }
+html.dark .text-purple-700 { color: #c084fc !important; }
+html.dark .bg-orange-100   { background-color: #2d1f10 !important; }
+html.dark .text-orange-700 { color: #fb923c !important; }
+html.dark .bg-blue-100     { background-color: #0e1d2d !important; }
+html.dark .text-blue-700   { color: #60a5fa !important; }
+html.dark .bg-green-50,
+html.dark .hover\:bg-green-50:hover { background-color: var(--primary-soft) !important; }
+html.dark .hover\:bg-blue-50:hover  { background-color: #0e1d2d !important; }
+html.dark .hover\:bg-red-50:hover   { background-color: #2d0f0f !important; }
+
 /* ─── Base ─────────────────────────────────────────────────────────────────── */
 html, body, #root {
   min-height: 100vh;

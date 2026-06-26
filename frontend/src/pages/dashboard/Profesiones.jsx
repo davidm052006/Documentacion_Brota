@@ -252,7 +252,7 @@ export default function Profesiones() {
             </div>
             {/* Search dentro del hero */}
             <div style={{
-              background: '#fff', borderRadius: 14, padding: '13px 18px',
+              background: 'var(--surface)', borderRadius: 14, padding: '13px 18px',
               marginTop: 16, display: 'flex', alignItems: 'center', gap: 12,
               maxWidth: 560, boxShadow: '0 8px 20px rgba(0,0,0,.15)',
             }}>
@@ -264,7 +264,7 @@ export default function Profesiones() {
                 placeholder="Buscar por nombre de programa o institución…"
                 style={{
                   flex: 1, border: 'none', outline: 'none',
-                  fontSize: 14, color: '#15241B', background: 'transparent', fontFamily: 'inherit',
+                  fontSize: 14, color: 'var(--ink)', background: 'transparent', fontFamily: 'inherit',
                 }}
               />
               {busqueda && (
