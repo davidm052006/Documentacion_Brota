@@ -11,7 +11,7 @@ const supabase = require('../config/supabase');
  * desde el frontend).
  */
 const registerPerfil = async (req, res) => {
-  const { nombre, apellido } = req.body;
+  const { nombre, apellido, fechaNacimiento, ciudad, nivelEducativo } = req.body;
 
   if (!nombre) {
     return res.status(400).json({ success: false, message: 'El campo nombre es requerido' });
@@ -19,9 +19,27 @@ const registerPerfil = async (req, res) => {
 
   const userId = req.user.id;
 
+  // Calcular edad entera desde fecha de nacimiento
+  let edad = null;
+  if (fechaNacimiento) {
+    const hoy = new Date();
+    const nacimiento = new Date(fechaNacimiento);
+    edad = hoy.getFullYear() - nacimiento.getFullYear();
+    const m = hoy.getMonth() - nacimiento.getMonth();
+    if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) edad--;
+    if (edad < 14 || edad > 100) edad = null; // fuera del rango del CHECK
+  }
+
   const { error } = await supabase
     .from('perfiles_usuario')
-    .insert([{ user_id: userId, nombre, apellido: apellido ?? '' }]);
+    .insert([{
+      user_id: userId,
+      nombre,
+      apellido: apellido ?? '',
+      edad,
+      ciudad: ciudad ?? null,
+      nivel_educativo: nivelEducativo ?? null,
+    }]);
 
   if (!error) {
     return res.status(201).json({ success: true });

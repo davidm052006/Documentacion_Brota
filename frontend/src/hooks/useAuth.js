@@ -130,7 +130,7 @@ export const useAuth = () => {
     try {
       const { success, error: authError } = await signUpWithEmail(
         email, password, nombre, apellido,
-        { nivelEducativo, grado, edad, ciudad, telefono }
+        { nivelEducativo, grado, fechaNacimiento: edad, ciudad, telefono }
       );
       if (!success) setError(authError);
       else navigate('/dashboard');
