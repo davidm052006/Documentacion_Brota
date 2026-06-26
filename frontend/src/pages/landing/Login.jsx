@@ -82,16 +82,14 @@ function Login() {
   const {
     mode, email, password, confirmPassword,
     primerNombre, segundoNombre, primerApellido, segundoApellido,
-    nivelEducativo, grado, edad, ciudad, telefono,
-    termsAccepted,
+    nivelEducativo, grado, edad, ciudad, telefono, termsAccepted,
     loading, error, successMessage, validationErrors,
     onPrimerNombreChange, onSegundoNombreChange,
     onPrimerApellidoChange, onSegundoApellidoChange,
     onEmailChange,
     onPasswordChange, onConfirmPasswordChange,
     onNivelEducativoChange, onGradoChange, onEdadChange,
-    onCiudadChange, onTelefonoChange,
-    onTermsAcceptedChange,
+    onCiudadChange, onTelefonoChange, onTermsAcceptedChange,
     handleLogin, handleSignup, handlePasswordRecovery,
     changeMode,
   } = useAuth();
@@ -134,6 +132,8 @@ function Login() {
         onEdadChange={onEdadChange}
         onCiudadChange={onCiudadChange}
         onTelefonoChange={onTelefonoChange}
+        termsAccepted={termsAccepted}
+        onTermsAcceptedChange={onTermsAcceptedChange}
         onSubmit={handleSignup}
         onSwitchToLogin={() => changeMode('login')}
       />

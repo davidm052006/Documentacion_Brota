@@ -164,9 +164,7 @@ export const useAuth = () => {
   return {
     mode, email, password, confirmPassword,
     primerNombre, segundoNombre, primerApellido, segundoApellido,
-    nivelEducativo, grado, edad, ciudad, telefono,
-    
-    termsAccepted,
+    nivelEducativo, grado, edad, ciudad, telefono, termsAccepted,
     loading, error, successMessage, validationErrors,
     ...fieldHandlers,
     handleLogin, handleSignup, handlePasswordRecovery,
