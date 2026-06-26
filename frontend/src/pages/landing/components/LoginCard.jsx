@@ -1,33 +1,46 @@
 import { useState } from 'react';
 import AuthCardShell from './AuthCardShell';
 
+const inputStyle = (error) => ({
+  width: '100%', boxSizing: 'border-box',
+  background: 'var(--surface-2)',
+  border: `1px solid ${error ? '#e53e3e' : 'var(--line)'}`,
+  borderRadius: 13, padding: '13px 15px',
+  fontSize: 13.5, color: 'var(--ink)',
+  outline: 'none', fontFamily: 'inherit',
+});
+
 function FieldInput({ placeholder, value, onChange, error, type = 'text' }) {
   const [show, setShow] = useState(false);
   const isPassword = type === 'password';
 
   return (
-    <div className="relative flex flex-col">
-      <input
-        type={isPassword && !show ? 'password' : 'text'}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        autoComplete="off"
-        className={`w-full bg-gray-50 dark:bg-[#0d110e] border rounded-xl px-4 py-3 text-sm text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-500 transition-all ${
-          error ? 'border-red-400' : 'border-gray-200 dark:border-[#1e2a21]'
-        }`}
-      />
-      {isPassword && (
-        <button
-          type="button"
-          onClick={() => setShow(s => !s)}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-sm"
-          tabIndex={-1}
-        >
-          {show ? '🙈' : '👁️'}
-        </button>
-      )}
-      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <div style={{ position: 'relative' }}>
+        <input
+          type={isPassword && !show ? 'password' : 'text'}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          autoComplete="off"
+          style={inputStyle(error)}
+        />
+        {isPassword && (
+          <button
+            type="button"
+            onClick={() => setShow(s => !s)}
+            style={{
+              position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
+              background: 'none', border: 'none', cursor: 'pointer',
+              color: 'var(--ink-soft)', fontSize: 15,
+            }}
+            tabIndex={-1}
+          >
+            {show ? '🙈' : '👁️'}
+          </button>
+        )}
+      </div>
+      {error && <p style={{ color: '#e53e3e', fontSize: 11, marginTop: 3 }}>{error}</p>}
     </div>
   );
 }
@@ -40,20 +53,23 @@ function LoginCard({
   return (
     <AuthCardShell title="Accede a tu cuenta" description="¡Qué bueno verte de nuevo! 🌱">
       {error && (
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-4 py-3 rounded-xl text-sm">
+        <div style={{
+          background: 'var(--accent-soft)', border: '1px solid var(--accent)',
+          color: 'var(--accent)', borderRadius: 12, padding: '12px 16px', fontSize: 13,
+        }}>
           {error}
         </div>
       )}
 
-      <form onSubmit={onSubmit} className="flex flex-col gap-3">
+      <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
         <FieldInput
-          placeholder="Escribe tu correo..."
+          placeholder="Escribe tu correo…"
           value={email}
           onChange={onEmailChange}
           error={validationErrors.email}
         />
         <FieldInput
-          placeholder="Contraseña..."
+          placeholder="Contraseña…"
           type="password"
           value={password}
           onChange={onPasswordChange}
@@ -62,28 +78,32 @@ function LoginCard({
         <button
           type="submit"
           disabled={loading}
-          className="w-full mt-1 py-3 rounded-xl bg-green-600 hover:bg-green-700 text-white font-semibold text-sm transition-colors disabled:opacity-60"
+          style={{
+            background: 'var(--primary)', color: 'var(--primary-ink)',
+            textAlign: 'center', fontWeight: 800, fontSize: 15,
+            padding: 14, borderRadius: 13, border: 'none', cursor: 'pointer',
+            boxShadow: '0 8px 20px var(--primary-glow)',
+            opacity: loading ? .6 : 1, marginTop: 2,
+          }}
         >
-          {loading ? 'Ingresando...' : 'Ingresar'}
+          {loading ? 'Ingresando…' : 'Ingresar'}
         </button>
       </form>
 
-      <div className="flex flex-col items-center gap-2 text-sm">
-        <p className="text-gray-500 dark:text-gray-400">
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+        <p style={{ fontSize: 13, color: 'var(--ink-soft)' }}>
           ¿Aún no eres parte?{' '}
-          <button
-            type="button"
-            onClick={onSwitchToSignup}
-            className="text-green-600 dark:text-green-400 font-semibold hover:underline"
-          >
+          <button type="button" onClick={onSwitchToSignup} style={{
+            background: 'none', border: 'none', cursor: 'pointer',
+            color: 'var(--primary)', fontWeight: 700, fontSize: 13,
+          }}>
             Regístrate
           </button>
         </p>
-        <button
-          type="button"
-          onClick={onSwitchToForgotPassword}
-          className="text-green-600 dark:text-green-400 font-semibold hover:underline text-sm"
-        >
+        <button type="button" onClick={onSwitchToForgotPassword} style={{
+          background: 'none', border: 'none', cursor: 'pointer',
+          color: 'var(--primary)', fontWeight: 700, fontSize: 13,
+        }}>
           ¿Olvidaste tu contraseña?
         </button>
       </div>

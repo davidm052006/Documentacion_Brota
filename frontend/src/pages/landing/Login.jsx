@@ -1,82 +1,92 @@
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useDarkMode } from '../../hooks/useDarkMode';
 import LoginCard from './components/LoginCard';
 import SignupCard from './components/SignupCard';
 import ForgotPasswordCard from './components/ForgotPasswordCard';
 
-// ─── Hero izquierdo por modo ──────────────────────────────────────────────────
+// ─── Brand SVG inline ────────────────────────────────────────────────────────
+function BrotaLogo({ size = 58 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+      <path d="M16 31 V13" stroke="var(--primary-deep)" strokeWidth="2.6" strokeLinecap="round"/>
+      <path d="M16 17 C16 9 8 6 3 6.5 C3 15 9 18 16 18 Z" fill="var(--primary)"/>
+      <path d="M16 15 C16 7 24 4 29 5 C28 14 23 17 16 17 Z" fill="var(--primary-deep)"/>
+    </svg>
+  );
+}
 
+// ─── Lados de marca ───────────────────────────────────────────────────────────
 function LoginHero() {
   return (
-    <div className="flex flex-col justify-center">
-      <div className="flex items-center gap-2.5 mb-8">
-        <img src="/logo-brota.png" alt="Brota" className="h-10 w-auto" />
-        <span className="text-2xl font-bold text-green-800 dark:text-green-300 tracking-tight">BROTA</span>
+    <div style={{ maxWidth: 440 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        <BrotaLogo />
+        <span className="font-display" style={{ fontWeight: 800, fontSize: 46, color: 'var(--primary)', letterSpacing: -1 }}>BROTA</span>
       </div>
-      <h1 className="text-4xl font-bold text-gray-900 dark:text-white leading-snug mb-4">
-        Tu camino sigue justo<br />donde lo dejaste.
-      </h1>
-      <p className="text-gray-500 dark:text-gray-400 text-base leading-relaxed max-w-sm">
+      <div className="font-display" style={{ fontWeight: 800, fontSize: 32, marginTop: 26, lineHeight: 1.1, color: 'var(--ink)' }}>
+        Tu camino sigue justo donde lo dejaste.
+      </div>
+      <div style={{ fontSize: 15, color: 'var(--ink-soft)', marginTop: 14, lineHeight: 1.55 }}>
         Vuelve a explorar profesiones, retomar tu test y descubrir lo que sigue para tu futuro.
-      </p>
+      </div>
     </div>
   );
 }
 
 function SignupHero() {
   const FEATURES = [
-    { icon: '✅', text: 'Test vocacional 100% gratuito' },
-    { icon: '🎯', text: '7.000+ programas disponibles' },
-    { icon: '🔒', text: 'Tus datos siempre protegidos' },
+    { icon: '✅', tint: 'var(--primary-soft)', text: 'Test vocacional 100% gratuito' },
+    { icon: '🧭', tint: 'var(--accent-soft)',  text: '7.000+ programas disponibles'  },
+    { icon: '🔒', tint: 'var(--primary-soft)', text: 'Tus datos siempre protegidos'  },
   ];
 
   return (
-    <div className="flex flex-col justify-center">
-      <div className="flex items-center gap-2.5 mb-8">
-        <img src="/logo-brota.png" alt="Brota" className="h-10 w-auto" />
-        <span className="text-2xl font-bold text-green-800 dark:text-green-300 tracking-tight">BROTA</span>
+    <div style={{ maxWidth: 430 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        <BrotaLogo size={52} />
+        <span className="font-display" style={{ fontWeight: 800, fontSize: 44, color: 'var(--primary)', letterSpacing: -1 }}>BROTA</span>
       </div>
-      <h1 className="text-4xl font-bold text-gray-900 dark:text-white leading-snug mb-3">
-        Crea tu cuenta y empieza a{' '}
-        <span className="text-green-600 dark:text-green-400">crecer.</span>
-      </h1>
-      <p className="text-gray-500 dark:text-gray-400 text-base leading-relaxed mb-8 max-w-sm">
+      <div className="font-display" style={{ fontWeight: 800, fontSize: 30, marginTop: 24, lineHeight: 1.1, color: 'var(--ink)' }}>
+        Crea tu cuenta y empieza a <span style={{ color: 'var(--primary)' }}>crecer.</span>
+      </div>
+      <div style={{ fontSize: 15, color: 'var(--ink-soft)', marginTop: 14, lineHeight: 1.55 }}>
         Orientación vocacional pensada para ti, desde grado 9° hasta la especialización profesional.
-      </p>
-      <ul className="flex flex-col gap-3">
-        {FEATURES.map(({ icon, text }) => (
-          <li key={text} className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
-            <span className="text-lg">{icon}</span>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 26 }}>
+        {FEATURES.map(({ icon, tint, text }) => (
+          <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 11, fontSize: 14, fontWeight: 600 }}>
+            <span style={{
+              width: 30, height: 30, borderRadius: 9, background: tint,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+            }}>{icon}</span>
             {text}
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
 
 function ForgotHero() {
   return (
-    <div className="flex flex-col justify-center">
-      <div className="flex items-center gap-2.5 mb-8">
-        <img src="/logo-brota.png" alt="Brota" className="h-10 w-auto" />
-        <span className="text-2xl font-bold text-green-800 dark:text-green-300 tracking-tight">BROTA</span>
+    <div style={{ maxWidth: 440 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        <BrotaLogo />
+        <span className="font-display" style={{ fontWeight: 800, fontSize: 46, color: 'var(--primary)', letterSpacing: -1 }}>BROTA</span>
       </div>
-      <h1 className="text-4xl font-bold text-gray-900 dark:text-white leading-snug mb-4">
-        Recupera el acceso<br />a tu cuenta.
-      </h1>
-      <p className="text-gray-500 dark:text-gray-400 text-base leading-relaxed max-w-sm">
+      <div className="font-display" style={{ fontWeight: 800, fontSize: 32, marginTop: 26, lineHeight: 1.1, color: 'var(--ink)' }}>
+        Recupera el acceso a tu cuenta.
+      </div>
+      <div style={{ fontSize: 15, color: 'var(--ink-soft)', marginTop: 14, lineHeight: 1.55 }}>
         Te enviaremos un correo con las instrucciones para restablecer tu contraseña.
-      </p>
+      </div>
     </div>
   );
 }
 
 // ─── Componente principal ─────────────────────────────────────────────────────
-
 function Login() {
-  const navigate = useNavigate();
   const [dark, toggleDark] = useDarkMode();
 
   const {
@@ -167,50 +177,66 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f2efea] dark:bg-[#0d110e]">
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg)', color: 'var(--ink)' }}>
 
-      {/* ── Toggle dark mode flotante ── */}
+      {/* Toggle dark flotante */}
       <button
         onClick={toggleDark}
         title={dark ? 'Modo claro' : 'Modo oscuro'}
-        className="fixed top-4 right-4 z-50 w-9 h-9 flex items-center justify-center rounded-full bg-white/80 dark:bg-[#1a1d24] border border-gray-200 dark:border-[#2c3140] shadow-sm hover:shadow-md backdrop-blur-sm text-sm transition-all"
+        style={{
+          position: 'fixed', top: 16, right: 16, zIndex: 50,
+          width: 38, height: 38, borderRadius: 11,
+          background: 'var(--surface-2)', border: '1px solid var(--line)',
+          cursor: 'pointer', fontSize: 15,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}
       >
         {dark ? '☀️' : '🌙'}
       </button>
 
-      {/* ── Contenido principal ── */}
-      <main className="flex-1 flex items-center justify-center px-6 py-12">
-        <div className="w-full max-w-5xl flex flex-col md:flex-row items-center gap-12 md:gap-20">
+      {/* Contenido */}
+      <main style={{
+        flex: 1, display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        alignItems: 'center',
+        padding: '48px 56px', gap: 40,
+      }}>
+        {/* Brand side */}
+        <div>{heroMap[mode] ?? heroMap.login}</div>
 
-          {/* Columna izquierda: hero */}
-          <div className="flex-1 min-w-0">
-            {heroMap[mode] ?? heroMap.login}
-          </div>
-
-          {/* Columna derecha: formulario */}
-          <div className="w-full md:w-[420px] shrink-0">
-            {cardMap[mode] ?? cardMap.login}
-          </div>
-
+        {/* Form side */}
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          {cardMap[mode] ?? cardMap.login}
         </div>
       </main>
 
-      {/* ── Footer bar ── */}
-      <footer className="border-t border-gray-200 dark:border-[#1a2420] bg-white/50 dark:bg-[#0a0e0b]/50 backdrop-blur-sm">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <img src="/logo-brota.png" alt="Brota" className="h-5 w-auto opacity-70" />
-            <span className="text-sm font-semibold text-gray-700 dark:text-gray-400">BROTA</span>
-            <span className="text-gray-300 dark:text-gray-600 text-xs hidden sm:inline">·</span>
-            <span className="text-xs text-gray-400 dark:text-gray-500 hidden sm:inline">Orientación vocacional para tu futuro</span>
+      {/* Footer */}
+      <div style={{ height: 3, background: 'linear-gradient(90deg, var(--primary), var(--accent))' }} />
+      <footer style={{
+        background: 'var(--surface)', borderTop: '1px solid var(--line)',
+        padding: '20px 56px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+            <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+              <path d="M16 31 V15" stroke="var(--primary)" strokeWidth="2.6"/>
+              <path d="M16 18 C16 11 9 8.5 4.5 8.5 C4.5 16 10 19 16 19 Z" fill="var(--primary)"/>
+            </svg>
+            <span className="font-display" style={{ fontWeight: 800, fontSize: 16, color: 'var(--ink)' }}>BROTA</span>
           </div>
-
-          <nav className="flex items-center gap-5 text-xs text-gray-500 dark:text-gray-500">
-            <Link to="/" className="hover:text-green-600 transition-colors">Inicio</Link>
-            <Link to="/contacto" className="hover:text-green-600 transition-colors">Contacto</Link>
-            <Link to="/privacidad" className="hover:text-green-600 transition-colors">Privacidad</Link>
-            <Link to="/terminos" className="hover:text-green-600 transition-colors">Términos</Link>
-          </nav>
+          <div style={{ fontSize: 11.5, color: 'var(--ink-soft)', marginTop: 3 }}>
+            Orientación vocacional para tu futuro
+          </div>
+        </div>
+        <nav style={{ display: 'flex', gap: 24, fontSize: 13, color: 'var(--ink-soft)', fontWeight: 600 }}>
+          <Link to="/"           style={{ color: 'var(--ink-soft)', textDecoration: 'none' }}>Inicio</Link>
+          <Link to="/contacto"   style={{ color: 'var(--ink-soft)', textDecoration: 'none' }}>Contacto</Link>
+          <Link to="/privacidad" style={{ color: 'var(--ink-soft)', textDecoration: 'none' }}>Privacidad</Link>
+          <Link to="/terminos"   style={{ color: 'var(--ink-soft)', textDecoration: 'none' }}>Términos</Link>
+        </nav>
+        <div style={{ fontSize: 15, color: 'var(--ink-soft)', display: 'flex', gap: 12 }}>
+          📷 💼 ✖
         </div>
       </footer>
 

@@ -2,41 +2,30 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useDarkMode } from '../../hooks/useDarkMode';
 
-// ─── Datos de contenido ──────────────────────────────────────────────────────
-
 const NAV_LINKS = [
-  { label: 'Conoce Brota', href: '#como-funciona' },
-  { label: 'Beneficios',   href: '#por-que-brota' },
-  { label: 'Testimonios',  href: '#testimonios'    },
-  { label: 'FAQ',          href: '#faq'            },
+  { label: 'Cómo funciona', href: '#como-funciona' },
+  { label: 'Beneficios',    href: '#beneficios'    },
+  { label: 'Testimonios',   href: '#testimonios'   },
+  { label: 'FAQ',           href: '#faq'           },
 ];
 
 const PASOS = [
-  {
-    numero: '01',
-    emoji: '📝',
-    titulo: 'Responde el test',
-    desc: 'Contesta preguntas sobre tus intereses, habilidades y lo que te apasiona. No hay respuestas correctas ni incorrectas.',
-  },
-  {
-    numero: '02',
-    emoji: '🧠',
-    titulo: 'Descubre tu perfil',
-    desc: 'Obtendrás un perfil vocacional personalizado que refleja quién eres y tus fortalezas reales.',
-  },
-  {
-    numero: '03',
-    emoji: '🎓',
-    titulo: 'Explora programas',
-    desc: 'Te recomendamos carreras, programas y rutas formativas reales: universidades, SENA y más.',
-  },
+  { num: '01', tint: 'var(--primary-soft)', numColor: 'var(--primary-deep)', icon: '🧭',
+    titulo: 'Explora quién eres',
+    desc: 'Responde actividades diseñadas para conocer tus intereses, habilidades y motivaciones.' },
+  { num: '02', tint: 'var(--accent-soft)',  numColor: 'var(--accent)',        icon: '🚩',
+    titulo: 'Descubre opciones',
+    desc: 'Te mostramos carreras y áreas que realmente van contigo.' },
+  { num: '03', tint: 'var(--primary-soft)', numColor: 'var(--primary-deep)', icon: '🌱',
+    titulo: 'Elige tu mejor paso',
+    desc: 'Recibe recomendaciones personalizadas para tomar decisiones con confianza.' },
 ];
 
-const FEATURES = [
-  { emoji: '🔬', titulo: 'Basado en ciencia', desc: 'Nuestro modelo se fundamenta en teorías de orientación vocacional reconocidas internacionalmente.' },
-  { emoji: '🎯', titulo: 'Perfil único',       desc: 'Tu perfil no es una caja. Es una combinación de categorías que describe tu forma de ver el mundo.' },
-  { emoji: '🏫', titulo: 'Programas reales',   desc: 'Conectamos tu perfil con instituciones y programas disponibles en Colombia: universidades, SENA y técnicos.' },
-  { emoji: '🌱', titulo: 'Gratis y accesible', desc: 'Brota es gratis para estudiantes. Queremos que ninguna persona tome decisiones sin orientación.' },
+const BENEFITS = [
+  { icon: '✅', tint: 'var(--primary-soft)', titulo: 'Sin presión, a tu ritmo',     desc: 'Tú decides cuándo y cómo avanzar.' },
+  { icon: '⭐', tint: 'var(--accent-soft)',  titulo: 'Resultados que entiendes',     desc: 'Recomendaciones basadas en lo que eres y te gusta.' },
+  { icon: '👥', tint: 'var(--primary-soft)', titulo: 'Diseñado para jóvenes',       desc: 'Lenguaje claro, cercano y motivador.' },
+  { icon: '🔒', tint: 'var(--accent-soft)',  titulo: 'Privado y seguro',             desc: 'Tu información está protegida siempre.' },
 ];
 
 // ─── Navbar ──────────────────────────────────────────────────────────────────
@@ -46,86 +35,63 @@ function Navbar({ dark, toggleDark }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-white/90 dark:bg-[#060d07]/90 backdrop-blur-md border-b border-green-100 dark:border-green-950">
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+    <header style={{
+      position: 'sticky', top: 0, zIndex: 50,
+      background: 'var(--bg)',
+      borderBottom: '1px solid var(--line)',
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      padding: '0 40px', height: 64,
+    }}>
+      {/* Logo */}
+      <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 9, textDecoration: 'none' }}>
+        <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
+          <path d="M16 31 V15" stroke="var(--primary)" strokeWidth="2.6" strokeLinecap="round"/>
+          <path d="M16 18 C16 11 9 8.5 4.5 8.5 C4.5 16 10 19 16 19 Z" fill="var(--primary)"/>
+          <path d="M16 16 C16 8.5 23.5 5.5 28.5 6.5 C27.5 14 22 17 16 17 Z" fill="var(--primary)" opacity=".8"/>
+        </svg>
+        <span className="font-display" style={{ fontWeight: 800, fontSize: 20, color: 'var(--ink)', letterSpacing: '-0.5px' }}>
+          BROTA
+        </span>
+      </Link>
 
-        {/* Logo */}
-        <Link to="/" className="flex items-center gap-2.5 shrink-0">
-          <img src="/logo-brota.png" alt="Brota" className="h-9 w-auto" />
-          <span className="text-xl font-bold text-green-900 dark:text-green-100 tracking-tight">BROTA</span>
-        </Link>
+      {/* Links desktop */}
+      <nav style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
+        {NAV_LINKS.map(({ label, href }) => (
+          <a key={label} href={href} style={{
+            fontSize: 13.5, fontWeight: 600, color: 'var(--ink-soft)',
+            textDecoration: 'none', transition: 'color .15s',
+          }}
+            onMouseEnter={e => e.target.style.color = 'var(--ink)'}
+            onMouseLeave={e => e.target.style.color = 'var(--ink-soft)'}
+          >{label}</a>
+        ))}
 
-        {/* Nav desktop */}
-        <nav className="hidden md:flex items-center gap-6">
-          {NAV_LINKS.map(({ label, href }) =>
-            href.startsWith('#') ? (
-              <a
-                key={label}
-                href={href}
-                className="text-sm font-medium text-gray-600 dark:text-green-200/80 hover:text-green-700 dark:hover:text-green-300 transition-colors"
-              >
-                {label}
-              </a>
-            ) : (
-              <Link
-                key={label}
-                to={href}
-                className="text-sm font-medium text-gray-600 dark:text-green-200/80 hover:text-green-700 dark:hover:text-green-300 transition-colors"
-              >
-                {label}
-              </Link>
-            )
-          )}
-        </nav>
+        <button
+          onClick={toggleDark}
+          style={{
+            width: 36, height: 36, borderRadius: 10,
+            background: 'var(--surface-2)', border: 'none',
+            cursor: 'pointer', fontSize: 15, display: 'flex',
+            alignItems: 'center', justifyContent: 'center',
+          }}
+          title={dark ? 'Modo claro' : 'Modo oscuro'}
+        >
+          {dark ? '☀️' : '🌙'}
+        </button>
 
-        {/* Acciones */}
-        <div className="flex items-center gap-3">
-          <button
-            onClick={toggleDark}
-            title={dark ? 'Modo claro' : 'Modo oscuro'}
-            className="hidden sm:flex w-8 h-8 items-center justify-center rounded-full text-sm bg-green-50 dark:bg-green-950 border border-green-100 dark:border-green-900 hover:bg-green-100 dark:hover:bg-green-900 transition-colors"
-          >
-            {dark ? '☀️' : '🌙'}
-          </button>
-
-          <button
-            onClick={() => navigate('/login')}
-            className="hidden md:inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-green-600 dark:bg-green-500 hover:bg-green-700 dark:hover:bg-green-400 rounded-full shadow-sm transition-colors"
-          >
-            Empezar gratis
-          </button>
-
-          {/* Hamburger mobile */}
-          <button
-            onClick={() => setOpen(!open)}
-            className="md:hidden p-2 rounded-lg text-gray-600 dark:text-green-200 hover:bg-green-50 dark:hover:bg-green-950"
-          >
-            {open ? '✕' : '☰'}
-          </button>
-        </div>
-      </div>
-
-      {/* Menú mobile */}
-      {open && (
-        <div className="md:hidden px-6 pb-4 pt-2 border-t border-green-100 dark:border-green-950 bg-white dark:bg-[#060d07] flex flex-col gap-3">
-          {NAV_LINKS.map(({ label, href }) => (
-            <a
-              key={label}
-              href={href}
-              onClick={() => setOpen(false)}
-              className="text-sm font-medium text-gray-700 dark:text-green-200 py-1"
-            >
-              {label}
-            </a>
-          ))}
-          <button
-            onClick={() => navigate('/login')}
-            className="mt-2 w-full py-2 text-sm font-semibold text-white bg-green-700 rounded-full"
-          >
-            Iniciar sesión
-          </button>
-        </div>
-      )}
+        <button
+          onClick={() => navigate('/login')}
+          style={{
+            background: 'var(--primary)', color: 'var(--primary-ink)',
+            padding: '10px 20px', borderRadius: 999,
+            fontWeight: 700, fontSize: 13.5,
+            border: 'none', cursor: 'pointer',
+            boxShadow: '0 4px 14px var(--primary-glow)',
+          }}
+        >
+          Empezar ahora
+        </button>
+      </nav>
     </header>
   );
 }
@@ -136,203 +102,202 @@ function Hero() {
   const navigate = useNavigate();
 
   return (
-    <section className="max-w-6xl mx-auto px-6 py-20 md:py-28 flex flex-col md:flex-row items-center gap-12 md:gap-16">
-
-      {/* Texto */}
-      <div className="flex-1 text-center md:text-left">
-        <span className="inline-flex items-center gap-2 text-xs font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-900 px-3 py-1.5 rounded-full mb-6">
-          🌱 Orientación vocacional gratuita
-        </span>
-
-        <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-green-950 dark:text-green-50 mb-6">
-          Descubre<br />
-          <em className="not-italic text-green-600 dark:text-green-400">quién</em>{' '}
-          quieres<br />
-          ser.
-        </h1>
-
-        <p className="text-lg text-gray-600 dark:text-green-200/70 leading-relaxed mb-8 max-w-md mx-auto md:mx-0">
-          Brota te ayuda a conocer tus intereses, habilidades y fortalezas para que puedas elegir
-          una carrera o programa con confianza, no con miedo.
-        </p>
-
-        <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
+    <section style={{ display: 'grid', gridTemplateColumns: '1.05fr 1fr', gap: 40, alignItems: 'center', padding: '30px 40px 50px' }}>
+      <div>
+        <div className="font-display" style={{
+          fontWeight: 800, fontSize: 62, lineHeight: 0.98, letterSpacing: -2,
+          color: 'var(--ink)',
+        }}>
+          Descubre <span style={{ color: 'var(--primary)' }}>quién</span> quieres ser.
+        </div>
+        <div style={{ fontSize: 16, color: 'var(--ink-soft)', marginTop: 22, maxWidth: 430, lineHeight: 1.55 }}>
+          Una experiencia pensada para ayudarte a explorar tu vocación y tomar decisiones con claridad y propósito.
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 30 }}>
           <button
             onClick={() => navigate('/login')}
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-semibold text-white bg-green-700 dark:bg-green-600 hover:bg-green-800 dark:hover:bg-green-500 rounded-full shadow-md hover:shadow-lg transition-all"
+            style={{
+              background: 'var(--primary)', color: 'var(--primary-ink)',
+              padding: '15px 30px', borderRadius: 999,
+              fontWeight: 800, fontSize: 15, border: 'none', cursor: 'pointer',
+              boxShadow: '0 8px 22px var(--primary-glow)',
+            }}
           >
-            Comenzar gratis →
+            Empieza gratis
           </button>
-          <a
-            href="#como-funciona"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-semibold text-green-800 dark:text-green-300 border-2 border-green-200 dark:border-green-800 hover:border-green-400 dark:hover:border-green-600 rounded-full transition-all"
-          >
-            Cómo funciona
+          <a href="#como-funciona" style={{ fontWeight: 700, fontSize: 15, color: 'var(--ink)', textDecoration: 'none' }}>
+            Conocer más →
           </a>
-        </div>
-
-        {/* Stats row — 4 bloques verdes */}
-        <div className="flex gap-3 mt-10 flex-wrap justify-center md:justify-start">
-          {[
-            { icon: '🌱', label: 'Orientación gratuita' },
-            { icon: '🧭', label: 'Explorar áreas'        },
-            { icon: '📊', label: 'Resultados personalizados' },
-            { icon: '🎯', label: '¡Toma decisiones!'     },
-          ].map(({ icon, label }) => (
-            <div
-              key={label}
-              className="flex items-center gap-2 bg-green-50 dark:bg-green-950 border border-green-100 dark:border-green-900 px-3 py-2 rounded-xl"
-            >
-              <span className="text-base">{icon}</span>
-              <span className="text-xs font-medium text-green-800 dark:text-green-300">{label}</span>
-            </div>
-          ))}
         </div>
       </div>
 
       {/* Ilustración */}
-      <div className="shrink-0 flex items-center justify-center">
-        <div className="relative w-64 h-64 md:w-80 md:h-80">
-          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-green-100 to-emerald-200 dark:from-green-950 dark:to-emerald-900 opacity-60" />
-          <img
-            src="/logo-brota.png"
-            alt="Brota — crece tu potencial"
-            className="relative w-full h-full object-contain drop-shadow-xl p-6"
-          />
-        </div>
+      <div style={{
+        position: 'relative', aspectRatio: '1.15', borderRadius: 30,
+        background: 'linear-gradient(135deg, var(--primary-soft), var(--surface-2))',
+        overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}>
+        <div style={{
+          position: 'absolute', width: '62%', aspectRatio: '1',
+          borderRadius: '50%', background: 'var(--surface)',
+          boxShadow: '0 20px 50px rgba(0,0,0,.08)',
+        }} />
+        <svg width="150" height="150" viewBox="0 0 32 32" fill="none" style={{ position: 'relative', zIndex: 1 }}>
+          <path d="M16 31 V13" stroke="var(--primary-deep)" strokeWidth="2.6" strokeLinecap="round"/>
+          <path d="M16 17 C16 9 8 6 3 6.5 C3 15 9 18 16 18 Z" fill="var(--primary)"/>
+          <path d="M16 15 C16 7 24 4 29 5 C28 14 23 17 16 17 Z" fill="var(--primary-deep)"/>
+        </svg>
+        <div style={{
+          position: 'absolute', bottom: '14%', right: '18%',
+          width: 36, height: 36, borderRadius: '50%',
+          background: 'var(--accent)',
+        }} />
       </div>
-
     </section>
   );
 }
 
-// ─── Cómo funciona ───────────────────────────────────────────────────────────
+// ─── Trust bar ───────────────────────────────────────────────────────────────
+
+function TrustBar() {
+  return (
+    <div style={{
+      background: 'var(--primary-soft)', padding: '14px 40px',
+      display: 'flex', justifyContent: 'space-between',
+      fontSize: 13, fontWeight: 600, color: 'var(--primary-deep)',
+    }}>
+      <span>✓ 100% gratuito</span>
+      <span>👤 Sin barreras</span>
+      <span>🎯 Resultados personalizados</span>
+      <span>🌱 Hecho para jóvenes</span>
+    </div>
+  );
+}
+
+// ─── 3 pasos ─────────────────────────────────────────────────────────────────
 
 function ComoFunciona() {
   return (
-    <section id="como-funciona" className="bg-green-50 dark:bg-[#0a1a0a] py-20">
-      <div className="max-w-6xl mx-auto px-6">
-
-        <div className="text-center mb-14">
-          <p className="text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-widest mb-2">Proceso</p>
-          <h2 className="text-3xl md:text-4xl font-bold text-green-950 dark:text-green-50">
-            Tu camino en 3 pasos
-          </h2>
-          <p className="text-gray-500 dark:text-green-200/60 mt-3 max-w-md mx-auto">
-            En menos de 20 minutos puedes tener claridad sobre tu dirección.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {PASOS.map(({ numero, emoji, titulo, desc }) => (
-            <div
-              key={numero}
-              className="bg-white dark:bg-[#0d1f0d] rounded-2xl p-7 border border-green-100 dark:border-green-900 flex flex-col gap-4 hover:shadow-md hover:border-green-300 dark:hover:border-green-700 transition-all"
-            >
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">{emoji}</span>
-                <span className="text-xs font-bold text-green-300 dark:text-green-700">{numero}</span>
-              </div>
-              <h3 className="text-lg font-bold text-green-900 dark:text-green-100">{titulo}</h3>
-              <p className="text-sm text-gray-500 dark:text-green-200/60 leading-relaxed">{desc}</p>
+    <section id="como-funciona" style={{ padding: '48px 40px 30px' }}>
+      <div className="font-display" style={{ textAlign: 'center', fontWeight: 800, fontSize: 28, color: 'var(--ink)' }}>
+        Tu camino en 3 pasos
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 18, marginTop: 26 }}>
+        {PASOS.map(({ num, tint, numColor, icon, titulo, desc }) => (
+          <div key={num} style={{
+            background: 'var(--surface)', border: '1px solid var(--line)',
+            borderRadius: 20, padding: 24, boxShadow: 'var(--shadow)',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{
+                width: 38, height: 38, borderRadius: '50%',
+                background: tint, color: numColor,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 800, fontSize: 15,
+              }}>{num}</span>
+              <span style={{ fontSize: 24 }}>{icon}</span>
             </div>
-          ))}
-        </div>
-
+            <div className="font-display" style={{ fontWeight: 700, fontSize: 17, marginTop: 16, color: 'var(--ink)' }}>{titulo}</div>
+            <div style={{ fontSize: 13, color: 'var(--ink-soft)', marginTop: 7, lineHeight: 1.5 }}>{desc}</div>
+          </div>
+        ))}
       </div>
     </section>
   );
 }
 
-// ─── Filosofía ───────────────────────────────────────────────────────────────
+// ─── Beneficios ───────────────────────────────────────────────────────────────
 
-function Filosofia() {
+function Beneficios() {
   return (
-    <section className="max-w-6xl mx-auto px-6 py-20">
-      <div className="flex flex-col md:flex-row items-center gap-12">
-
-        {/* Icono */}
-        <div className="shrink-0 w-40 h-40 rounded-3xl bg-green-50 dark:bg-green-950 border border-green-100 dark:border-green-900 flex items-center justify-center text-6xl shadow-sm">
-          🔓
-        </div>
-
-        {/* Texto */}
-        <div>
-          <p className="text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-widest mb-3">Nuestra filosofía</p>
-          <h2 className="text-3xl md:text-4xl font-bold text-green-950 dark:text-green-50 mb-5 leading-snug">
-            No se trata de elegir{' '}
-            <em className="not-italic text-green-600 dark:text-green-400">"bien"</em>.
-          </h2>
-          <p className="text-gray-600 dark:text-green-200/70 leading-relaxed max-w-xl mb-4">
-            Muchos estudiantes sienten que elegir carrera es decidir su futuro para siempre,
-            y ese peso paraliza. En Brota creemos que la vocación no es una caja cerrada:
-            es un punto de partida.
-          </p>
-          <p className="text-gray-600 dark:text-green-200/70 leading-relaxed max-w-xl">
-            No buscamos la carrera "perfecta" — buscamos la que tiene más afinidad con
-            quien eres hoy, con espacio para crecer, cambiar y descubrirte.
-          </p>
-        </div>
-
+    <section id="beneficios" style={{ padding: '32px 40px' }}>
+      <div className="font-display" style={{
+        textAlign: 'center', fontWeight: 800, fontSize: 26, lineHeight: 1.25, color: 'var(--ink)',
+      }}>
+        No se trata de elegir "bien".<br />
+        Se trata de elegir lo <span style={{ color: 'var(--primary)' }}>tuyo.</span>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, marginTop: 28 }}>
+        {BENEFITS.map(({ icon, tint, titulo, desc }) => (
+          <div key={titulo} style={{
+            background: 'var(--surface)', border: '1px solid var(--line)',
+            borderRadius: 18, padding: 22, boxShadow: 'var(--shadow)', textAlign: 'center',
+          }}>
+            <div style={{
+              width: 48, height: 48, borderRadius: 14, background: tint,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 23, margin: '0 auto',
+            }}>{icon}</div>
+            <div style={{ fontWeight: 700, fontSize: 14.5, marginTop: 14, color: 'var(--ink)' }}>{titulo}</div>
+            <div style={{ fontSize: 12.5, color: 'var(--ink-soft)', marginTop: 6, lineHeight: 1.45 }}>{desc}</div>
+          </div>
+        ))}
       </div>
     </section>
   );
 }
 
-// ─── Features ────────────────────────────────────────────────────────────────
+// ─── Testimonio ───────────────────────────────────────────────────────────────
 
-function Features() {
+function Testimonial() {
   return (
-    <section id="por-que-brota" className="bg-green-50 dark:bg-[#0a1a0a] py-20">
-      <div className="max-w-6xl mx-auto px-6">
-
-        <div className="text-center mb-14">
-          <p className="text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-widest mb-2">Por qué Brota</p>
-          <h2 className="text-3xl md:text-4xl font-bold text-green-950 dark:text-green-50">
-            Diseñado para ti
-          </h2>
+    <section id="testimonios" style={{ padding: '18px 40px 32px' }}>
+      <div style={{
+        background: 'var(--primary-soft)', borderRadius: 20, padding: '30px 34px',
+        display: 'flex', alignItems: 'center', gap: 20,
+        position: 'relative', overflow: 'hidden',
+      }}>
+        <span className="font-display" style={{
+          fontWeight: 800, fontSize: 56, color: 'var(--primary)',
+          lineHeight: 0.6, alignSelf: 'flex-start', flexShrink: 0,
+        }}>"</span>
+        <div className="font-display" style={{ fontWeight: 700, fontSize: 21, lineHeight: 1.35, color: 'var(--ink)', flex: 1 }}>
+          Pensé que ya lo tenía todo claro, hasta que entendí que descubrirlo también es avanzar.
         </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {FEATURES.map(({ emoji, titulo, desc }) => (
-            <div
-              key={titulo}
-              className="bg-white dark:bg-[#0d1f0d] rounded-2xl p-6 border border-green-100 dark:border-green-900 flex flex-col gap-3 hover:shadow-sm transition-shadow"
-            >
-              <span className="text-3xl">{emoji}</span>
-              <h3 className="font-bold text-green-900 dark:text-green-100">{titulo}</h3>
-              <p className="text-sm text-gray-500 dark:text-green-200/60 leading-relaxed">{desc}</p>
-            </div>
-          ))}
-        </div>
-
+        <svg width="90" height="90" viewBox="0 0 32 32" fill="none" style={{ opacity: .5, flexShrink: 0 }}>
+          <path d="M16 31 V13" stroke="var(--primary)" strokeWidth="2.6"/>
+          <path d="M16 17 C16 9 8 6 3 6.5 C3 15 9 18 16 18 Z" fill="var(--primary)"/>
+        </svg>
       </div>
     </section>
   );
 }
 
-// ─── CTA footer ─────────────────────────────────────────────────────────────
+// ─── CTA final ───────────────────────────────────────────────────────────────
 
 function FooterCTA() {
   const navigate = useNavigate();
 
   return (
-    <section className="bg-green-900 dark:bg-green-950 py-20 px-6">
-      <div className="max-w-2xl mx-auto text-center">
-        <p className="text-xs font-bold text-green-400 uppercase tracking-widest mb-4">Empieza hoy</p>
-        <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
-          Tu futuro empieza<br />con <span className="text-green-400">Brota.</span>
-        </h2>
-        <p className="text-green-200/70 mb-8 max-w-md mx-auto">
-          Únete a estudiantes colombianos que ya están descubriendo su camino.
-          Es gratis, es tuyo.
-        </p>
+    <section style={{ padding: '0 40px 40px' }}>
+      <div style={{
+        background: 'linear-gradient(120deg, var(--primary-deep), var(--primary))',
+        borderRadius: 24, padding: 44, textAlign: 'center', color: '#fff',
+        position: 'relative', overflow: 'hidden',
+      }}>
+        <div className="font-display" style={{ fontWeight: 800, fontSize: 30 }}>
+          Tu futuro empieza con un brote.
+        </div>
+        <div style={{ fontSize: 15, opacity: .92, marginTop: 10 }}>
+          Explora. Descúbrete. Decide con confianza.
+        </div>
         <button
           onClick={() => navigate('/login')}
-          className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-bold text-green-900 bg-green-400 hover:bg-green-300 rounded-full shadow-lg shadow-green-900/40 transition-all"
+          style={{
+            display: 'inline-block', background: '#fff', color: 'var(--primary-deep)',
+            padding: '15px 34px', borderRadius: 999,
+            fontWeight: 800, fontSize: 15, marginTop: 24,
+            border: 'none', cursor: 'pointer',
+          }}
         >
-          Comenzar ahora →
+          Empezar ahora →
         </button>
+        <svg width="150" height="150" viewBox="0 0 32 32" fill="none"
+          style={{ position: 'absolute', left: '5%', bottom: -30, opacity: .2, pointerEvents: 'none' }}>
+          <path d="M16 31 V13" stroke="#fff" strokeWidth="2.6"/>
+          <path d="M16 17 C16 9 8 6 3 6.5 C3 15 9 18 16 18 Z" fill="#fff"/>
+          <path d="M16 15 C16 7 24 4 29 5 C28 14 23 17 16 17 Z" fill="#fff"/>
+        </svg>
       </div>
     </section>
   );
@@ -342,32 +307,23 @@ function FooterCTA() {
 
 function Footer() {
   return (
-    <footer className="bg-[#040a04] dark:bg-[#020602] text-green-200/50">
-      <div className="max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-
-        <div className="flex items-center gap-2.5">
-          <img src="/logo-brota.png" alt="Brota" className="h-7 w-auto opacity-70" />
-          <span className="text-white/70 font-semibold text-sm">BROTA</span>
-        </div>
-
-        <nav className="flex gap-6 text-sm flex-wrap">
-          {[
-            { label: 'Inicio',    to: '/'           },
-            { label: 'Servicios', to: '/servicios'  },
-            { label: 'Contacto',  to: '/contacto'   },
-            { label: 'Privacidad', to: '/privacidad'},
-            { label: 'Términos',  to: '/terminos'   },
-          ].map(({ label, to }) => (
-            <Link key={label} to={to} className="hover:text-green-400 transition-colors">
-              {label}
-            </Link>
-          ))}
-        </nav>
-
-        <p className="text-xs text-green-200/30">
-          © {new Date().getFullYear()} Brota — Colombia
-        </p>
+    <footer style={{
+      borderTop: '1px solid var(--line)', padding: '24px 40px',
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      fontSize: 13, color: 'var(--ink-soft)',
+    }}>
+      <span className="font-display" style={{ fontWeight: 800, fontSize: 16, color: 'var(--ink)' }}>BROTA</span>
+      <div style={{ display: 'flex', gap: 26, fontWeight: 600 }}>
+        {[
+          { label: 'Servicios', to: '/servicios' },
+          { label: 'Contacto',  to: '/contacto'  },
+          { label: 'Términos',  to: '/terminos'  },
+          { label: 'Privacidad', to: '/privacidad'},
+        ].map(({ label, to }) => (
+          <Link key={label} to={to} style={{ color: 'var(--ink-soft)', textDecoration: 'none' }}>{label}</Link>
+        ))}
       </div>
+      <span>Hecho con 💚 para jóvenes como tú.</span>
     </footer>
   );
 }
@@ -378,12 +334,13 @@ export default function LandingPage() {
   const [dark, toggleDark] = useDarkMode();
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#060d07] transition-colors duration-200">
+    <div style={{ minHeight: '100vh', background: 'var(--bg)', color: 'var(--ink)' }}>
       <Navbar dark={dark} toggleDark={toggleDark} />
       <Hero />
+      <TrustBar />
       <ComoFunciona />
-      <Filosofia />
-      <Features />
+      <Beneficios />
+      <Testimonial />
       <FooterCTA />
       <Footer />
     </div>

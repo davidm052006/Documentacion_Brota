@@ -1,4 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
+
 @source "pages/**/*.{jsx,tsx,js,ts}";
 @source "components/**/*.{jsx,tsx,js,ts}";
 @source "hooks/**/*.{js,ts}";
@@ -6,45 +8,70 @@
 @source "utils/**/*.{js,ts}";
 @source "config/**/*.{js,ts}";
 
-/* Activar dark mode por clase (.dark en <html>) en TailwindCSS v4 */
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-primary:       #16A34A;
-  --color-primary-hover: #15803D;
-  --color-bg:            #ffffff;
-  --color-text:          #052e16;
-  --color-border:        #bbf7d0;
-  --color-surface:       #ffffff;
-  --radius-md:           8px;
+  --color-primary:       #21BD68;
+  --color-primary-hover: #0E7D43;
+  --color-accent:        #E07A42;
+  --radius-md:           12px;
 }
 
-html,
-body,
-#root {
+/* ─── Tokens de marca (modo claro) ────────────────────────────────────────── */
+:root {
+  --bg:           #F4F3EC;
+  --surface:      #FFFFFF;
+  --surface-2:    #EFEEE5;
+  --ink:          #15241B;
+  --ink-soft:     #67756B;
+  --line:         #E6E4DA;
+  --primary:      #21BD68;
+  --primary-deep: #0E7D43;
+  --primary-ink:  #FFFFFF;
+  --primary-soft: #E2F6EC;
+  --primary-glow: rgba(33,189,104,.28);
+  --accent:       #E07A42;
+  --accent-soft:  #FBE8DC;
+  --shadow:       0 4px 18px rgba(20,40,28,.06);
+  --shadow-md:    0 8px 24px rgba(20,40,28,.10);
+}
+
+/* ─── Tokens de marca (modo oscuro) ───────────────────────────────────────── */
+html.dark {
+  --bg:           #0C1310;
+  --surface:      #151F19;
+  --surface-2:    #1C2A22;
+  --ink:          #EAF3EC;
+  --ink-soft:     #94A69B;
+  --line:         #27362D;
+  --primary:      #34D27D;
+  --primary-deep: #1FA862;
+  --primary-ink:  #04301C;
+  --primary-soft: #16301F;
+  --primary-glow: rgba(52,210,125,.22);
+  --accent:       #F0996A;
+  --accent-soft:  #2C2018;
+  --shadow:       0 10px 30px rgba(0,0,0,.45);
+  --shadow-md:    0 14px 40px rgba(0,0,0,.55);
+}
+
+/* ─── Base ─────────────────────────────────────────────────────────────────── */
+html, body, #root {
   min-height: 100vh;
 }
 
-body,
-#root {
-  background-color: #ffffff;
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  background-color: var(--bg);
+  color: var(--ink);
 }
 
-/* ─── Layout principal del dashboard ──────────────────────────────────────── */
-.brota-layout {
-  background: linear-gradient(to bottom, #f0fdf4, #dcfce7);
+/* ─── Tipografía display ───────────────────────────────────────────────────── */
+.font-display {
+  font-family: 'Bricolage Grotesque', sans-serif;
 }
 
-html.dark body,
-html.dark #root {
-  background-color: #060d07;
-}
-
-html.dark .brota-layout {
-  background: linear-gradient(to bottom, #0a1a0a, #060d07);
-}
-
-/* ─── Animación de entrada para tarjetas ───────────────────────────────────── */
+/* ─── Animaciones ──────────────────────────────────────────────────────────── */
 @keyframes fadeSlideIn {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -54,7 +81,6 @@ html.dark .brota-layout {
   animation: fadeSlideIn 280ms ease-out both;
 }
 
-/* ─── Revelación progresiva del formulario de registro ─────────────────────── */
 @keyframes revealField {
   from { opacity: 0; transform: translateY(-6px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -64,91 +90,33 @@ html.dark .brota-layout {
   animation: revealField 220ms ease-out both;
 }
 
-/* Sidebar */
-html.dark aside { background-color: #1a1d24 !important; border-color: #2c3140 !important; }
-
-/* Fondos neutros */
-html.dark .bg-white        { background-color: #1a1d24 !important; }
-html.dark .bg-gray-50      { background-color: #14171e !important; }
-html.dark .bg-gray-100     { background-color: #1a1d24 !important; }
-html.dark .bg-green-50     { background-color: #14171e !important; }
-html.dark .bg-emerald-50   { background-color: #14171e !important; }
-
-/* Fondos de iconos / badges de color */
-html.dark .bg-green-100    { background-color: #0d2818 !important; }
-html.dark .bg-yellow-100   { background-color: #2a1f00 !important; }
-html.dark .bg-blue-100     { background-color: #0d1a30 !important; }
-html.dark .bg-purple-100   { background-color: #1a0f30 !important; }
-html.dark .bg-red-100      { background-color: #280a0a !important; }
-html.dark .bg-orange-100   { background-color: #281200 !important; }
-html.dark .bg-emerald-100  { background-color: #0a2018 !important; }
-html.dark .bg-teal-50      { background-color: #081a18 !important; }
-html.dark .bg-teal-100     { background-color: #0a2220 !important; }
-html.dark .bg-amber-50     { background-color: #1a1000 !important; }
-html.dark .bg-amber-100    { background-color: #2a1f00 !important; }
-html.dark .bg-blue-50      { background-color: #0a1020 !important; }
-
-/* Texto */
-html.dark .text-gray-900  { color: #ffffff !important; }
-html.dark .text-gray-800  { color: #ffffff !important; }
-html.dark .text-gray-700  { color: #e8e8e8 !important; }
-html.dark .text-gray-600  { color: #c8cdd8 !important; }
-html.dark .text-gray-500  { color: #8892a4 !important; }
-html.dark .text-gray-400  { color: #555e6e !important; }
-
-/* Texto de badges */
-html.dark .text-green-700  { color: #4ade80 !important; }
-html.dark .text-green-600  { color: #86efac !important; }
-html.dark .text-yellow-700 { color: #fcd34d !important; }
-html.dark .text-blue-700   { color: #93c5fd !important; }
-html.dark .text-purple-700 { color: #d8b4fe !important; }
-html.dark .text-red-500    { color: #fca5a5 !important; }
-html.dark .text-orange-700 { color: #fdba74 !important; }
-
-/* Bordes */
-html.dark .border-gray-100  { border-color: #2c3140 !important; }
-html.dark .border-gray-200  { border-color: #3a4055 !important; }
-html.dark .border-green-200 { border-color: #1a4030 !important; }
-
-/* Hover */
-html.dark .hover\:bg-gray-50:hover   { background-color: #20242e !important; }
-html.dark .hover\:bg-gray-100:hover  { background-color: #262a36 !important; }
-html.dark .hover\:bg-green-50:hover  { background-color: #0d2018 !important; }
-html.dark .hover\:bg-red-50:hover    { background-color: #1c0a0a !important; }
-html.dark .hover\:bg-blue-50:hover   { background-color: #0a1020 !important; }
-html.dark .hover\:bg-purple-50:hover { background-color: #160a2e !important; }
-
-/* ─── Inputs, textareas y selects ─────────────────────────────────────────── */
-
-/* Color del placeholder en modo claro */
+/* ─── Inputs y selects ─────────────────────────────────────────────────────── */
 input::placeholder,
 textarea::placeholder {
-  color: #6b7280; /* gris medio — igual en todos los campos */
+  color: var(--ink-soft);
 }
 
-/* Color del texto de opción vacía en selects (modo claro) */
 select {
-  color: #6b7280;
+  color: var(--ink-soft);
 }
 
-/* Cuando el select tiene un valor seleccionado, usar texto oscuro */
 select:not([value=""]) {
-  color: #374151; /* gray-700 */
+  color: var(--ink);
 }
 
-/* Dark mode — inputs, textareas y selects */
 html.dark input:not([type="checkbox"]):not([type="radio"]),
 html.dark textarea,
 html.dark select {
-  background-color: #14171e !important;
-  border-color: #2c3140 !important;
-  color: #ffffff !important;
+  background-color: var(--surface-2) !important;
+  border-color: var(--line) !important;
+  color: var(--ink) !important;
 }
 
 html.dark input::placeholder,
 html.dark textarea::placeholder {
-  color: #555e6e !important;
+  color: var(--ink-soft) !important;
 }
 
-/* Sombras */
-html.dark .shadow-sm { box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.5), 0 1px 2px -1px rgb(0 0 0 / 0.5) !important; }
+/* ─── Scrollbar oculta para navs horizontales ─────────────────────────────── */
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }

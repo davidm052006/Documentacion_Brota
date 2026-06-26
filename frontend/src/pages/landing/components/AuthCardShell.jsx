@@ -1,10 +1,17 @@
 function AuthCardShell({ title, description, children, className = '' }) {
   return (
-    <div className={`bg-white dark:bg-[#141a16] rounded-2xl shadow-lg border border-gray-100 dark:border-[#1e2a21] p-8 w-full flex flex-col gap-6 ${className}`}>
-      <div className="text-center">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white">{title}</h3>
+    <div style={{
+      width: '100%', maxWidth: 440,
+      background: 'var(--surface)',
+      border: '1px solid var(--line)',
+      borderRadius: 24, padding: '32px 30px 28px',
+      boxShadow: 'var(--shadow)',
+      display: 'flex', flexDirection: 'column', gap: 20,
+    }} className={className}>
+      <div style={{ textAlign: 'center' }}>
+        <h3 className="font-display" style={{ fontWeight: 800, fontSize: 24, color: 'var(--ink)' }}>{title}</h3>
         {description && (
-          <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">{description}</p>
+          <p style={{ fontSize: 13, color: 'var(--ink-soft)', marginTop: 4 }}>{description}</p>
         )}
       </div>
       {children}

@@ -1,41 +1,51 @@
-// src/pages/dashboard/test-vocacional/components/TestQuestion.jsx
-// ── SOLO VISUAL ───────────────────────────────────────────────
-// Props esperadas:
-//   pregunta: { id, texto, tipo, opciones: [{id, label, icon}] }
-//   preguntaNumero: number        — 1-based display
+// Props:
+//   pregunta: { id, texto, tipo, categoria?, opciones: [{id, label, icon}] }
+//   preguntaNumero: number (1-based)
 //   totalPreguntas: number
-//   seleccionadas: string[]       — ids de opciones marcadas
-//   onSeleccionar: (id) => void   — toggle de opción
-//   onAnterior: () => void
-//   onSiguiente: () => void
-//   puedeAvanzar: boolean         — habilita botón siguiente
+//   seleccionadas: string[]
+//   onSeleccionar: (id) => void
+//   onAnterior, onSiguiente: () => void
+//   puedeAvanzar: boolean
 //   guardando: boolean
 //   esUltima: boolean
 
 const PREGUNTA_DEMO = {
   id: 'demo',
-  texto: '¿Qué actividades disfrutas hacer en tu tiempo libre?',
+  texto: '¿Qué actividades disfrutas en tu tiempo libre?',
   tipo: 'multiple',
   opciones: [
-    { id: 'a', label: 'Dibujar, diseñar o crear cosas',              icon: '🎨' },
+    { id: 'a', label: 'Dibujar, diseñar o crear cosas',                icon: '🎨' },
     { id: 'b', label: 'Pasar tiempo con amigos o conocer gente nueva', icon: '🤝' },
-    { id: 'c', label: 'Jugar videojuegos',                            icon: '🎮' },
-    { id: 'd', label: 'Leer, escribir o aprender sobre temas nuevos', icon: '📚' },
-    { id: 'e', label: 'Resolver problemas o retos mentales',          icon: '🧩' },
-    { id: 'f', label: 'Tomar fotos, grabar videos o editar contenido',icon: '📷' },
-    { id: 'g', label: 'Programar, usar tecnología o investigar',      icon: '💻' },
-    { id: 'h', label: 'Hacer deporte o actividades al aire libre',    icon: '🏃' },
+    { id: 'c', label: 'Jugar videojuegos',                             icon: '🎮' },
+    { id: 'd', label: 'Leer, escribir o aprender sobre temas nuevos',  icon: '📚' },
+    { id: 'e', label: 'Resolver problemas o retos mentales',           icon: '🧩' },
+    { id: 'f', label: 'Tomar fotos, grabar videos o editar contenido', icon: '📷' },
+    { id: 'g', label: 'Programar, usar tecnología o investigar',       icon: '💻' },
+    { id: 'h', label: 'Hacer deporte o actividades al aire libre',     icon: '🏃' },
   ],
 };
 
-// Ilustración decorativa por número de pregunta
-const ILUSTRACIONES = ['🎮', '🎨', '📚', '🔬', '💡', '🌍', '🚀', '🧠',
-                       '🎭', '⚗️', '🏗️', '🎯', '🤝', '🌱', '💼', '🎵'];
+function splitTexto(texto) {
+  if (!texto) return { normal: '', verde: '' };
+  const m = texto.match(/^(.+?)\s+(en tu\b.+|para tu\b.+|sobre tu\b.+|de tu\b.+|con tu\b.+)$/i);
+  if (m) return { normal: m[1], verde: m[2] };
+  const w = texto.split(' ');
+  const h = Math.ceil(w.length / 2);
+  return { normal: w.slice(0, h).join(' '), verde: w.slice(h).join(' ') };
+}
+
+const LIKERT_OPTS = [
+  { id: '1', label: 'Nada me identifica', mark: '😕' },
+  { id: '2', label: 'Poco',               mark: '🙁' },
+  { id: '3', label: 'Neutral',            mark: '😐' },
+  { id: '4', label: 'Bastante',           mark: '🙂' },
+  { id: '5', label: 'Totalmente',         mark: '😄' },
+];
 
 export default function TestQuestion({
   pregunta       = PREGUNTA_DEMO,
-  preguntaNumero = 4,
-  totalPreguntas = 24,
+  preguntaNumero = 1,
+  totalPreguntas = 30,
   seleccionadas  = [],
   onSeleccionar  = () => {},
   onAnterior     = () => {},
@@ -44,88 +54,113 @@ export default function TestQuestion({
   guardando      = false,
   esUltima       = false,
 }) {
-  const esMultiple  = pregunta.tipo === 'multiple';
-  const ilustracion = ILUSTRACIONES[(preguntaNumero - 1) % ILUSTRACIONES.length];
+  const esLikert   = pregunta.tipo === 'likert';
+  const esMultiple = pregunta.tipo === 'multiple';
+  const { normal, verde } = splitTexto(pregunta.texto);
+  const opciones = esLikert ? LIKERT_OPTS : pregunta.opciones;
 
-  // Partir el texto en dos líneas: antes y después de la primera coma o "en"
-  const partes = partirTexto(pregunta.texto);
+  const catLabel = pregunta.categoria
+    ? pregunta.categoria.charAt(0).toUpperCase() + pregunta.categoria.slice(1)
+    : 'Intereses';
 
   return (
-    <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-
-      {/* ── Cabecera ── */}
-      <div className="px-8 pt-7 pb-5">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1 min-w-0">
-            {/* Badge */}
-            <span className="inline-block text-xs font-semibold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full mb-4">
-              Pregunta {preguntaNumero} de {totalPreguntas}
-            </span>
-
-            {/* Título bicolor — igual al mockup */}
-            <h2 className="text-xl font-bold leading-snug mb-1">
-              <span className="text-gray-800">{partes.normal}</span>
-              {partes.verde && (
-                <>
-                  {' '}
-                  <span className="text-emerald-500">{partes.verde}</span>
-                </>
-              )}
-            </h2>
-
-            <p className="text-xs text-gray-400 mt-2">
-              {esMultiple
-                ? 'Selecciona todas las que apliquen para ti.'
-                : 'Selecciona la opción que mejor te represente.'}
-            </p>
-          </div>
-
-
-          {/* Ilustración */}
-          <div className="w-20 h-20 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl flex items-center justify-center text-4xl flex-shrink-0 hidden sm:flex">
-            {ilustracion}
-          </div>
+    <div style={{
+      background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 24,
+      padding: '34px 40px', boxShadow: 'var(--shadow)',
+    }}>
+      {/* Category badge + question */}
+      <div style={{ textAlign: 'center' }}>
+        <span style={{
+          display: 'inline-flex', alignItems: 'center', gap: 7,
+          background: 'var(--primary-soft)', color: 'var(--primary-deep)',
+          fontSize: 12, fontWeight: 700, padding: '5px 13px', borderRadius: 999,
+        }}>
+          🎯 {catLabel}
+        </span>
+        <div className="font-display" style={{ fontWeight: 800, fontSize: 28, marginTop: 16, lineHeight: 1.15 }}>
+          {normal}{' '}
+          {verde && <span style={{ color: 'var(--primary)' }}>{verde}</span>}
+        </div>
+        <div style={{ color: 'var(--ink-soft)', fontSize: 13.5, marginTop: 8 }}>
+          {esMultiple
+            ? 'Selecciona todas las opciones que apliquen para ti.'
+            : 'No hay respuestas correctas. Elige la opción que mejor te represente.'}
         </div>
       </div>
 
-      {/* ── Opciones ── */}
-      <div className="px-8 pb-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {pregunta.opciones.map((opcion) => {
-            const activa = seleccionadas.includes(opcion.id);
+      {/* Options */}
+      {esLikert ? (
+        /* Likert horizontal scale */
+        <div style={{ position: 'relative', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10, marginTop: 30 }}>
+          {/* Track line */}
+          <div style={{
+            position: 'absolute', top: 23, left: '8%', right: '8%',
+            height: 3, background: 'var(--surface-2)', borderRadius: 999,
+          }} />
+          {opciones.map(o => {
+            const active = seleccionadas.includes(o.id);
             return (
-              <button
-                key={opcion.id}
-                onClick={() => onSeleccionar(opcion.id)}
-                className={`
-                  flex items-center gap-3 p-4 rounded-2xl border-2 text-left
-                  transition-all duration-150 group
-                  ${activa
-                    ? 'border-emerald-400 bg-emerald-50'
-                    : 'border-gray-100 bg-gray-50 hover:border-emerald-200 hover:bg-emerald-50/40'
-                  }
-                `}
-              >
-                {/* Ícono */}
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0 transition-colors ${activa ? 'bg-emerald-100' : 'bg-white'}`}>
-                  {opcion.icon ?? '•'}
-                </div>
-
-                {/* Texto */}
-                <span className={`text-sm leading-snug flex-1 ${activa ? 'text-emerald-800 font-medium' : 'text-gray-700'}`}>
-                  {opcion.label}
+              <div key={o.id} onClick={() => onSeleccionar(o.id)} style={{
+                flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
+                gap: 11, zIndex: 1, cursor: 'pointer',
+              }}>
+                <span style={{
+                  width: 46, height: 46, borderRadius: '50%',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 18, border: `3px solid ${active ? 'var(--primary)' : 'var(--line)'}`,
+                  background: active ? 'var(--primary)' : 'var(--surface)',
+                  transform: active ? 'scale(1.12)' : 'scale(1)',
+                  transition: 'all .2s',
+                }}>
+                  {o.mark}
                 </span>
-
-                {/* Checkbox */}
-                <div className={`
-                  w-5 h-5 rounded flex-shrink-0 flex items-center justify-center border-2 transition-all
-                  ${activa ? 'bg-emerald-500 border-emerald-500' : 'border-gray-300 group-hover:border-emerald-300'}
-                  ${esMultiple ? 'rounded-md' : 'rounded-full'}
-                `}>
-                  {activa && (
-                    <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 12 12">
-                      <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2"
-                            strokeLinecap="round" strokeLinejoin="round" />
+                <span style={{
+                  fontSize: 12, fontWeight: active ? 700 : 600, textAlign: 'center',
+                  maxWidth: 90, lineHeight: 1.25,
+                  color: active ? 'var(--primary-deep)' : 'var(--ink-soft)',
+                }}>
+                  {o.label}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        /* Multiple / single grid */
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 24 }}>
+          {opciones.map(o => {
+            const active = seleccionadas.includes(o.id);
+            return (
+              <button key={o.id} onClick={() => onSeleccionar(o.id)} style={{
+                display: 'flex', alignItems: 'center', gap: 12,
+                padding: '14px 16px', borderRadius: 18, textAlign: 'left',
+                border: `2px solid ${active ? 'var(--primary)' : 'var(--line)'}`,
+                background: active ? 'var(--primary-soft)' : 'var(--surface-2)',
+                cursor: 'pointer', transition: 'all .15s', fontFamily: 'inherit',
+              }}>
+                <div style={{
+                  width: 40, height: 40, borderRadius: 12, flexShrink: 0,
+                  background: active ? 'var(--primary-soft)' : 'var(--surface)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18,
+                }}>
+                  {o.icon ?? '•'}
+                </div>
+                <span style={{
+                  flex: 1, fontSize: 13.5, lineHeight: 1.3,
+                  color: active ? 'var(--primary-deep)' : 'var(--ink)',
+                  fontWeight: active ? 600 : 400,
+                }}>
+                  {o.label}
+                </span>
+                <div style={{
+                  width: 20, height: 20, flexShrink: 0, borderRadius: esMultiple ? 6 : '50%',
+                  border: `2px solid ${active ? 'var(--primary)' : 'var(--line)'}`,
+                  background: active ? 'var(--primary)' : 'transparent',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  {active && (
+                    <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+                      <path d="M2 6l3 3 5-5" stroke="var(--primary-ink)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   )}
                 </div>
@@ -133,73 +168,42 @@ export default function TestQuestion({
             );
           })}
         </div>
+      )}
 
-        {esMultiple && (
-          <p className="text-xs text-gray-400 mt-3 flex items-center gap-1">
-            <span>💡</span> Puedes seleccionar varias opciones
-          </p>
-        )}
-      </div>
+      {esMultiple && (
+        <div style={{ fontSize: 12, color: 'var(--ink-soft)', marginTop: 10 }}>
+          💡 Puedes seleccionar varias opciones
+        </div>
+      )}
 
-      {/* ── Navegación ── */}
-      <div className="px-8 pb-6 pt-2 flex items-center justify-between">
-        <button
-          onClick={onAnterior}
-          disabled={preguntaNumero === 1}
-          className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed px-4 py-2 rounded-xl hover:bg-gray-50 transition"
-        >
+      {/* Navigation */}
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        marginTop: 30, paddingTop: 20, borderTop: '1px solid var(--line)',
+      }}>
+        <button onClick={onAnterior} disabled={preguntaNumero === 1} style={{
+          fontSize: 14, fontWeight: 600, color: 'var(--ink-soft)',
+          background: 'none', border: 'none', cursor: preguntaNumero === 1 ? 'not-allowed' : 'pointer',
+          opacity: preguntaNumero === 1 ? .3 : 1, fontFamily: 'inherit',
+        }}>
           ← Anterior
         </button>
 
-        <button
-          onClick={onSiguiente}
-          disabled={!puedeAvanzar || guardando}
-          className={`
-            flex items-center gap-2 text-sm font-semibold px-7 py-3 rounded-2xl transition-all duration-200
-            ${puedeAvanzar && !guardando
-              ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm hover:shadow-md'
-              : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-            }
-          `}
-        >
+        <span style={{ fontSize: 12.5, color: 'var(--ink-soft)' }}>
+          Paso {Math.ceil((preguntaNumero / totalPreguntas) * 6)} de 6 · perfil en construcción 🌱
+        </span>
+
+        <button onClick={onSiguiente} disabled={!puedeAvanzar || guardando} style={{
+          background: puedeAvanzar ? 'var(--primary)' : 'var(--surface-2)',
+          color: puedeAvanzar ? 'var(--primary-ink)' : 'var(--ink-soft)',
+          padding: '12px 28px', borderRadius: 999, border: 'none',
+          fontWeight: 700, fontSize: 14, cursor: puedeAvanzar && !guardando ? 'pointer' : 'not-allowed',
+          boxShadow: puedeAvanzar ? '0 8px 20px var(--primary-glow)' : 'none',
+          fontFamily: 'inherit', transition: 'all .15s',
+        }}>
           {guardando ? 'Guardando...' : esUltima ? 'Ver resultados →' : 'Siguiente →'}
         </button>
       </div>
-
-      {/* ── Banner motivacional inferior ── */}
-      <div className="mx-8 mb-7 bg-amber-50 rounded-2xl p-4 flex items-start gap-3">
-        <span className="text-xl flex-shrink-0">⭐</span>
-        <div>
-          <p className="text-xs font-semibold text-amber-800">
-            Cada pregunta es una oportunidad para conocerte mejor.
-          </p>
-          <p className="text-xs text-amber-600 mt-0.5">
-            Tómate tu tiempo y elige lo que realmente te representa.
-          </p>
-        </div>
-      </div>
-
     </div>
   );
-}
-
-// ── Helpers ──────────────────────────────────────────────────
-// Divide el texto para que la segunda parte sea verde,
-// replicando el estilo del mockup ("¿Qué actividades... / en tu tiempo libre?")
-function partirTexto(texto) {
-  if (!texto) return { normal: '', verde: '' };
-
-  // Busca "en tu", "para tu", "sobre tu", "de tu" como punto de corte natural
-  const patron = /^(.+?)\s+(en tu\b.+|para tu\b.+|sobre tu\b.+|de tu\b.+|con tu\b.+)$/i;
-  const match  = texto.match(patron);
-
-  if (match) return { normal: match[1], verde: match[2] };
-
-  // Fallback: cortar por la mitad de palabras
-  const palabras = texto.split(' ');
-  const mitad    = Math.ceil(palabras.length / 2);
-  return {
-    normal: palabras.slice(0, mitad).join(' '),
-    verde:  palabras.slice(mitad).join(' '),
-  };
 }

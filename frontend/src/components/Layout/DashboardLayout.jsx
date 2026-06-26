@@ -2,9 +2,9 @@ import TopNavbar from './TopNavbar';
 
 export default function DashboardLayout({ children, profile, isDemoMode = false }) {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#0d110e]">
+    <div style={{ minHeight: '100vh', background: 'var(--bg)', color: 'var(--ink)' }}>
       <TopNavbar profile={profile} isDemoMode={isDemoMode} />
-      <main className="min-h-[calc(100vh-3.5rem)]">
+      <main style={{ minHeight: 'calc(100vh - 66px)' }}>
         {children}
       </main>
     </div>

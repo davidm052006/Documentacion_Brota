@@ -1,5 +1,9 @@
 # CLAUDE.md — Contexto del proyecto Brota
 
+## Manual de marca
+Ver **[BRAND.md](./BRAND.md)** para colores, tipografía, voz, tono, componentes UI y contexto del producto.
+Cualquier cambio visual debe respetar la paleta y los tokens definidos ahí.
+
 ## Stack
 - **Frontend**: React 19 + Vite 7 + TailwindCSS 4 (en `frontend/`)
 - **Backend**: Node.js + Express 5 CommonJS (en `backend/`, puerto **3001**)

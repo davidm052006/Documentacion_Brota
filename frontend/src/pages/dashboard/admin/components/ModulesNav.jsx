@@ -1,30 +1,38 @@
 const MODULES = [
-  { key: 'usuarios',       icon: '👥', label: 'Usuarios' },
-  { key: 'oportunidades',  icon: '💼', label: 'Oportunidades' },
-  { key: 'instituciones',  icon: '🏛️', label: 'Instituciones' },
-  { key: 'cuestionarios',  icon: '📋', label: 'Cuestionarios' },
-  { key: 'preguntas',      icon: '❓', label: 'Preguntas' },
-  { key: 'contactos',      icon: '📬', label: 'Solicitudes' },
-  { key: 'configuracion',  icon: '⚙️', label: 'Configuración' },
+  { key: 'usuarios',      icon: '👥', label: 'Usuarios'       },
+  { key: 'oportunidades', icon: '💼', label: 'Oportunidades'  },
+  { key: 'instituciones', icon: '🏛️', label: 'Instituciones'  },
+  { key: 'cuestionarios', icon: '📋', label: 'Cuestionarios'  },
+  { key: 'preguntas',     icon: '❓', label: 'Preguntas'      },
+  { key: 'contactos',     icon: '📬', label: 'Solicitudes'    },
+  { key: 'configuracion', icon: '⚙️', label: 'Configuración'  },
 ];
 
 export default function ModulesNav({ active, onChange }) {
   return (
-    <div className="flex gap-1 flex-wrap">
-      {MODULES.map(({ key, icon, label }) => (
-        <button
-          key={key}
-          onClick={() => onChange(key)}
-          className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all ${
-            active === key
-              ? 'bg-green-600 text-white shadow-sm'
-              : 'bg-white dark:bg-[#141a16] text-gray-500 dark:text-gray-400 border border-gray-100 dark:border-[#1e2a21] hover:bg-gray-50 dark:hover:bg-white/5 hover:text-gray-700 dark:hover:text-gray-200'
-          }`}
-        >
-          <span className="text-sm">{icon}</span>
-          <span>{label}</span>
-        </button>
-      ))}
+    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+      {MODULES.map(({ key, icon, label }) => {
+        const isActive = active === key;
+        return (
+          <button
+            key={key}
+            onClick={() => onChange(key)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 7,
+              padding: '10px 16px', borderRadius: 11, fontSize: 13,
+              fontWeight: isActive ? 700 : 600, cursor: 'pointer',
+              border: isActive ? 'none' : '1px solid var(--line)',
+              background: isActive ? 'var(--primary)' : 'var(--surface)',
+              color: isActive ? 'var(--primary-ink)' : 'var(--ink-soft)',
+              fontFamily: 'inherit', whiteSpace: 'nowrap',
+              transition: 'all .15s',
+            }}
+          >
+            <span>{icon}</span>
+            <span>{label}</span>
+          </button>
+        );
+      })}
     </div>
   );
 }

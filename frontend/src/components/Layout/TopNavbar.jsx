@@ -4,20 +4,28 @@ import { useDarkMode } from '../../hooks/useDarkMode';
 import { handleLogout } from '../../utils/auth';
 
 const NAV_ITEMS = [
-  { to: '/dashboard',              label: 'Inicio',         end: true },
-  { to: '/dashboard/profesiones',  label: 'Explorar' },
-  { to: '/dashboard/test',         label: 'Test vocacional' },
-  { to: '/dashboard/rutas',        label: 'Rutas' },
-  { to: '/dashboard/recursos',     label: 'Recursos' },
-  { to: '/dashboard/comunidad',    label: 'Comunidad' },
+  { to: '/dashboard',             label: 'Inicio',         end: true },
+  { to: '/dashboard/profesiones', label: 'Explorar' },
+  { to: '/dashboard/test',        label: 'Test vocacional' },
+  { to: '/dashboard/rutas',       label: 'Rutas' },
+  { to: '/dashboard/recursos',    label: 'Recursos' },
+  { to: '/dashboard/comunidad',   label: 'Comunidad' },
 ];
 
 function Avatar({ nombre }) {
   const initial = (nombre || 'U').charAt(0).toUpperCase();
   return (
-    <div className="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center text-white text-sm font-bold shrink-0">
+    <span
+      style={{
+        width: 36, height: 36, borderRadius: '50%',
+        background: 'var(--primary)', color: 'var(--primary-ink)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 800, fontSize: 14,
+        flexShrink: 0,
+      }}
+    >
       {initial}
-    </div>
+    </span>
   );
 }
 
@@ -27,93 +35,136 @@ export default function TopNavbar({ profile, isDemoMode = false }) {
   const navigate = useNavigate();
 
   const nombre = profile?.nombre || profile?.primer_nombre || '';
+  const rol = isAdmin ? 'Administrador' : 'Estudiante';
+
+  const iconBtn = {
+    width: 38, height: 38, borderRadius: 11,
+    background: 'var(--surface-2)', border: 'none', cursor: 'pointer',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    fontSize: 15, color: 'var(--ink-soft)', transition: 'opacity .15s',
+  };
 
   return (
-    <header className="sticky top-0 z-30 bg-white dark:bg-[#111318] border-b border-gray-100 dark:border-[#1e2520]">
-      <div className="flex items-center h-14 px-5 gap-4">
+    <header style={{
+      position: 'sticky', top: 0, zIndex: 30,
+      background: 'var(--surface)', borderBottom: '1px solid var(--line)',
+      height: 66, display: 'flex', alignItems: 'center',
+      padding: '0 28px', gap: 22, flexShrink: 0,
+    }}>
 
-        {/* Logo */}
-        <NavLink to="/dashboard" className="flex items-center gap-2 shrink-0 mr-2">
-          <img src="/logo-brota.png" alt="Brota" className="h-7 w-auto" />
-          <span className="text-base font-bold text-green-800 dark:text-green-300 tracking-tight">BROTA</span>
-        </NavLink>
+      {/* Logo */}
+      <NavLink
+        to="/dashboard"
+        style={{ display: 'flex', alignItems: 'center', gap: 9, flexShrink: 0, textDecoration: 'none' }}
+      >
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <path d="M16 31 V15" stroke="var(--primary)" strokeWidth="2.6" strokeLinecap="round"/>
+          <path d="M16 18 C16 11 9 8.5 4.5 8.5 C4.5 16 10 19 16 19 Z" fill="var(--primary)"/>
+          <path d="M16 16 C16 8.5 23.5 5.5 28.5 6.5 C27.5 14 22 17 16 17 Z" fill="var(--primary)" opacity=".8"/>
+        </svg>
+        <span style={{
+          fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 800,
+          fontSize: 19, color: 'var(--ink)', letterSpacing: '-0.5px',
+        }}>BROTA</span>
+      </NavLink>
 
-        {/* Nav tabs */}
-        <nav className="flex items-center gap-0.5 flex-1 overflow-x-auto scrollbar-none">
-          {NAV_ITEMS.map(({ to, label, end }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={end}
-              className={({ isActive }) =>
-                `px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
-                  isActive
-                    ? 'bg-green-50 dark:bg-green-950/50 text-green-700 dark:text-green-400'
-                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/5'
-                }`
-              }
-            >
-              {label}
-            </NavLink>
-          ))}
-        </nav>
-
-        {/* Acciones derecha */}
-        <div className="flex items-center gap-2 shrink-0">
-          {!adminLoading && isAdmin && (
-            <NavLink
-              to="/dashboard/admin"
-              className={({ isActive }) =>
-                `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                  isActive
-                    ? 'bg-green-600 text-white'
-                    : 'bg-green-600 text-white hover:bg-green-700'
-                }`
-              }
-            >
-              🛡️ Panel Admin
-            </NavLink>
-          )}
-
-          <button
-            onClick={() => navigate('/dashboard/favoritos')}
-            title="Favoritos"
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-yellow-500 hover:bg-yellow-50 dark:hover:bg-yellow-950/20 transition-colors text-sm"
+      {/* Nav tabs */}
+      <nav style={{ display: 'flex', alignItems: 'center', gap: 4, flex: 1, overflowX: 'auto' }} className="scrollbar-none">
+        {NAV_ITEMS.map(({ to, label, end }) => (
+          <NavLink
+            key={to}
+            to={to}
+            end={end}
+            style={({ isActive }) => ({
+              padding: '9px 15px',
+              borderRadius: 11,
+              fontSize: 13.5,
+              fontWeight: isActive ? 700 : 600,
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              textDecoration: 'none',
+              transition: 'background .15s',
+              background: isActive ? 'var(--primary)' : 'transparent',
+              color: isActive ? 'var(--primary-ink)' : 'var(--ink-soft)',
+            })}
           >
-            ⭐
-          </button>
+            {label}
+          </NavLink>
+        ))}
+      </nav>
 
-          <button
-            onClick={toggleDark}
-            title={dark ? 'Modo claro' : 'Modo oscuro'}
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-sm"
+      {/* Acciones derecha */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+        {!adminLoading && isAdmin && (
+          <NavLink
+            to="/dashboard/admin"
+            style={({ isActive }) => ({
+              display: 'flex', alignItems: 'center', gap: 6,
+              padding: '9px 15px', borderRadius: 11,
+              fontSize: 13, fontWeight: 700,
+              background: isActive ? 'var(--primary-deep)' : 'var(--primary)',
+              color: 'var(--primary-ink)',
+              textDecoration: 'none', whiteSpace: 'nowrap',
+            })}
           >
-            {dark ? '☀️' : '🌙'}
-          </button>
+            🛡️ Panel Admin
+          </NavLink>
+        )}
 
-          <button
-            onClick={() => navigate('/dashboard/ajustes')}
-            title="Mi perfil"
-            className="flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
-          >
-            <Avatar nombre={nombre} />
-            {nombre && (
-              <span className="text-xs font-medium text-gray-700 dark:text-gray-300 hidden lg:inline max-w-[80px] truncate">
-                {nombre}
-              </span>
-            )}
-          </button>
+        <button
+          onClick={() => navigate('/dashboard/favoritos')}
+          title="Favoritos"
+          style={iconBtn}
+        >⭐</button>
 
+        <div style={{ position: 'relative' }}>
           <button
-            onClick={() => handleLogout(isDemoMode)}
-            title="Cerrar sesión"
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors text-sm"
-          >
-            ↩
-          </button>
+            onClick={() => navigate('/dashboard/mensajes')}
+            title="Mensajes"
+            style={iconBtn}
+          >💬</button>
+          <span style={{
+            position: 'absolute', top: 6, right: 6,
+            width: 7, height: 7, borderRadius: '50%',
+            background: 'var(--accent)',
+          }} />
         </div>
 
+        <button
+          onClick={toggleDark}
+          title={dark ? 'Modo claro' : 'Modo oscuro'}
+          style={{ ...iconBtn, background: 'var(--accent-soft)', color: 'var(--accent)' }}
+        >
+          {dark ? '☀️' : '🌙'}
+        </button>
+
+        <div style={{ width: 1, height: 26, background: 'var(--line)', margin: '0 2px' }} />
+
+        <button
+          onClick={() => navigate('/dashboard/ajustes')}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 9,
+            cursor: 'pointer', background: 'none', border: 'none', padding: '4px 6px',
+            borderRadius: 10,
+          }}
+          title="Mi perfil"
+        >
+          <Avatar nombre={nombre} />
+          <div style={{ lineHeight: 1.15, textAlign: 'left' }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)', whiteSpace: 'nowrap' }}>
+              {nombre || 'Mi perfil'}
+            </div>
+            <div style={{ fontSize: 10.5, color: 'var(--ink-soft)' }}>{rol}</div>
+          </div>
+        </button>
+
+        <button
+          onClick={() => handleLogout(isDemoMode)}
+          title="Cerrar sesión"
+          style={{ ...iconBtn, fontSize: 16 }}
+        >↩</button>
       </div>
+
     </header>
   );
 }

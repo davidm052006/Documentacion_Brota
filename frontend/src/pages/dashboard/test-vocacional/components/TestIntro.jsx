@@ -7,96 +7,90 @@ export default function TestIntro({
   tieneBorrador  = false,
   tieneResultado = false,
 }) {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-[72vh] px-4">
-      <div className="bg-white dark:bg-[#1a2e1f] rounded-3xl shadow-sm border border-gray-100 dark:border-[#334155] p-10 max-w-lg w-full text-center">
+  const btnPrimary = {
+    width: '100%', padding: '14px', borderRadius: 16, border: 'none',
+    background: 'var(--primary)', color: 'var(--primary-ink)',
+    fontWeight: 700, fontSize: 14, cursor: 'pointer',
+    boxShadow: '0 8px 20px var(--primary-glow)', fontFamily: 'inherit',
+  };
+  const btnOutline = {
+    width: '100%', padding: '12px', borderRadius: 16,
+    border: '1px solid var(--line)', background: 'var(--surface-2)',
+    color: 'var(--ink-soft)', fontWeight: 600, fontSize: 13,
+    cursor: 'pointer', fontFamily: 'inherit',
+  };
 
-        <div className="w-20 h-20 bg-emerald-100 dark:bg-[#064e3b] rounded-full flex items-center justify-center text-4xl mx-auto mb-6">
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '72vh', padding: '24px' }}>
+      <div style={{
+        background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 28,
+        boxShadow: 'var(--shadow)', padding: '40px 36px', maxWidth: 480, width: '100%', textAlign: 'center',
+      }}>
+        {/* Icon */}
+        <div style={{
+          width: 80, height: 80, borderRadius: '50%', background: 'var(--primary-soft)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 38, margin: '0 auto 24px',
+        }}>
           🌱
         </div>
 
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">
+        <div className="font-display" style={{ fontWeight: 800, fontSize: 24, marginBottom: 8 }}>
           Test Vocacional
-        </h1>
-        <p className="text-gray-500 dark:text-gray-400 text-sm mb-8 leading-relaxed">
+        </div>
+        <p style={{ color: 'var(--ink-soft)', fontSize: 13.5, marginBottom: 28, lineHeight: 1.55 }}>
           No hay respuestas correctas o incorrectas.<br />
           Elige todo lo que realmente te represente.
         </p>
 
-        <div className="grid grid-cols-3 gap-3 mb-8">
+        {/* Stats */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10, marginBottom: 28 }}>
           {[
             { icon: '❓', label: `${totalPreguntas || 30} preguntas` },
             { icon: '⏱️', label: '10–15 min' },
             { icon: '🎯', label: 'Perfil único' },
           ].map(({ icon, label }) => (
-            <div key={label} className="bg-gray-50 dark:bg-[#111c14] rounded-2xl p-3">
-              <div className="text-xl mb-1">{icon}</div>
-              <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">{label}</p>
+            <div key={label} style={{
+              background: 'var(--surface-2)', borderRadius: 16, padding: '12px 8px', textAlign: 'center',
+            }}>
+              <div style={{ fontSize: 20, marginBottom: 4 }}>{icon}</div>
+              <div style={{ fontSize: 11.5, fontWeight: 600, color: 'var(--ink-soft)' }}>{label}</div>
             </div>
           ))}
         </div>
 
-        <p className="text-xs text-gray-400 italic mb-8">
+        {/* Quote */}
+        <div style={{
+          background: 'var(--primary-soft)', borderRadius: 14, padding: '14px 16px',
+          marginBottom: 26, fontSize: 13, color: 'var(--primary-deep)',
+          fontStyle: 'italic', lineHeight: 1.45,
+        }}>
           "Tu camino comienza con un paso. Cada respuesta te acerca a descubrir tu mejor versión."
-        </p>
+        </div>
 
-        {/* ── Botones según estado ── */}
-
-        {/* Tiene resultado previo en BD */}
+        {/* Botones según estado */}
         {tieneResultado && (
-          <div className="flex flex-col gap-3">
-            <button
-              onClick={onVerResultado}
-              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-4 rounded-2xl transition-all text-sm shadow-sm"
-            >
-              ✓ Ver mi resultado anterior
-            </button>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <button onClick={onVerResultado} style={btnPrimary}>✓ Ver mi resultado anterior</button>
             {tieneBorrador && (
-              <button
-                onClick={onContinuar}
-                className="w-full border border-emerald-300 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-[#052e16] font-medium py-3 rounded-2xl text-sm transition"
-              >
-                ▶ Continuar test en progreso
-              </button>
+              <button onClick={onContinuar} style={btnOutline}>▶ Continuar test en progreso</button>
             )}
-            <button
-              onClick={onStart}
-              className="w-full border border-gray-200 dark:border-[#334155] text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-[#243d29] font-medium py-3 rounded-2xl text-sm transition"
-            >
-              ↺ Reiniciar test
-            </button>
+            <button onClick={onStart} style={btnOutline}>↺ Reiniciar test</button>
           </div>
         )}
 
-        {/* Tiene borrador pero no resultado previo */}
         {tieneBorrador && !tieneResultado && (
-          <div className="flex flex-col gap-3">
-            <button
-              onClick={onContinuar}
-              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-4 rounded-2xl transition-all text-sm shadow-sm"
-            >
-              ▶ Continuar donde lo dejé
-            </button>
-            <button
-              onClick={onStart}
-              className="w-full border border-gray-200 dark:border-[#334155] text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-[#243d29] font-medium py-3 rounded-2xl text-sm transition"
-            >
-              ↺ Empezar de nuevo
-            </button>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <button onClick={onContinuar} style={btnPrimary}>▶ Continuar donde lo dejé</button>
+            <button onClick={onStart} style={btnOutline}>↺ Empezar de nuevo</button>
           </div>
         )}
 
-        {/* Test nuevo */}
         {!tieneBorrador && !tieneResultado && (
-          <button
-            onClick={onStart}
-            disabled={loading}
-            className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-300 text-white font-semibold py-4 rounded-2xl transition-all duration-200 text-sm shadow-sm hover:shadow-md"
-          >
+          <button onClick={onStart} disabled={loading} style={{ ...btnPrimary, opacity: loading ? .6 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}>
             {loading ? 'Cargando...' : 'Comenzar test →'}
           </button>
         )}
-
       </div>
     </div>
   );

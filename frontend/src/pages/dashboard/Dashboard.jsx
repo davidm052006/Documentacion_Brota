@@ -4,103 +4,130 @@ import { obtenerPerfil } from "../../services/perfilService";
 import DashboardLayout from "../../components/Layout/DashboardLayout";
 import ContinueSection from "./components/ContinueSection";
 
-// ─── Hero banner de bienvenida ────────────────────────────────────────────────
+const FRASE_DEL_DIA = "No se trata de tener todas las respuestas, sino la curiosidad de descubrirlas.";
+
+// ─── Hero banner ─────────────────────────────────────────────────────────────
 
 function HeroBanner({ nombre, estado }) {
   const navigate = useNavigate();
-
   const testCompletado = estado === 'completado';
 
+  const hoy = new Date();
+  const fecha = hoy.toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' });
+  const fechaCap = fecha.charAt(0).toUpperCase() + fecha.slice(1);
+
   return (
-    <div className="bg-gradient-to-r from-green-600 to-green-700 dark:from-green-700 dark:to-green-800 rounded-2xl p-6 text-white relative overflow-hidden">
-      <div className="relative z-10">
-        <h1 className="text-2xl font-bold mb-1">
-          ¡Hola, {nombre || 'estudiante'}! 🌱
-        </h1>
-        <p className="text-green-100 text-sm mb-4">
-          Tu orientación vocacional está en marcha.
-        </p>
-        <div className="flex flex-wrap items-center gap-3">
-          {testCompletado ? (
-            <span className="inline-flex items-center gap-1.5 bg-white/20 px-3 py-1.5 rounded-lg text-xs font-semibold">
-              ✓ Test completado 100%
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-1.5 bg-white/20 px-3 py-1.5 rounded-lg text-xs font-semibold">
-              📝 Test pendiente
-            </span>
-          )}
-          <button
-            onClick={() => navigate('/dashboard/test')}
-            className="inline-flex items-center gap-1.5 bg-white text-green-700 hover:bg-green-50 px-4 py-1.5 rounded-lg text-xs font-bold transition-colors"
-          >
-            {testCompletado ? 'Ver resultado →' : 'Realizar test →'}
-          </button>
+    <div style={{
+      position: 'relative', overflow: 'hidden', borderRadius: 24,
+      padding: '26px 28px',
+      background: 'linear-gradient(120deg, var(--primary-deep), var(--primary))',
+      color: '#fff',
+      boxShadow: '0 12px 30px var(--primary-glow)',
+    }}>
+      <div style={{ fontSize: 13, fontWeight: 600, opacity: .9 }}>
+        {fechaCap} · ¡A crecer! 🌱
+      </div>
+      <div className="font-display" style={{ fontWeight: 800, fontSize: 30, marginTop: 6, lineHeight: 1.05 }}>
+        Hola, {nombre || 'estudiante'} 👋
+      </div>
+      <div style={{ fontSize: 14, opacity: .92, marginTop: 8, maxWidth: 440 }}>
+        Vas por buen camino. {testCompletado ? 'Tu resultado vocacional está listo.' : 'Retoma tu test vocacional y descubre tu próximo paso.'}
+      </div>
+
+      {/* Card embebida del test */}
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 16, marginTop: 20,
+        background: 'rgba(255,255,255,.14)', border: '1px solid rgba(255,255,255,.2)',
+        borderRadius: 16, padding: '14px 16px', maxWidth: 520,
+      }}>
+        <div style={{
+          width: 46, height: 46, borderRadius: 13,
+          background: 'rgba(255,255,255,.2)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 24, flexShrink: 0,
+        }}>🎯</div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontWeight: 700, fontSize: 14 }}>
+            Test vocacional · {testCompletado ? '100% completado' : 'Pendiente'}
+          </div>
+          <div style={{
+            height: 7, background: 'rgba(255,255,255,.25)',
+            borderRadius: 999, marginTop: 7, overflow: 'hidden',
+          }}>
+            <div style={{
+              width: testCompletado ? '100%' : '0%',
+              height: '100%', background: '#fff', borderRadius: 999,
+            }} />
+          </div>
         </div>
+        <button
+          onClick={() => navigate('/dashboard/test')}
+          style={{
+            background: '#fff', color: 'var(--primary-deep)',
+            fontWeight: 800, fontSize: 13,
+            padding: '9px 16px', borderRadius: 999,
+            border: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
+          }}
+        >
+          {testCompletado ? 'Ver resultado →' : 'Realizar test →'}
+        </button>
       </div>
-      <div className="absolute right-4 bottom-0 text-[80px] opacity-10 select-none pointer-events-none leading-none">
-        🌿
-      </div>
+
+      {/* Decorativo */}
+      <svg width="150" height="150" viewBox="0 0 32 32" fill="none"
+        style={{ position: 'absolute', right: -12, bottom: -26, opacity: .16, pointerEvents: 'none' }}>
+        <path d="M16 31 V13" stroke="#fff" strokeWidth="2.6"/>
+        <path d="M16 17 C16 9 8 6 3 6.5 C3 15 9 18 16 18 Z" fill="#fff"/>
+        <path d="M16 15 C16 7 24 4 29 5 C28 14 23 17 16 17 Z" fill="#fff"/>
+      </svg>
     </div>
   );
 }
 
-// ─── Acciones rápidas ─────────────────────────────────────────────────────────
+// ─── Quick actions ────────────────────────────────────────────────────────────
 
 const ACTIONS = [
-  {
-    icon: '🧭',
-    title: 'Explorar profesiones',
-    desc: 'Descubre carreras que se alinean contigo',
-    to: '/dashboard/profesiones',
-    bg: 'bg-green-50 dark:bg-green-950/30',
-    iconBg: 'bg-green-100 dark:bg-green-900/50',
-  },
-  {
-    icon: '✅',
-    title: 'Realizar test vocacional',
-    desc: 'Conoce tus intereses y fortalezas',
-    to: '/dashboard/test',
-    bg: 'bg-teal-50 dark:bg-teal-950/30',
-    iconBg: 'bg-teal-100 dark:bg-teal-900/50',
-  },
-  {
-    icon: '🗺️',
-    title: 'Rutas formativas',
-    desc: 'Encuentra caminos educativos para tu futuro',
-    to: '/dashboard/rutas',
-    bg: 'bg-amber-50 dark:bg-amber-950/30',
-    iconBg: 'bg-amber-100 dark:bg-amber-900/50',
-  },
-  {
-    icon: '📖',
-    title: 'Explorar recursos',
-    desc: 'Guías, videos y herramientas',
-    to: '/dashboard/recursos',
-    bg: 'bg-blue-50 dark:bg-blue-950/30',
-    iconBg: 'bg-blue-100 dark:bg-blue-900/50',
-  },
+  { icon: '🧭', title: 'Explorar profesiones',   desc: 'Carreras que se alinean contigo.',      to: '/dashboard/profesiones', tint: 'var(--primary-soft)' },
+  { icon: '✅', title: 'Realizar test vocacional', desc: 'Conoce tus intereses y fortalezas.',   to: '/dashboard/test',        tint: 'var(--accent-soft)'  },
+  { icon: '🗺️', title: 'Rutas formativas',        desc: 'Caminos educativos para tu futuro.',   to: '/dashboard/rutas',       tint: 'var(--primary-soft)' },
+  { icon: '📚', title: 'Explorar recursos',        desc: 'Guías, becas y herramientas.',         to: '/dashboard/recursos',    tint: 'var(--accent-soft)'  },
 ];
 
 function QuickActions() {
   const navigate = useNavigate();
+
   return (
     <div>
-      <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+      <div className="font-display" style={{ fontWeight: 800, fontSize: 18, marginBottom: 13 }}>
         ¿Qué te gustaría hacer hoy?
-      </h2>
-      <div className="grid grid-cols-2 gap-3">
-        {ACTIONS.map(({ icon, title, desc, to, bg, iconBg }) => (
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+        {ACTIONS.map(({ icon, title, desc, to, tint }) => (
           <button
             key={to}
             onClick={() => navigate(to)}
-            className={`${bg} rounded-2xl p-4 text-left border border-transparent hover:border-green-200 dark:hover:border-green-800 hover:shadow-sm transition-all group`}
+            style={{
+              background: 'var(--surface)', border: '1px solid var(--line)',
+              borderRadius: 18, padding: 18,
+              boxShadow: 'var(--shadow)',
+              display: 'flex', alignItems: 'center', gap: 15,
+              cursor: 'pointer', textAlign: 'left',
+              transition: 'transform .18s, box-shadow .18s',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 22px var(--primary-glow)'; }}
+            onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = 'var(--shadow)'; }}
           >
-            <div className={`${iconBg} w-9 h-9 rounded-xl flex items-center justify-center text-lg mb-3`}>
-              {icon}
+            <div style={{
+              width: 48, height: 48, borderRadius: 14,
+              background: tint,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 22, flexShrink: 0,
+            }}>{icon}</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: 700, fontSize: 14.5 }}>{title}</div>
+              <div style={{ fontSize: 12, color: 'var(--ink-soft)', lineHeight: 1.35, marginTop: 2 }}>{desc}</div>
             </div>
-            <p className="text-sm font-semibold text-gray-800 dark:text-gray-100 leading-snug mb-1">{title}</p>
-            <p className="text-xs text-gray-400 dark:text-gray-500 leading-snug">{desc}</p>
+            <div style={{ color: 'var(--primary)', fontWeight: 800, fontSize: 18 }}>→</div>
           </button>
         ))}
       </div>
@@ -117,78 +144,112 @@ function ProfileSidebar({ profile, userEmail, isAdmin }) {
                  [profile?.primer_nombre, profile?.primer_apellido].filter(Boolean).join(' ') || '—';
   const initial = nombre.charAt(0).toUpperCase();
 
-  const diasRacha = 3;
+  const diasRacha = 3; // TODO: conectar con retos_completados
+
+  const card = {
+    background: 'var(--surface)', border: '1px solid var(--line)',
+    borderRadius: 20, padding: 20, boxShadow: 'var(--shadow)',
+  };
 
   return (
-    <aside className="w-64 shrink-0 flex flex-col gap-4">
+    <aside style={{ width: 300, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 16 }}>
 
       {/* Tarjeta de perfil */}
-      <div className="bg-white dark:bg-[#141a16] rounded-2xl border border-gray-100 dark:border-[#1e2a21] p-5">
-
-        {/* Avatar + nombre */}
-        <div className="flex flex-col items-center text-center mb-4">
-          <div className="w-14 h-14 rounded-full bg-green-600 flex items-center justify-center text-white text-xl font-bold mb-2">
-            {initial}
+      <div style={card}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 13 }}>
+          <span style={{
+            width: 52, height: 52, borderRadius: '50%',
+            background: 'var(--primary)', color: 'var(--primary-ink)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 800, fontSize: 20,
+          }}>{initial}</span>
+          <div>
+            <div style={{ fontWeight: 800, fontSize: 16 }}>{nombre}</div>
+            <div style={{ fontSize: 12, color: 'var(--ink-soft)' }}>
+              {userEmail ? userEmail.slice(0, 20) + (userEmail.length > 20 ? '…' : '') : ''}
+            </div>
           </div>
-          <p className="font-semibold text-gray-900 dark:text-white text-sm">{nombre}</p>
+        </div>
+
+        {/* Barra de progreso perfil */}
+        <div style={{
+          height: 7, background: 'var(--surface-2)',
+          borderRadius: 999, margin: '16px 0 7px', overflow: 'hidden',
+        }}>
+          <div style={{
+            width: '45%', height: '100%',
+            background: 'linear-gradient(90deg, var(--primary), var(--accent))',
+            borderRadius: 999,
+          }} />
+        </div>
+        <div style={{ fontSize: 11.5, color: 'var(--ink-soft)' }}>
+          Perfil 45% completo
           {isAdmin && (
-            <span className="mt-1 inline-block text-[10px] font-semibold bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400 px-2 py-0.5 rounded-full">
-              admin
-            </span>
-          )}
-          {userEmail && (
-            <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1 truncate max-w-full">{userEmail}</p>
+            <span style={{
+              marginLeft: 8,
+              background: 'var(--primary-soft)', color: 'var(--primary-deep)',
+              fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 999,
+            }}>Admin</span>
           )}
         </div>
 
         <button
           onClick={() => navigate('/dashboard/ajustes')}
-          className="w-full py-2 rounded-xl bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-xs font-semibold text-gray-700 dark:text-gray-300 transition-colors"
+          style={{
+            marginTop: 14, width: '100%',
+            background: 'var(--primary-soft)', color: 'var(--primary-deep)',
+            textAlign: 'center', fontWeight: 700, fontSize: 13,
+            padding: 11, borderRadius: 12, border: 'none', cursor: 'pointer',
+          }}
         >
-          Completar perfil
+          Completar perfil →
         </button>
-
-        {/* Info del perfil */}
-        <div className="mt-4 flex flex-col gap-2">
-          {[
-            { label: 'Ciudad',   value: profile?.ciudad },
-            { label: 'Nivel',    value: profile?.nivel_educativo },
-            { label: 'Grado',    value: profile?.grado ? `${profile.grado}°` : null },
-          ].filter(f => f.value).map(({ label, value }) => (
-            <div key={label} className="flex justify-between items-center">
-              <span className="text-[11px] text-gray-400 dark:text-gray-500">{label}</span>
-              <span className="text-[11px] font-medium text-gray-700 dark:text-gray-300">{value}</span>
-            </div>
-          ))}
-        </div>
       </div>
 
       {/* Racha */}
-      <div className="bg-white dark:bg-[#141a16] rounded-2xl border border-gray-100 dark:border-[#1e2a21] p-5">
-        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-          Racha de aprendizaje
-        </p>
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-2xl font-bold text-green-600 dark:text-green-400">{diasRacha}</span>
-          <span className="text-sm text-gray-500 dark:text-gray-400">días</span>
-        </div>
-        <div className="flex gap-1.5">
-          {Array.from({ length: 7 }).map((_, i) => (
-            <div
-              key={i}
-              className={`w-6 h-6 rounded-full text-center leading-6 text-[10px] font-semibold ${
-                i < diasRacha
-                  ? 'bg-green-500 text-white'
-                  : 'bg-gray-100 dark:bg-white/5 text-gray-300 dark:text-gray-600'
-              }`}
-            >
-              {['L','M','X','J','V','S','D'][i]}
+      <div style={{
+        background: 'linear-gradient(135deg, var(--accent), var(--primary))',
+        borderRadius: 20, padding: 20, color: '#fff',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span style={{ fontSize: 24 }}>🔥</span>
+          <div>
+            <div className="font-display" style={{ fontWeight: 800, fontSize: 22, lineHeight: 1 }}>
+              {diasRacha} días
             </div>
+            <div style={{ fontSize: 12, opacity: .92 }}>de racha activa</div>
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 6, marginTop: 14 }}>
+          {Array.from({ length: 7 }).map((_, i) => (
+            <span key={i} style={{
+              flex: 1, height: 30, borderRadius: 8,
+              background: i < diasRacha ? 'rgba(255,255,255,.85)' : 'rgba(255,255,255,.3)',
+              border: i < diasRacha ? 'none' : '1.5px dashed rgba(255,255,255,.6)',
+            }} />
           ))}
         </div>
-        <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-3">
-          ¡Sigue así! No se te olvide explorar hoy.
-        </p>
+        <div style={{ fontSize: 11.5, opacity: .92, marginTop: 10 }}>
+          ¡Vuelve mañana para no perder tu racha!
+        </div>
+      </div>
+
+      {/* Frase del día */}
+      <div style={{
+        flex: 1, background: 'var(--primary-soft)',
+        border: '1px solid var(--line)', borderRadius: 20, padding: 22,
+        display: 'flex', flexDirection: 'column', justifyContent: 'center',
+      }}>
+        <div style={{ fontSize: 30, color: 'var(--primary)', lineHeight: 1 }}>"</div>
+        <div className="font-display" style={{
+          fontStyle: 'italic', fontWeight: 700, fontSize: 15,
+          color: 'var(--ink)', lineHeight: 1.4, marginTop: -4,
+        }}>
+          {FRASE_DEL_DIA}
+        </div>
+        <div style={{ fontSize: 12, color: 'var(--ink-soft)', marginTop: 12 }}>
+          Tu frase del día 🌱
+        </div>
       </div>
 
     </aside>
@@ -225,8 +286,10 @@ export default function Dashboard({ user, isDemoMode = false }) {
   if (loadingProfile) {
     return (
       <DashboardLayout isDemoMode={isDemoMode}>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <p className="text-gray-400 text-sm animate-pulse">Cargando tu perfil…</p>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
+          <p style={{ color: 'var(--ink-soft)', fontSize: 14 }} className="animate-pulse">
+            Cargando tu perfil…
+          </p>
         </div>
       </DashboardLayout>
     );
@@ -235,13 +298,17 @@ export default function Dashboard({ user, isDemoMode = false }) {
   if (error) {
     return (
       <DashboardLayout isDemoMode={isDemoMode}>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-center">
-            <p className="text-red-500 font-semibold mb-2">Ocurrió un error</p>
-            <p className="text-gray-500 text-sm mb-4">{error}</p>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
+          <div style={{ textAlign: 'center' }}>
+            <p style={{ color: 'var(--accent)', fontWeight: 600, marginBottom: 8 }}>Ocurrió un error</p>
+            <p style={{ color: 'var(--ink-soft)', fontSize: 14, marginBottom: 16 }}>{error}</p>
             <button
               onClick={() => navigate('/')}
-              className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-600 transition"
+              style={{
+                background: 'var(--accent)', color: '#fff',
+                padding: '8px 16px', borderRadius: 999, border: 'none', cursor: 'pointer',
+                fontWeight: 600, fontSize: 14,
+              }}
             >
               Volver al inicio
             </button>
@@ -255,16 +322,20 @@ export default function Dashboard({ user, isDemoMode = false }) {
 
   return (
     <DashboardLayout profile={profileFull} isDemoMode={isDemoMode}>
-      <div className="max-w-6xl mx-auto px-5 py-6 flex gap-6">
+      <div style={{
+        maxWidth: 1180, margin: '0 auto',
+        padding: '24px 28px',
+        display: 'grid', gridTemplateColumns: '1fr 300px', gap: 20,
+      }}>
 
-        {/* ── Contenido principal ── */}
-        <div className="flex-1 min-w-0 flex flex-col gap-5">
+        {/* Columna principal */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 18, minWidth: 0 }}>
           <HeroBanner nombre={profile?.nombre || profile?.primer_nombre} estado={null} />
           <QuickActions />
           <ContinueSection perfilUsuarioId={profile?.id} userId={user?.id} />
         </div>
 
-        {/* ── Sidebar derecho ── */}
+        {/* Rail derecho */}
         <ProfileSidebar
           profile={profile}
           userEmail={user?.email}
