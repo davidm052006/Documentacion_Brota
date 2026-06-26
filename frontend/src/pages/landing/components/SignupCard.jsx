@@ -134,16 +134,34 @@ function Button({ children, variant, className, disabled, type }) {
 }
 
 function SignupCard({
-  primerNombre = '', primerApellido = '',
-  email = '', password = '', confirmPassword = '',
-  nivelEducativo = '', grado = '', edad = '', ciudad = '', telefono = '',
-  validationErrors = {}, error, loading,
-  onPrimerNombreChange, onPrimerApellidoChange,
-  onEmailChange, onPasswordChange, onConfirmPasswordChange,
-  onNivelEducativoChange, onGradoChange, onEdadChange,
-  onCiudadChange, onTelefonoChange,
-  onSubmit, onSwitchToLogin,
-}) {
+  primerNombre = '',
+  primerApellido = '',
+  email = '',
+  password = '',
+  confirmPassword = '',
+  nivelEducativo = '',
+  grado = '',
+  edad = '',
+  ciudad = '',
+  telefono = '',
+  termsAccepted = '',
+  validationErrors = {},
+  error,
+  loading,
+  onPrimerNombreChange,
+  onPrimerApellidoChange,
+  onEmailChange,
+  onPasswordChange,
+  onConfirmPasswordChange,
+  onNivelEducativoChange,
+  onGradoChange,
+  onEdadChange,
+  onCiudadChange,
+  onTelefonoChange,
+  onTermsAcceptedChange,
+  onSubmit,
+  onSwitchToLogin,
+}){
   const getPasswordStrength = (pwd) => {
     if (!pwd || pwd.length === 0) return { label: '', score: 0 };
     if (pwd.length < 4)           return { label: 'Muy débil', score: 1 };
@@ -153,6 +171,18 @@ function SignupCard({
   };
 
   const passwordStrength = getPasswordStrength(password);
+
+  const formComplete =
+  primerNombre.trim() !== '' &&
+  primerApellido.trim() !== '' &&
+  email.trim() !== '' &&
+  password.trim() !== '' &&
+  confirmPassword.trim() !== '' &&
+  nivelEducativo !== '' &&
+  grado !== '' &&
+  edad.trim() !== '' &&
+  ciudad.trim() !== '' &&
+  telefono.trim() !== '';
 
   return (
     <AuthCardShell title="Crea tu cuenta" description="Toma menos de 2 minutos." className="max-w-md w-full">
@@ -302,7 +332,11 @@ function SignupCard({
           <input
             type="checkbox"
             required
-            className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--color-primary)] cursor-pointer"
+            checked={termsAccepted}
+            onChange={onTermsAcceptedChange}
+            disabled={!formComplete}
+              
+              className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--color-primary)] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           />
           <p>
             Acepto los{' '}
