@@ -15,15 +15,16 @@ import DashboardLayout from './components/Layout/DashboardLayout';
 import AdminPanel     from './pages/dashboard/admin/AdminPanel';
 import Recursos       from './pages/dashboard/Recursos';
 import Profesiones    from './pages/dashboard/Profesiones';
+import Comunidad      from './pages/dashboard/Comunidad';
 
 function PaginaEnConstruccion({ titulo }) {
   return (
     <DashboardLayout>
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-center">
-          <p className="text-4xl mb-4">🚧</p>
-          <p className="text-gray-700 font-semibold text-lg">{titulo}</p>
-          <p className="text-gray-400 text-sm mt-1">Esta sección está en construcción</p>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: 40, marginBottom: 16 }}>🚧</div>
+          <div style={{ fontWeight: 700, fontSize: 18, color: 'var(--ink)' }}>{titulo}</div>
+          <div style={{ fontSize: 14, color: 'var(--ink-soft)', marginTop: 4 }}>Esta sección está en construcción</div>
         </div>
       </div>
     </DashboardLayout>
@@ -82,10 +83,10 @@ function App() {
   const puedeAcceder = user || isDemoMode;
 
   const spinner = (
-    <div className="flex items-center justify-center min-h-screen bg-white dark:bg-[#060d07]">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-green-500 mx-auto" />
-        <p className="mt-4 text-gray-500 dark:text-green-400 text-sm">Cargando...</p>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--bg)' }}>
+      <div style={{ textAlign: 'center' }}>
+        <div className="animate-spin" style={{ width: 40, height: 40, border: '3px solid var(--line)', borderTopColor: 'var(--primary)', borderRadius: '50%', margin: '0 auto' }} />
+        <div style={{ marginTop: 16, fontSize: 14, color: 'var(--ink-soft)' }}>Cargando...</div>
       </div>
     </div>
   );
@@ -130,10 +131,13 @@ function App() {
           path="/dashboard/profesiones"
           element={loading ? spinner : puedeAcceder ? <Profesiones /> : <Navigate to="/login" replace />}
         />
+        <Route
+          path="/dashboard/comunidad"
+          element={loading ? spinner : puedeAcceder ? <Comunidad /> : <Navigate to="/login" replace />}
+        />
         {[
           { path: '/dashboard/rutas',     titulo: 'Rutas formativas' },
           { path: '/dashboard/favoritos', titulo: 'Favoritos' },
-          { path: '/dashboard/comunidad', titulo: 'Comunidad' },
           { path: '/dashboard/mensajes',  titulo: 'Mensajes' },
           { path: '/dashboard/ajustes',   titulo: 'Ajustes' },
         ].map(({ path, titulo }) => (
