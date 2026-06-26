@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAdmin } from '../../hooks/useAdmin';
 import { useDarkMode } from '../../hooks/useDarkMode';
 import { handleLogout } from '../../utils/auth';
@@ -33,6 +33,7 @@ export default function TopNavbar({ profile, isDemoMode = false }) {
   const { isAdmin, loading: adminLoading } = useAdmin();
   const [dark, toggleDark] = useDarkMode();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const nombre = profile?.nombre || profile?.primer_nombre || '';
   const rol = isAdmin ? 'Administrador' : 'Estudiante';
@@ -52,9 +53,15 @@ export default function TopNavbar({ profile, isDemoMode = false }) {
       padding: '0 28px', gap: 22, flexShrink: 0,
     }}>
 
-      {/* Logo */}
+      {/* Logo — si ya estás en Comunidad, resetea el feed en lugar de ir al dashboard */}
       <NavLink
         to="/dashboard"
+        onClick={e => {
+          if (location.pathname === '/dashboard/comunidad') {
+            e.preventDefault();
+            navigate('/dashboard/comunidad', { state: { resetAt: Date.now() } });
+          }
+        }}
         style={{ display: 'flex', alignItems: 'center', gap: 9, flexShrink: 0, textDecoration: 'none' }}
       >
         <svg width="28" height="28" viewBox="0 0 32 32" fill="none">

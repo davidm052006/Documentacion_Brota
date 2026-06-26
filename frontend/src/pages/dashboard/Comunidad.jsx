@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
 
 // ── Datos estáticos (reemplazar por API en siguiente iteración) ───────────────
@@ -455,6 +456,17 @@ const FAB_ICON = { foros: '+', historias: '✍️', preguntas: '?', convocatoria
 
 export default function Comunidad() {
   const [tabActiva, setTabActiva] = useState('foros');
+  const location = useLocation();
+
+  // Cuando el logo BROTA se pulsa estando en Comunidad, resetea al tab inicial
+  // (en el futuro también disparará un re-fetch del feed personalizado)
+  useEffect(() => {
+    if (location.state?.resetAt) {
+      setTabActiva('foros');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [location.state?.resetAt]);
+
   const fabIcon = FAB_ICON[tabActiva];
 
   return (
