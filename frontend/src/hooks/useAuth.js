@@ -6,7 +6,7 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { validateFields } from '../utils/validation';
+import { validateFields, isValidEmail } from '../utils/validation';
 import { loginWithEmail, signUpWithEmail, sendPasswordReset } from '../services/authService';
 
 export const useAuth = () => {
@@ -56,7 +56,17 @@ export const useAuth = () => {
     onSegundoNombreChange:   (e) => { setSegundoNombre(e.target.value);   clearFieldError('segundoNombre'); },
     onPrimerApellidoChange:  (e) => { setPrimerApellido(e.target.value);  clearFieldError('primerApellido'); clearFieldError('apellido'); },
     onSegundoApellidoChange: (e) => { setSegundoApellido(e.target.value); clearFieldError('segundoApellido'); },
-    onEmailChange:           (e) => { setEmail(e.target.value);           clearFieldError('email'); },
+    onEmailChange:           (e) => { 
+      const value = e.target.value;
+      setEmail(value);
+      if (!value) {
+        clearFieldError('email');
+      } else if (!isValidEmail(value)) {
+        setValidationErrors((prev) => ({ ...prev, email: 'Correo inválido' }));
+      } else {
+        clearFieldError('email');
+      }
+    },
     onPasswordChange:        (e) => { setPassword(e.target.value);        clearFieldError('password'); },
     onConfirmPasswordChange: (e) => { setConfirmPassword(e.target.value); clearFieldError('confirmPassword'); },
     onNivelEducativoChange:  (value) => { setNivelEducativo(value);       clearFieldError('nivelEducativo'); },
