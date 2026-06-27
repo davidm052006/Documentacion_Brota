@@ -124,7 +124,7 @@ function Button({ children, variant, className, disabled, type }) {
       disabled={disabled}
       className={`px-4 py-3 text-sm font-semibold rounded-[var(--radius-md)] transition-all duration-200
         ${variant === 'secondary'
-          ? 'bg-[var(--color-primary)] text-white hover:opacity-90 disabled:opacity-50'
+          ? 'bg-[var(--color-primary)] text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed'
           : 'bg-gray-200 text-gray-800'}
         ${className}`}
     >
@@ -144,7 +144,7 @@ function SignupCard({
   edad = '',
   ciudad = '',
   telefono = '',
-  termsAccepted = '',
+  termsAccepted = false,
   validationErrors = {},
   error,
   loading,
@@ -161,7 +161,7 @@ function SignupCard({
   onTermsAcceptedChange,
   onSubmit,
   onSwitchToLogin,
-}){
+}) {
   const getPasswordStrength = (pwd) => {
     if (!pwd || pwd.length === 0) return { label: '', score: 0 };
     if (pwd.length < 4)           return { label: 'Muy débil', score: 1 };
@@ -172,17 +172,19 @@ function SignupCard({
 
   const passwordStrength = getPasswordStrength(password);
 
+  // ✅ termsAccepted incluido — el botón solo se activa cuando todo está completo Y aceptado
   const formComplete =
-  primerNombre.trim() !== '' &&
-  primerApellido.trim() !== '' &&
-  email.trim() !== '' &&
-  password.trim() !== '' &&
-  confirmPassword.trim() !== '' &&
-  nivelEducativo !== '' &&
-  grado !== '' &&
-  edad.trim() !== '' &&
-  ciudad.trim() !== '' &&
-  telefono.trim() !== '';
+    primerNombre.trim()     !== '' &&
+    primerApellido.trim()   !== '' &&
+    email.trim()            !== '' &&
+    password.trim()         !== '' &&
+    confirmPassword.trim()  !== '' &&
+    nivelEducativo          !== '' &&
+    grado                   !== '' &&
+    edad.trim()             !== '' &&
+    ciudad.trim()           !== '' &&
+    telefono.trim()         !== '' &&
+    termsAccepted === true;
 
   return (
     <AuthCardShell title="Crea tu cuenta" description="Toma menos de 2 minutos." className="max-w-md w-full">
@@ -195,7 +197,6 @@ function SignupCard({
 
       <form onSubmit={onSubmit} className="flex flex-col gap-3" autoComplete="off">
 
-        {/* ── Nombres completos ── */}
         <Input
           placeholder="Nombres completos"
           value={primerNombre}
@@ -203,7 +204,6 @@ function SignupCard({
           error={validationErrors.primerNombre}
         />
 
-        {/* ── Apellidos completos ── */}
         <Input
           placeholder="Apellidos completos"
           value={primerApellido}
@@ -211,7 +211,6 @@ function SignupCard({
           error={validationErrors.primerApellido}
         />
 
-        {/* ── Email ── */}
         <Input
           placeholder="Correo electrónico"
           value={email}
@@ -219,7 +218,6 @@ function SignupCard({
           error={validationErrors.email}
         />
 
-        {/* ── Contraseñas ── */}
         <div className="grid grid-cols-2 gap-3">
           <PasswordInput
             placeholder="Contraseña"
@@ -235,7 +233,6 @@ function SignupCard({
           />
         </div>
 
-        {/* ── Barra fortaleza contraseña ── */}
         {password && (
           <div className="flex items-center gap-3">
             <div className="flex-1 bg-gray-200 dark:bg-[#2c3140] rounded-full h-1.5 overflow-hidden">
@@ -257,10 +254,7 @@ function SignupCard({
           </div>
         )}
 
-        {/* ── Nivel educativo + Grado ── */}
         <div className="grid grid-cols-2 gap-3">
-
-          {/* Nivel educativo */}
           <div className="flex flex-col">
             <select
               value={nivelEducativo}
@@ -279,7 +273,6 @@ function SignupCard({
             )}
           </div>
 
-          {/* Grado */}
           <div className="flex flex-col">
             <select
               value={grado}
@@ -289,7 +282,6 @@ function SignupCard({
                   validationErrors.grado ? 'border-red-500' : 'border-black dark:border-[#3a4155]'
                 }`}
             >
-              <select className="text-gray-500">  </select>
               <option value="">Grado</option>
               <option value="Noveno">Noveno</option>
               <option value="Décimo">Décimo</option>
@@ -297,13 +289,10 @@ function SignupCard({
             </select>
             {validationErrors.grado && (
               <p className="text-red-500 text-xs mt-1">{validationErrors.grado}</p>
-              
             )}
           </div>
+        </div>
 
-        </div>{/* ── fin grid Nivel + Grado ── */}
-
-        {/* ── Fecha de nacimiento + Ciudad ── */}
         <div className="grid grid-cols-2 gap-3">
           <Input
             placeholder="Fecha de nacimiento"
@@ -319,7 +308,6 @@ function SignupCard({
           />
         </div>
 
-        {/* ── Teléfono ── */}
         <Input
           placeholder="Número de teléfono"
           value={telefono}
@@ -327,19 +315,21 @@ function SignupCard({
           error={validationErrors.telefono}
         />
 
-        {/* ── Términos ── */}
-        <div className="flex items-start gap-3 rounded-[var(--radius-md)] border border-black dark:border-[#3a4155] bg-white/70 dark:bg-[#1a1d24] px-4 py-3 text-sm leading-relaxed text-gray-700 dark:text-gray-300 shadow-sm">
+        {/* ── Términos y condiciones ── */}
+        {/* ✅ Siempre visible y habilitado — el usuario puede leer y aceptar en cualquier momento */}
+        <div className={`flex items-start gap-3 rounded-[var(--radius-md)] border px-4 py-3 text-sm leading-relaxed shadow-sm transition-colors ${
+          termsAccepted
+            ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5 dark:bg-[var(--color-primary)]/10'
+            : 'border-black dark:border-[#3a4155] bg-white/70 dark:bg-[#1a1d24]'
+        } text-gray-700 dark:text-gray-300`}>
           <input
             type="checkbox"
-            required
             checked={termsAccepted}
             onChange={onTermsAcceptedChange}
-            disabled={!formComplete}
-              
-              className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--color-primary)] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--color-primary)] cursor-pointer"
           />
           <p>
-            Acepto los{' '}
+            He leído y acepto los{' '}
             <a href="/terminos" target="_blank" rel="noreferrer"
               className="font-semibold text-[var(--color-primary)] underline underline-offset-4 hover:opacity-80">
               Términos y Condiciones
@@ -348,12 +338,25 @@ function SignupCard({
             <a href="/privacidad" target="_blank" rel="noreferrer"
               className="font-semibold text-[var(--color-primary)] underline underline-offset-4 hover:opacity-80">
               Política de Privacidad
-            </a>.
+            </a>{' '}
+            de Brota.
           </p>
         </div>
 
-        {/* ── Botón submit ── */}
-        <Button variant="secondary" className="w-full" disabled={loading} type="submit">
+        {/* Mensaje de ayuda cuando el form está completo pero faltan términos */}
+        {!termsAccepted && primerNombre && email && password && (
+          <p className="text-xs text-amber-600 dark:text-amber-400 text-center -mt-1">
+            Acepta los términos para continuar
+          </p>
+        )}
+
+        {/* ✅ Botón deshabilitado hasta que formComplete (incluye termsAccepted) */}
+        <Button
+          variant="secondary"
+          className="w-full"
+          disabled={loading || !formComplete}
+          type="submit"
+        >
           {loading ? 'Creando cuenta...' : 'Crear cuenta'}
         </Button>
 

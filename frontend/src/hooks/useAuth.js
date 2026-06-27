@@ -26,6 +26,7 @@ export const useAuth = () => {
   const [edad, setEdad]                       = useState('');
   const [ciudad, setCiudad]                   = useState('');
   const [telefono, setTelefono]               = useState('');
+  const [termsAccepted, setTermsAccepted]     = useState(false);
 
   // ── Estado de UI ─────────────────────────────────────────────
   const [loading, setLoading]                   = useState(false);
@@ -45,6 +46,7 @@ export const useAuth = () => {
 
   const changeMode = (nextMode) => {
     clearMessages();
+    setTermsAccepted(false);
     setMode(nextMode);
   };
 
@@ -62,6 +64,7 @@ export const useAuth = () => {
     onEdadChange:            (e) => { setEdad(e.target.value);            clearFieldError('edad'); },
     onCiudadChange:          (e) => { setCiudad(e.target.value);          clearFieldError('ciudad'); },
     onTelefonoChange:        (e) => { setTelefono(e.target.value);        clearFieldError('telefono'); },
+    onTermsAcceptedChange:   (e) => { setTermsAccepted(e.target.checked); clearFieldError('termsAccepted'); },
   };
 
   // ── Handler: Login ───────────────────────────────────────────
@@ -89,6 +92,11 @@ export const useAuth = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     clearMessages();
+
+    if (!termsAccepted) {
+      setError('Debes aceptar los términos y condiciones para continuar.'); 
+      return;
+    }
 
     const nombre   = `${primerNombre} ${segundoNombre}`.trim();
     const apellido = `${primerApellido} ${segundoApellido}`.trim();
@@ -147,6 +155,8 @@ export const useAuth = () => {
     mode, email, password, confirmPassword,
     primerNombre, segundoNombre, primerApellido, segundoApellido,
     nivelEducativo, grado, edad, ciudad, telefono,
+    
+    termsAccepted,
     loading, error, successMessage, validationErrors,
     ...fieldHandlers,
     handleLogin, handleSignup, handlePasswordRecovery,

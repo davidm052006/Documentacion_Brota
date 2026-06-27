@@ -83,6 +83,7 @@ function Login() {
     mode, email, password, confirmPassword,
     primerNombre, segundoNombre, primerApellido, segundoApellido,
     nivelEducativo, grado, edad, ciudad, telefono,
+    termsAccepted,
     loading, error, successMessage, validationErrors,
     onPrimerNombreChange, onSegundoNombreChange,
     onPrimerApellidoChange, onSegundoApellidoChange,
@@ -90,6 +91,7 @@ function Login() {
     onPasswordChange, onConfirmPasswordChange,
     onNivelEducativoChange, onGradoChange, onEdadChange,
     onCiudadChange, onTelefonoChange,
+    onTermsAcceptedChange,
     handleLogin, handleSignup, handlePasswordRecovery,
     changeMode,
   } = useAuth();
@@ -115,6 +117,8 @@ function Login() {
         edad={edad}
         ciudad={ciudad}
         telefono={telefono}
+        termsAccepted={termsAccepted}
+        onTermsAcceptedChange={onTermsAcceptedChange}
         validationErrors={validationErrors}
         error={error}
         loading={loading}
