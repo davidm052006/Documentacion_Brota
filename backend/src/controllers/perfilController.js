@@ -113,8 +113,8 @@ const guardarResultado = async (req, res) => {
       return res.status(500).json({ success: false, message: error.message });
     }
 
-    // Generar recomendaciones en paralelo — no bloquea la respuesta HTTP
-    generarRecomendaciones(data.id, perfilVocacional, supabase)
+    // Generar recomendaciones antes de responder, así el frontend las encuentra de inmediato
+    await generarRecomendaciones(data.id, perfilVocacional, supabase)
       .catch((err) => console.error('[perfilController] generarRecomendaciones:', err));
 
     return res.status(201).json({ success: true, message: 'Resultado guardado', data });

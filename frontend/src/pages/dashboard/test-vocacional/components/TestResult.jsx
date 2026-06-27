@@ -111,18 +111,12 @@ export default function TestResult({
       setCargando(true);
       setError(null);
 
-      for (let intento = 0; intento < 4; intento++) {
-        if (cancelado) return;
-        if (intento > 0) await new Promise(r => setTimeout(r, 1500));
-        if (cancelado) return;
-
-        const res = await obtenerRecomendaciones(resultadoId);
-        if (cancelado) return;
-        if (!res.success) { setError(res.error); break; }
-        if (res.data.length > 0) { setRecomendaciones(res.data); break; }
+      const res = await obtenerRecomendaciones(resultadoId);
+      if (!cancelado) {
+        if (!res.success) setError(res.error);
+        else setRecomendaciones(res.data ?? []);
+        setCargando(false);
       }
-
-      if (!cancelado) setCargando(false);
     })();
 
     return () => { cancelado = true; };

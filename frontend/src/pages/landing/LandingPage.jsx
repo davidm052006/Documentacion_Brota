@@ -44,11 +44,7 @@ function Navbar({ dark, toggleDark }) {
     }}>
       {/* Logo */}
       <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 9, textDecoration: 'none' }}>
-        <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
-          <path d="M16 31 V15" stroke="var(--primary)" strokeWidth="2.6" strokeLinecap="round"/>
-          <path d="M16 18 C16 11 9 8.5 4.5 8.5 C4.5 16 10 19 16 19 Z" fill="var(--primary)"/>
-          <path d="M16 16 C16 8.5 23.5 5.5 28.5 6.5 C27.5 14 22 17 16 17 Z" fill="var(--primary)" opacity=".8"/>
-        </svg>
+        <img src="/logo-brota.png" alt="Brota" style={{ height: 28, width: 'auto' }} />
         <span className="font-display" style={{ fontWeight: 800, fontSize: 20, color: 'var(--ink)', letterSpacing: '-0.5px' }}>
           BROTA
         </span>
@@ -131,26 +127,37 @@ function Hero() {
         </div>
       </div>
 
-      {/* Ilustración */}
+      {/* Logo hero */}
       <div style={{
         position: 'relative', aspectRatio: '1.15', borderRadius: 30,
         background: 'linear-gradient(135deg, var(--primary-soft), var(--surface-2))',
-        overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        overflow: 'hidden', display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center', gap: 16,
       }}>
         <div style={{
-          position: 'absolute', width: '62%', aspectRatio: '1',
+          position: 'absolute', width: '70%', aspectRatio: '1',
           borderRadius: '50%', background: 'var(--surface)',
           boxShadow: '0 20px 50px rgba(0,0,0,.08)',
         }} />
-        <svg width="150" height="150" viewBox="0 0 32 32" fill="none" style={{ position: 'relative', zIndex: 1 }}>
-          <path d="M16 31 V13" stroke="var(--primary-deep)" strokeWidth="2.6" strokeLinecap="round"/>
-          <path d="M16 17 C16 9 8 6 3 6.5 C3 15 9 18 16 18 Z" fill="var(--primary)"/>
-          <path d="M16 15 C16 7 24 4 29 5 C28 14 23 17 16 17 Z" fill="var(--primary-deep)"/>
-        </svg>
+        <img
+          src="/logo-brota.png"
+          alt="Brota"
+          style={{ position: 'relative', zIndex: 1, height: 110, width: 'auto' }}
+        />
+        <span
+          className="font-display"
+          style={{
+            position: 'relative', zIndex: 1,
+            fontWeight: 800, fontSize: 38, letterSpacing: '-1px',
+            color: 'var(--primary)',
+          }}
+        >
+          BROTA
+        </span>
         <div style={{
-          position: 'absolute', bottom: '14%', right: '18%',
-          width: 36, height: 36, borderRadius: '50%',
-          background: 'var(--accent)',
+          position: 'absolute', bottom: '12%', right: '16%',
+          width: 32, height: 32, borderRadius: '50%',
+          background: 'var(--accent)', opacity: .75,
         }} />
       </div>
     </section>

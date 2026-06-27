@@ -5,14 +5,10 @@ import LoginCard from './components/LoginCard';
 import SignupCard from './components/SignupCard';
 import ForgotPasswordCard from './components/ForgotPasswordCard';
 
-// ─── Brand SVG inline ────────────────────────────────────────────────────────
+// ─── Logo de marca ────────────────────────────────────────────────────────────
 function BrotaLogo({ size = 58 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
-      <path d="M16 31 V13" stroke="var(--primary-deep)" strokeWidth="2.6" strokeLinecap="round"/>
-      <path d="M16 17 C16 9 8 6 3 6.5 C3 15 9 18 16 18 Z" fill="var(--primary)"/>
-      <path d="M16 15 C16 7 24 4 29 5 C28 14 23 17 16 17 Z" fill="var(--primary-deep)"/>
-    </svg>
+    <img src="/logo-brota.png" alt="Brota" style={{ height: size, width: 'auto' }} />
   );
 }
 

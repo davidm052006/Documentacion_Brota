@@ -9,6 +9,33 @@ import TestProgress from './components/TestProgress';
 import TestResult   from './components/TestResult';
 import { getCategoriaInfo, storageKey } from '../../../utils/vocacionalCategorias';
 
+// Calcula el perfil localmente usando los pesos ya cargados en las preguntas.
+// Se usa como respaldo cuando el backend no está disponible o el usuario es anónimo.
+function calcularPerfilLocal(preguntas, seleccionadas) {
+  const acumulado = {};
+  preguntas.forEach(pregunta => {
+    const elegidas = seleccionadas[pregunta.id] ?? [];
+    elegidas.forEach(opcionId => {
+      const opcion = pregunta.opciones?.find(o => o.id === opcionId);
+      if (!opcion?.pesos) return;
+      Object.entries(opcion.pesos).forEach(([cat, pts]) => {
+        acumulado[cat] = (acumulado[cat] ?? 0) + pts;
+      });
+    });
+  });
+  const ordenados = Object.entries(acumulado).sort(([, a], [, b]) => b - a);
+  const maxPts = ordenados[0]?.[1] ?? 1;
+  return {
+    categoriaPrincipal:  ordenados[0]?.[0] ?? null,
+    categoriaSecundaria: ordenados[1]?.[0] ?? null,
+    scores: ordenados.map(([categoria, puntos]) => ({
+      categoria,
+      puntos,
+      porcentaje: Math.round((puntos / maxPts) * 100),
+    })),
+  };
+}
+
 function calcToUI(perfilVocacional) {
   if (!perfilVocacional) return null;
   const principal  = getCategoriaInfo(perfilVocacional.categoriaPrincipal, 0);
@@ -133,7 +160,16 @@ export default function TestVocacional({ user, isDemoMode = false }) {
         if (pUid) {
           try {
             const { data: resPrevio } = await obtenerResultado(pUid);
-            if (resPrevio) { setResultadoGuardadoDB(resPrevio); setTieneResultadoPrevio(true); }
+            if (resPrevio) {
+              const pv = resPrevio.perfil_vocacional ?? {};
+              const scores = pv.scores ?? pv.perfil?.scores ?? [];
+              const cat = pv.categoriaPrincipal ?? pv.perfil?.categoriaPrincipal;
+              // Ignorar resultados vacíos (bug de versión anterior con IDs likert incorrectos)
+              if (cat && scores.length > 0) {
+                setResultadoGuardadoDB(resPrevio);
+                setTieneResultadoPrevio(true);
+              }
+            }
           } catch { /* no bloquea */ }
         }
       } catch (err) {
@@ -208,16 +244,28 @@ export default function TestVocacional({ user, isDemoMode = false }) {
     if (preguntaIdx < totalPreguntas - 1) { setPreguntaIdx(i => i + 1); return; }
     setFase('calculando');
     setGuardando(true);
+
+    // Cálculo local siempre disponible como respaldo
+    const perfilLocal = calcularPerfilLocal(preguntas, seleccionadas);
+
     try {
       if (perfilUsuarioId && cuestionarioId) {
         const res = await guardarResultado(perfilUsuarioId, cuestionarioId, seleccionadas);
         if (res.success && res.data) {
           setResultado(calcToUI(res.data.perfil_vocacional));
           setResultadoId(res.data.id);
+        } else {
+          // Backend falló: mostrar resultado calculado localmente
+          console.warn('guardarResultado falló:', res.error);
+          setResultado(calcToUI(perfilLocal));
         }
+      } else {
+        // Modo demo o sin perfil: calcular en cliente
+        setResultado(calcToUI(perfilLocal));
       }
     } catch (err) {
       console.error('Error al guardar resultado:', err);
+      setResultado(calcToUI(perfilLocal));
     } finally {
       setGuardando(false);
       setFase('resultado');

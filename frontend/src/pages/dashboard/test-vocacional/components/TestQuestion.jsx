@@ -34,13 +34,7 @@ function splitTexto(texto) {
   return { normal: w.slice(0, h).join(' '), verde: w.slice(h).join(' ') };
 }
 
-const LIKERT_OPTS = [
-  { id: '1', label: 'Nada me identifica', mark: '😕' },
-  { id: '2', label: 'Poco',               mark: '🙁' },
-  { id: '3', label: 'Neutral',            mark: '😐' },
-  { id: '4', label: 'Bastante',           mark: '🙂' },
-  { id: '5', label: 'Totalmente',         mark: '😄' },
-];
+const LIKERT_MARKS = ['😕', '🙁', '😐', '🙂', '😄'];
 
 export default function TestQuestion({
   pregunta       = PREGUNTA_DEMO,
@@ -57,7 +51,12 @@ export default function TestQuestion({
   const esLikert   = pregunta.tipo === 'likert';
   const esMultiple = pregunta.tipo === 'multiple';
   const { normal, verde } = splitTexto(pregunta.texto);
-  const opciones = esLikert ? LIKERT_OPTS : pregunta.opciones;
+  // Para likert usamos las opciones reales del DB (con sus UUIDs) y les añadimos el emoji de escala
+  const opciones = esLikert
+    ? (pregunta.opciones ?? [])
+        .slice().sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0))
+        .map((o, i) => ({ ...o, mark: LIKERT_MARKS[i] ?? '•' }))
+    : pregunta.opciones;
 
   const catLabel = pregunta.categoria
     ? pregunta.categoria.charAt(0).toUpperCase() + pregunta.categoria.slice(1)

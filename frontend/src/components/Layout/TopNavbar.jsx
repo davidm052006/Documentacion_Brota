@@ -64,11 +64,7 @@ export default function TopNavbar({ profile, isDemoMode = false }) {
         }}
         style={{ display: 'flex', alignItems: 'center', gap: 9, flexShrink: 0, textDecoration: 'none' }}
       >
-        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
-          <path d="M16 31 V15" stroke="var(--primary)" strokeWidth="2.6" strokeLinecap="round"/>
-          <path d="M16 18 C16 11 9 8.5 4.5 8.5 C4.5 16 10 19 16 19 Z" fill="var(--primary)"/>
-          <path d="M16 16 C16 8.5 23.5 5.5 28.5 6.5 C27.5 14 22 17 16 17 Z" fill="var(--primary)" opacity=".8"/>
-        </svg>
+        <img src="/logo-brota.png" alt="Brota" style={{ height: 28, width: 'auto' }} />
         <span style={{
           fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 800,
           fontSize: 19, color: 'var(--ink)', letterSpacing: '-0.5px',
