@@ -106,71 +106,70 @@ function Login() {
     forgotPassword: <ForgotHero />,
   };
 
-  const cardMap = {
-    signup: (
-      <SignupCard
-        primerNombre={primerNombre}
-        segundoNombre={segundoNombre}
-        primerApellido={primerApellido}
-        segundoApellido={segundoApellido}
-        email={email}
-        password={password}
-        confirmPassword={confirmPassword}
-        nivelEducativo={nivelEducativo}
-        grado={grado}
-        edad={edad}
-        ciudad={ciudad}
-        telefono={telefono}
-        termsAccepted={termsAccepted}
-        onTermsAcceptedChange={onTermsAcceptedChange}
-        validationErrors={validationErrors}
-        error={error}
-        loading={loading}
-        onPrimerNombreChange={onPrimerNombreChange}
-        onSegundoNombreChange={onSegundoNombreChange}
-        onPrimerApellidoChange={onPrimerApellidoChange}
-        onSegundoApellidoChange={onSegundoApellidoChange}
-        onEmailChange={onEmailChange}
-        onPasswordChange={onPasswordChange}
-        onConfirmPasswordChange={onConfirmPasswordChange}
-        onNivelEducativoChange={onNivelEducativoChange}
-        onGradoChange={onGradoChange}
-        onEdadChange={onEdadChange}
-        onCiudadChange={onCiudadChange}
-        onTelefonoChange={onTelefonoChange}
-        termsAccepted={termsAccepted}
-        onTermsAcceptedChange={onTermsAcceptedChange}
-        onSubmit={handleSignup}
-        onSwitchToLogin={() => changeMode('login')}
-      />
-    ),
-    forgotPassword: (
-      <ForgotPasswordCard
-        email={email}
-        validationErrors={validationErrors}
-        error={error}
-        successMessage={successMessage}
-        loading={loading}
-        onEmailChange={onEmailChange}
-        onSubmit={handlePasswordRecovery}
-        onSwitchToLogin={() => changeMode('login')}
-      />
-    ),
-    login: (
-      <LoginCard
-        email={email}
-        password={password}
-        validationErrors={validationErrors}
-        error={error}
-        loading={loading}
-        onEmailChange={onEmailChange}
-        onPasswordChange={onPasswordChange}
-        onSubmit={handleLogin}
-        onSwitchToSignup={() => changeMode('signup')}
-        onSwitchToForgotPassword={() => changeMode('forgotPassword')}
-      />
-    ),
-  };
+const cardMap = {
+  signup: (
+    <SignupCard
+      primerNombre={primerNombre}
+      segundoNombre={segundoNombre}
+      primerApellido={primerApellido}
+      segundoApellido={segundoApellido}
+      email={email}
+      password={password}
+      confirmPassword={confirmPassword}
+      nivelEducativo={nivelEducativo}
+      grado={grado}
+      edad={edad}
+      ciudad={ciudad}
+      telefono={telefono}
+      termsAccepted={termsAccepted}
+      onTermsAcceptedChange={onTermsAcceptedChange}
+      validationErrors={validationErrors}
+      error={error}
+      loading={loading}
+      onPrimerNombreChange={onPrimerNombreChange}
+      onSegundoNombreChange={onSegundoNombreChange}
+      onPrimerApellidoChange={onPrimerApellidoChange}
+      onSegundoApellidoChange={onSegundoApellidoChange}
+      onEmailChange={onEmailChange}
+      onPasswordChange={onPasswordChange}
+      onConfirmPasswordChange={onConfirmPasswordChange}
+      onNivelEducativoChange={onNivelEducativoChange}
+      onGradoChange={onGradoChange}
+      onEdadChange={onEdadChange}
+      onCiudadChange={onCiudadChange}
+      onTelefonoChange={onTelefonoChange}
+      onSubmit={handleSignup}
+      onSwitchToLogin={() => changeMode('login')}
+    />
+  ),
+  forgotPassword: (
+    <ForgotPasswordCard
+      email={email}
+      validationErrors={validationErrors}
+      error={error}
+      successMessage={successMessage}
+      loading={loading}
+      onEmailChange={onEmailChange}
+      onSubmit={handlePasswordRecovery}
+      onSwitchToLogin={() => changeMode('login')}
+    />
+  ),
+  login: (
+    <LoginCard
+      email={email}
+      password={password}
+      validationErrors={validationErrors}
+      error={error}
+      loading={loading}
+      onEmailChange={onEmailChange}
+      onPasswordChange={onPasswordChange}
+      onSubmit={handleLogin}
+      onSwitchToSignup={() => changeMode('signup')}
+      onSwitchToForgotPassword={() => changeMode('forgotPassword')}
+    />
+  ),
+};
+
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg)', color: 'var(--ink)' }}>
