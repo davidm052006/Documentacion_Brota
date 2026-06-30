@@ -66,7 +66,7 @@ function ForgotPasswordCard({ onSwitchToLogin }) {
 
     if (!codigo || codigo.length < 8) errs.codigo = 'Ingresa el código de 8 dígitos';
     if (!password)                    errs.password = 'La contraseña es requerida';
-    else if (password.length < 8)    errs.password = 'Mínimo 8 caracteres';
+    else if (password.length < 6)    errs.password = 'Mínimo 6 caracteres';
     if (password !== confirmPassword) errs.confirmPassword = 'Las contraseñas no coinciden';
 
     if (Object.keys(errs).length) return setErrors(errs);
@@ -96,7 +96,7 @@ function ForgotPasswordCard({ onSwitchToLogin }) {
     return (
       <AuthCardShell
         title="Recupera tu contraseña"
-        description="Te enviaremos un código de 6 dígitos a tu correo."
+        description="Te enviaremos un código de 8 dígitos a tu correo."
       >
         {error && <div style={alertStyle('error')}>{error}</div>}
 
