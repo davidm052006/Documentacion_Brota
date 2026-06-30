@@ -70,10 +70,8 @@ export const signUpWithEmail = async (email, password, nombre, apellido, extraFi
 // ─────────────────────────────────────────────────────────────
 export const sendPasswordReset = async (email) => {
   try {
-    if (typeof supabase.auth.resetPasswordForEmail !== 'function') {
-      return { success: false, error: 'Funcionalidad de recuperación no disponible.' };
-    }
-    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {  
+    });
     if (error) return { success: false, error: translateAuthError(error.message) };
     return { success: true };
   } catch (err) {
@@ -81,7 +79,38 @@ export const sendPasswordReset = async (email) => {
     return { success: false, error: 'Error de conexión. Intenta nuevamente.' };
   }
 };
+ 
+export const verifyOtpAndUpdatePassword = async (email, token, newPassword) => {
+  try {
+    const { error: otpError } = await supabase.auth.verifyOtp({
+      email,
+      token,
+      type: 'recovery',
+    });
+  
+    if (otpError) {
+      return {
+        success: false,
+        error: otpError.message.includes('expired')
+          ? 'El código expiró. Solicita uno nuevo.'
+          : otpError.message.includes('invalid')
+          ? 'Código incorrecto. Verifica e intenta de nuevo.'
+          : translateAuthError(otpError.message),
+      };
+    }
 
+    const { error: updateError } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
+ 
+    if (updateError) return { success: false, error: translateAuthError(updateError.message) };
+    return { success: true };
+  } catch (err) {
+    console.error('authService.verifyOtpAndUpdatePassword:', err);
+    return { success: false, error: 'Error de conexión. Intenta nuevamente.' };
+  }
+};
+  
 // ─────────────────────────────────────────────────────────────
 // ACTUALIZAR CONTRASEÑA (usado en ResetPassword.jsx)
 // ─────────────────────────────────────────────────────────────
