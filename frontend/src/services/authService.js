@@ -88,13 +88,10 @@ export const verifyOtpAndUpdatePassword = async (email, token, newPassword) => {
     });
   
     if (otpError) {
+      console.error('verifyOtp error:', otpError.message);
       return {
         success: false,
-        error: otpError.message.includes('expired')
-          ? 'El código expiró. Solicita uno nuevo.'
-          : otpError.message.includes('invalid')
-          ? 'Código incorrecto. Verifica e intenta de nuevo.'
-          : translateAuthError(otpError.message),
+        error: 'Código incorrecto o expirado. Verifica e intenta de nuevo.',
       };
     }
 

@@ -64,7 +64,7 @@ function ForgotPasswordCard({ onSwitchToLogin }) {
     setError(null);
     const errs = {};
 
-    if (!codigo || codigo.length < 6) errs.codigo = 'Ingresa el código de 6 dígitos';
+    if (!codigo || codigo.length < 6) errs.codigo = 'El código debe tener 6 caracteres';
     if (!password)                    errs.password = 'La contraseña es requerida';
     else if (password.length < 6)    errs.password = 'Mínimo 6 caracteres';
     if (password !== confirmPassword) errs.confirmPassword = 'Las contraseñas no coinciden';
@@ -140,16 +140,13 @@ function ForgotPasswordCard({ onSwitchToLogin }) {
         {/* Campo del código OTP */}
         <div>
           <input
-            placeholder="Código de 6 dígitos"
+            placeholder="Código de verificación"
             value={codigo}
             onChange={(e) => {
-              // Solo números, máximo 6 dígitos
-              const val = e.target.value.replace(/\D/g, '').slice(0, 6);
-              setCodigo(val);
+              setCodigo(e.target.value.slice(0, 6));
               setErrors((prev) => ({ ...prev, codigo: '' }));
             }}
             maxLength={6}
-            inputMode="numeric"
             style={{
               ...inputBase,
               border: `1px solid ${errors.codigo ? '#e53e3e' : 'var(--line)'}`,
