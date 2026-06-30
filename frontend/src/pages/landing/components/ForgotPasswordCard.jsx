@@ -64,7 +64,11 @@ function ForgotPasswordCard({ onSwitchToLogin }) {
     setError(null);
     const errs = {};
 
+<<<<<<< HEAD
     if (!codigo || codigo.length < 8) errs.codigo = 'Ingresa el código de 8 dígitos';
+=======
+    if (!codigo || codigo.length < 6) errs.codigo = 'El código debe tener 6 caracteres';
+>>>>>>> ca53f2d3baa2b579423ad14a039c8694c75abd29
     if (!password)                    errs.password = 'La contraseña es requerida';
     else if (password.length < 6)    errs.password = 'Mínimo 6 caracteres';
     if (password !== confirmPassword) errs.confirmPassword = 'Las contraseñas no coinciden';
@@ -140,6 +144,7 @@ function ForgotPasswordCard({ onSwitchToLogin }) {
         {/* Campo del código OTP */}
         <div>
           <input
+<<<<<<< HEAD
             placeholder="Código de 8 dígitos"
             value={codigo}
             onChange={(e) => {
@@ -150,6 +155,15 @@ function ForgotPasswordCard({ onSwitchToLogin }) {
             }}
             maxLength={8}
             inputMode="numeric"
+=======
+            placeholder="Código de verificación"
+            value={codigo}
+            onChange={(e) => {
+              setCodigo(e.target.value.slice(0, 6));
+              setErrors((prev) => ({ ...prev, codigo: '' }));
+            }}
+            maxLength={6}
+>>>>>>> ca53f2d3baa2b579423ad14a039c8694c75abd29
             style={{
               ...inputBase,
               border: `1px solid ${errors.codigo ? '#e53e3e' : 'var(--line)'}`,
