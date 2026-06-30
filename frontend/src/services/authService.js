@@ -70,8 +70,7 @@ export const signUpWithEmail = async (email, password, nombre, apellido, extraFi
 // ─────────────────────────────────────────────────────────────
 export const sendPasswordReset = async (email) => {
   try {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {  
-    });
+    const { error } = await supabase.auth.resetPasswordForEmail(email);
     if (error) return { success: false, error: translateAuthError(error.message) };
     return { success: true };
   } catch (err) {

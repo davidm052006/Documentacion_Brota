@@ -153,8 +153,8 @@ function ForgotPasswordCard({ onSwitchToLogin }) {
             style={{
               ...inputBase,
               border: `1px solid ${errors.codigo ? '#e53e3e' : 'var(--line)'}`,
-              letterSpacing: '10px',
-              fontSize: 22,
+              letterSpacing: '6px',
+              fontSize: 16,
               fontWeight: 700,
               textAlign: 'center',
             }}
